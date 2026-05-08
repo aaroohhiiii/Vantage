@@ -56,3 +56,32 @@
 - Add lead capture form on results page
 - Email notification when audit completes
 - Deploy to Vercel for live testing
+
+---
+
+## Day 3 — 09-05-2026
+**Hours worked:** 6
+**What I did:**
+- Debugged 3-step form — replaced shadcn Select with native HTML select (hydration mismatch issue)
+- Form now fully functional: Tool selection → Spend entry → Team context
+- Fixed state management in `SpendForm/index.tsx` — initialized all tool inputs with first plan pre-selected
+- Users can now change plans, enter monthly spend, and adjust seats per tool
+- Form validates and calculates total spend + annual run rate in real-time
+- localStorage persistence working — form state survives page refresh
+- Cleaned up debug logs
+
+**What I learned:**
+- shadcn Select component had z-index/click issues in dark theme — native select more reliable
+- Hydration mismatch happens when server renders different HTML than client (e.g., undefined vs empty string)
+- Initialize all form fields in parent state to avoid server/client divergence
+- Native selects style consistently across browsers without extra dependencies
+
+**Blockers / what I'm stuck on:**
+- None — Form fully working
+
+**Plan for tomorrow:**
+- Build results page (`/app/audit/[id]/page.tsx`) to display audit results
+- Integrate Claude API for AI summary generation
+- Add lead capture form (email + company name)
+- Set up email notifications via Resend
+- Deploy to Vercel for live testing
