@@ -1,7 +1,7 @@
 # DEVLOG
 # Prune Dev Log
 
-## Day 1 — 2025-01-05
+## Day 1 — 07-05-2026
 **Hours worked:** 4
 **What I did:**
 - Created Next.js project and installed all dependencies (Supabase, Resend, Anthropic, Upstash)
@@ -28,7 +28,7 @@
 
 ---
 
-## Day 2 — 2025-01-06
+## Day 2 — 08-05-2026
 **Hours worked:** 7
 **What I did:**
 - Configured `.env.local` with all secrets (Supabase, Anthropic, Resend, Upstash)
