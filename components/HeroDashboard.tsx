@@ -1,19 +1,20 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { BadgeDollarSign, RefreshCw, Scissors, Zap } from "lucide-react"
 
 const MOCK_TOOLS = [
-  { name: "Cursor Pro", spend: 40, status: "keep", color: "#4F8CFF" },
+  { name: "Cursor Pro", spend: 40, status: "keep", color: "#00C853" },
   { name: "GitHub Copilot", spend: 19, status: "cancel", color: "#EF4444" },
   { name: "Claude Pro", spend: 20, status: "keep", color: "#CC785C" },
   { name: "ChatGPT Team", spend: 60, status: "downgrade", color: "#F59E0B" },
-  { name: "OpenAI API", spend: 180, status: "keep", color: "#10A37F" },
+  { name: "OpenAI API", spend: 180, status: "keep", color: "#00C853" },
 ]
 
 const SAVINGS_ITEMS = [
-  { label: "Redundant tools", amount: "$228/yr", icon: "🔁" },
-  { label: "Plan overpay", amount: "$360/yr", icon: "💸" },
-  { label: "Credex credits", amount: "$720/yr", icon: "⚡" },
+  { label: "Redundant tools", amount: "$228/yr", icon: RefreshCw },
+  { label: "Plan overpay", amount: "$360/yr", icon: BadgeDollarSign },
+  { label: "Credex credits", amount: "$720/yr", icon: Zap },
 ]
 
 const containerVariants = {
@@ -39,25 +40,22 @@ export default function HeroDashboard() {
       aria-hidden="true"
     >
       {/* Floating glow behind the dashboard */}
-      <div
-        className="absolute inset-0 rounded-3xl opacity-30 blur-3xl"
-        style={{ background: "radial-gradient(ellipse at 60% 40%, #4F8CFF 0%, #8B5CF6 50%, transparent 80%)" }}
-      />
+      <div className="absolute inset-0 rounded-3xl opacity-20 blur-3xl" style={{ background: "radial-gradient(ellipse at 60% 40%, #00C853 0%, #7C3AED 45%, transparent 80%)" }} />
 
       {/* Main dashboard card */}
       <motion.div
         variants={itemVariants}
-        className="animate-float relative rounded-2xl glass-card p-5 glow-blue"
+        className="animate-float relative rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm"
       >
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-[#94A3B8] uppercase tracking-widest">AI Spend Report</p>
-            <p className="mt-0.5 text-sm font-medium text-white/80">May 2026 · 5 tools</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-[#4B5563]">AI Spend Report</p>
+            <p className="mt-0.5 text-sm font-medium text-[#4B5563]">May 2026 · 5 tools</p>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-[#34D399]/15 px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#34D399] animate-pulse-glow" />
-            <span className="text-xs font-medium text-[#34D399]">Live audit</span>
+          <div className="flex items-center gap-1.5 rounded-full bg-[#00C853] px-3 py-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse-glow" />
+            <span className="text-xs font-medium text-white">Live audit</span>
           </div>
         </div>
 
@@ -65,16 +63,16 @@ export default function HeroDashboard() {
         <motion.div
           variants={itemVariants}
           className="mb-4 rounded-xl p-4"
-          style={{ background: "linear-gradient(135deg, rgba(79,140,255,0.12) 0%, rgba(139,92,246,0.12) 100%)", border: "1px solid rgba(79,140,255,0.2)" }}
+          style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
         >
-          <p className="text-xs text-[#76A9FF] font-medium mb-1">Estimated Annual Savings</p>
+          <p className="mb-1 text-xs font-medium text-[#4B5563]">Estimated Annual Savings</p>
           <p
-            className="text-4xl font-bold tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", background: "linear-gradient(135deg, #fff 0%, #76A9FF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+            className="text-4xl font-bold tracking-tight text-[#0A0A0A]"
+            style={{ fontFamily: "var(--font-heading)" }}
           >
             $1,308
           </p>
-          <p className="mt-1 text-xs text-[#94A3B8]">Across 3 optimization opportunities</p>
+          <p className="mt-1 text-xs text-[#4B5563]">Across 3 optimization opportunities</p>
         </motion.div>
 
         {/* Tool rows */}
@@ -85,32 +83,32 @@ export default function HeroDashboard() {
               variants={itemVariants}
               custom={i}
               className="flex items-center justify-between rounded-lg px-3 py-2.5"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+              style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
             >
               <div className="flex items-center gap-2.5">
                 <div
                   className="h-2 w-2 rounded-full flex-shrink-0"
                   style={{ backgroundColor: tool.color }}
                 />
-                <span className="text-sm text-white/80">{tool.name}</span>
+                <span className="text-sm text-[#0A0A0A]">{tool.name}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-[#94A3B8]">${tool.spend}/mo</span>
+                <span className="text-xs text-[#4B5563]">${tool.spend}/mo</span>
                 <span
                   className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                   style={{
                     background:
                       tool.status === "cancel"
-                        ? "rgba(239,68,68,0.15)"
+                        ? "#FEF2F2"
                         : tool.status === "downgrade"
-                        ? "rgba(245,158,11,0.15)"
-                        : "rgba(52,211,153,0.15)",
+                        ? "#FFFBEB"
+                        : "#F0FDF4",
                     color:
                       tool.status === "cancel"
                         ? "#EF4444"
                         : tool.status === "downgrade"
                         ? "#F59E0B"
-                        : "#34D399",
+                        : "#00C853",
                   }}
                 >
                   {tool.status === "cancel" ? "Cancel" : tool.status === "downgrade" ? "Downgrade" : "Optimal"}
@@ -124,17 +122,17 @@ export default function HeroDashboard() {
         <motion.div
           variants={itemVariants}
           className="rounded-xl p-3"
-          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+          style={{ background: "#F8F9FA", border: "1px solid #E5E7EB" }}
         >
-          <p className="text-xs font-medium text-[#94A3B8] mb-2.5">Savings breakdown</p>
+          <p className="mb-2.5 text-xs font-medium text-[#4B5563]">Savings breakdown</p>
           <div className="space-y-2">
             {SAVINGS_ITEMS.map((item) => (
               <div key={item.label} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm">{item.icon}</span>
-                  <span className="text-xs text-white/60">{item.label}</span>
+                  <item.icon className="h-3.5 w-3.5 text-[#4B5563]" />
+                  <span className="text-xs text-[#4B5563]">{item.label}</span>
                 </div>
-                <span className="text-xs font-semibold text-[#34D399]">{item.amount}</span>
+                <span className="text-xs font-semibold text-[#00C853]">{item.amount}</span>
               </div>
             ))}
           </div>
@@ -144,25 +142,23 @@ export default function HeroDashboard() {
       {/* Floating mini card — bottom right */}
       <motion.div
         variants={itemVariants}
-        className="animate-float-delayed absolute -bottom-6 -right-4 rounded-xl glass-card px-4 py-3 shadow-xl"
-        style={{ border: "1px solid rgba(139,92,246,0.25)", background: "rgba(139,92,246,0.08)" }}
+        className="animate-float-delayed absolute -bottom-6 -right-4 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] px-4 py-3 shadow-sm"
       >
-        <p className="text-[10px] text-[#C4B5FD] uppercase tracking-widest font-medium">Monthly burn</p>
-        <p className="text-xl font-bold text-white mt-0.5" style={{ fontFamily: "var(--font-heading)" }}>
-          $319<span className="text-sm font-normal text-white/40">/mo</span>
+        <p className="text-[10px] font-medium uppercase tracking-widest text-[#0A0A0A]">Monthly burn</p>
+        <p className="mt-0.5 text-xl font-bold text-[#0A0A0A]" style={{ fontFamily: "var(--font-heading)" }}>
+          $319<span className="text-sm font-normal text-[#4B5563]">/mo</span>
         </p>
       </motion.div>
 
       {/* Floating mini card — top right */}
       <motion.div
         variants={itemVariants}
-        className="absolute -top-5 -right-2 rounded-xl glass-card px-3 py-2 shadow-xl"
-        style={{ border: "1px solid rgba(52,211,153,0.2)", background: "rgba(52,211,153,0.06)" }}
+        className="absolute -top-5 -right-2 rounded-xl border border-[#EF4444] bg-[#EF4444] px-3 py-2 shadow-sm"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm">✂️</span>
+          <Scissors className="h-3.5 w-3.5 text-white" />
           <div>
-            <p className="text-[10px] text-[#6EE7B7] font-medium">Redundant found</p>
+            <p className="text-[10px] font-medium text-white">Redundant found</p>
             <p className="text-xs font-bold text-white">GitHub Copilot</p>
           </div>
         </div>

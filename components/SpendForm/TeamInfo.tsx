@@ -1,21 +1,32 @@
 "use client"
 
 import { motion } from "framer-motion"
+import {
+  Building,
+  Building2,
+  ChartColumn,
+  Code2,
+  GitMerge,
+  PenSquare,
+  Search,
+  UserRound,
+  Users,
+} from "lucide-react"
 import type { FormState, UseCase } from "@/lib/types"
 
 const TEAM_SIZE_OPTIONS = [
-  { label: "Solo", description: "Just me", value: 1, icon: "🧑‍💻" },
-  { label: "Small", description: "2–10 people", value: 5, icon: "👥" },
-  { label: "Mid-size", description: "11–50 people", value: 25, icon: "🏢" },
-  { label: "Enterprise", description: "50+ people", value: 100, icon: "🏗️" },
+  { label: "Solo", description: "Just me", value: 1, icon: UserRound },
+  { label: "Small", description: "2–10 people", value: 5, icon: Users },
+  { label: "Mid-size", description: "11–50 people", value: 25, icon: Building2 },
+  { label: "Enterprise", description: "50+ people", value: 100, icon: Building },
 ] as const
 
-const USE_CASE_OPTIONS: { value: UseCase; label: string; icon: string; desc: string }[] = [
-  { value: "coding", label: "Coding", icon: "💻", desc: "Dev tools & code gen" },
-  { value: "writing", label: "Writing", icon: "✍️", desc: "Docs, emails, content" },
-  { value: "data", label: "Data", icon: "📊", desc: "Analysis & reporting" },
-  { value: "research", label: "Research", icon: "🔍", desc: "Knowledge & synthesis" },
-  { value: "mixed", label: "Mixed", icon: "🔀", desc: "Multiple use cases" },
+const USE_CASE_OPTIONS: { value: UseCase; label: string; icon: typeof Code2; desc: string }[] = [
+  { value: "coding", label: "Coding", icon: Code2, desc: "Dev tools & code gen" },
+  { value: "writing", label: "Writing", icon: PenSquare, desc: "Docs, emails, content" },
+  { value: "data", label: "Data", icon: ChartColumn, desc: "Analysis & reporting" },
+  { value: "research", label: "Research", icon: Search, desc: "Knowledge & synthesis" },
+  { value: "mixed", label: "Mixed", icon: GitMerge, desc: "Multiple use cases" },
 ]
 
 type TeamInfoProps = {
@@ -61,12 +72,12 @@ export function TeamInfo({
       <div>
         <h2
           id="team-info-title"
-          className="text-xl font-bold text-white"
+          className="text-xl font-bold text-[#0A0A0A]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           Tell us about your team
         </h2>
-        <p className="mt-1 text-sm text-[#64748B]">
+        <p className="mt-1 text-sm text-[#4B5563]">
           This helps us tailor recommendations to your context.
         </p>
       </div>
@@ -74,7 +85,7 @@ export function TeamInfo({
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
         {/* Team size cards */}
         <motion.fieldset variants={itemVariants} className="space-y-3">
-          <legend className="text-sm font-semibold text-white/80">Team size</legend>
+          <legend className="text-sm font-semibold text-[#0A0A0A]">Team size</legend>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {TEAM_SIZE_OPTIONS.map((option) => {
               const isActive = activeTeamValue === option.value
@@ -84,30 +95,32 @@ export function TeamInfo({
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => onTeamSizeChange(option.value)}
-                  className="group relative rounded-2xl p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8CFF]"
+                  className="group relative rounded-2xl p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853]"
                   style={
                     isActive
                       ? {
-                          background: "rgba(79,140,255,0.1)",
-                          border: "1px solid rgba(79,140,255,0.35)",
-                          boxShadow: "0 0 20px rgba(79,140,255,0.1)",
+                          background: "#F0FDF4",
+                          border: "1px solid #00C853",
+                          boxShadow: "0 0 20px rgba(0,200,83,0.12)",
                         }
                       : {
-                          background: "rgba(255,255,255,0.03)",
-                          border: "1px solid rgba(255,255,255,0.07)",
+                          background: "#FFFFFF",
+                          border: "1px solid #E5E7EB",
                         }
                   }
                 >
-                  <div className="mb-2 text-xl">{option.icon}</div>
+                  <div className="mb-2 text-[#00C853]">
+                    <option.icon className="h-5 w-5" />
+                  </div>
                   <p
                     className="text-sm font-semibold"
-                    style={{ color: isActive ? "#fff" : "rgba(255,255,255,0.7)" }}
+                    style={{ color: "#0A0A0A" }}
                   >
                     {option.label}
                   </p>
                   <p
                     className="text-xs"
-                    style={{ color: isActive ? "#76A9FF" : "#475569" }}
+                    style={{ color: "#4B5563" }}
                   >
                     {option.description}
                   </p>
@@ -118,7 +131,7 @@ export function TeamInfo({
 
           {/* Custom numeric input for exact team size */}
           <div className="flex items-center gap-3">
-            <label htmlFor="team-size-exact" className="text-xs text-[#475569] whitespace-nowrap">
+            <label htmlFor="team-size-exact" className="whitespace-nowrap text-xs text-[#4B5563]">
               Exact count:
             </label>
             <input
@@ -126,20 +139,21 @@ export function TeamInfo({
               type="number"
               min={1}
               value={state.teamSize}
-              onChange={(e) => onTeamSizeChange(Math.max(1, Number(e.target.value) || 1))}
-              className="w-24 rounded-xl px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-[#4F8CFF]/60 transition-all"
+              onChange={(e) => onTeamSizeChange(Number(e.target.value) || 0)}
+              onBlur={(e) => onTeamSizeChange(Math.max(1, Number(e.target.value) || 1))}
+              className="w-24 rounded-xl px-3 py-2 text-sm text-[#0A0A0A] outline-none transition-all focus:ring-2 focus:ring-[#00C853]/40"
               style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                background: "#FFFFFF",
+                border: "1px solid #E5E7EB",
               }}
             />
-            <span className="text-xs text-[#334155]">people</span>
+            <span className="text-xs text-[#4B5563]">people</span>
           </div>
         </motion.fieldset>
 
         {/* Use case pills */}
         <motion.fieldset variants={itemVariants} className="space-y-3">
-          <legend className="text-sm font-semibold text-white/80">Primary use case</legend>
+          <legend className="text-sm font-semibold text-[#0A0A0A]">Primary use case</legend>
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
             {USE_CASE_OPTIONS.map((option) => {
               const isActive = state.useCase === option.value
@@ -149,28 +163,30 @@ export function TeamInfo({
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => onUseCaseChange(option.value)}
-                  className="group rounded-xl p-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8CFF]"
+                  className="group rounded-xl p-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853]"
                   style={
                     isActive
                       ? {
-                          background: "rgba(139,92,246,0.12)",
-                          border: "1px solid rgba(139,92,246,0.35)",
-                          boxShadow: "0 0 16px rgba(139,92,246,0.1)",
+                          background: "#F0FDF4",
+                          border: "1px solid #00C853",
+                          boxShadow: "0 0 16px rgba(0,200,83,0.12)",
                         }
                       : {
-                          background: "rgba(255,255,255,0.03)",
-                          border: "1px solid rgba(255,255,255,0.07)",
+                          background: "#FFFFFF",
+                          border: "1px solid #E5E7EB",
                         }
                   }
                 >
-                  <div className="mb-1.5 text-lg">{option.icon}</div>
+                  <div className="mb-1.5 text-[#00C853]">
+                    <option.icon className="h-4 w-4" />
+                  </div>
                   <p
                     className="text-xs font-semibold"
-                    style={{ color: isActive ? "#fff" : "rgba(255,255,255,0.7)" }}
+                    style={{ color: "#0A0A0A" }}
                   >
                     {option.label}
                   </p>
-                  <p className="text-[10px] leading-tight" style={{ color: isActive ? "#C4B5FD" : "#334155" }}>
+                  <p className="text-[10px] leading-tight" style={{ color: "#4B5563" }}>
                     {option.desc}
                   </p>
                 </button>
@@ -184,25 +200,25 @@ export function TeamInfo({
           variants={itemVariants}
           className="rounded-2xl px-5 py-4"
           style={{
-            background: "rgba(255,255,255,0.025)",
-            border: "1px solid rgba(255,255,255,0.07)",
+            background: "#F8F9FA",
+            border: "1px solid #E5E7EB",
           }}
         >
-          <p className="mb-3 text-xs font-medium uppercase tracking-widest text-[#475569]">
+          <p className="mb-3 text-xs font-medium uppercase tracking-widest text-[#4B5563]">
             Audit summary
           </p>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-[#475569]">Tools</p>
-              <p className="text-base font-semibold text-white">{state.selectedTools.length}</p>
+              <p className="text-xs text-[#4B5563]">Tools</p>
+              <p className="text-base font-semibold text-[#0A0A0A]">{state.selectedTools.length}</p>
             </div>
             <div>
-              <p className="text-xs text-[#475569]">Team size</p>
-              <p className="text-base font-semibold text-white">{state.teamSize}</p>
+              <p className="text-xs text-[#4B5563]">Team size</p>
+              <p className="text-base font-semibold text-[#0A0A0A]">{state.teamSize}</p>
             </div>
             <div>
-              <p className="text-xs text-[#475569]">Use case</p>
-              <p className="text-base font-semibold capitalize text-white">{state.useCase}</p>
+              <p className="text-xs text-[#4B5563]">Use case</p>
+              <p className="text-base font-semibold capitalize text-[#0A0A0A]">{state.useCase}</p>
             </div>
           </div>
         </motion.div>
@@ -213,7 +229,7 @@ export function TeamInfo({
             type="button"
             onClick={onBack}
             disabled={isSubmitting}
-            className="btn-ghost rounded-xl px-5 py-2.5 text-sm font-medium text-white/70 disabled:opacity-40"
+            className="rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#4B5563] hover:bg-[#F8F9FA] disabled:opacity-40"
           >
             ← Back
           </button>
@@ -222,7 +238,7 @@ export function TeamInfo({
             type="button"
             onClick={onSubmit}
             disabled={isSubmitting}
-            className="btn-primary relative rounded-2xl px-8 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed"
+            className="relative rounded-2xl bg-[#00C853] px-8 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 hover:bg-[#00A846]"
             id="submit-audit-btn"
           >
             {isSubmitting ? (

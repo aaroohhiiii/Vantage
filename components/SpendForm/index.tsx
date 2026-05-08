@@ -33,7 +33,7 @@ const STEPS = [
 function createDefaultToolInput(tool: ToolName): ToolInput {
   const pricing = getToolPricing(tool)
   const firstPlan = pricing?.plans[0]?.planName ?? ""
-  return { tool, plan: firstPlan, monthlySpend: 0, seats: 1 }
+  return { tool, plan: firstPlan, monthlySpend: 0, seats: 0 }
 }
 
 function createInitialFormState(): FormState {
@@ -155,8 +155,8 @@ export default function SpendForm() {
       id="spend-form"
       className="mx-auto w-full max-w-4xl rounded-3xl"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "#FFFFFF",
+        border: "1px solid #E5E7EB",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
       }}
@@ -175,17 +175,17 @@ export default function SpendForm() {
                     className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300"
                     style={
                       isCompleted
-                        ? { background: "rgba(52,211,153,0.15)", border: "1px solid rgba(52,211,153,0.4)", color: "#34D399" }
+                        ? { background: "#F0FDF4", border: "1px solid #BBF7D0", color: "#00C853" }
                         : isActive
-                        ? { background: "linear-gradient(135deg, #4F8CFF 0%, #8B5CF6 100%)", color: "#fff", boxShadow: "0 0 20px rgba(79,140,255,0.4)" }
-                        : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", color: "#475569" }
+                        ? { background: "#00C853", color: "#fff", boxShadow: "0 0 20px rgba(0,200,83,0.25)" }
+                        : { background: "#FFFFFF", border: "1px solid #E5E7EB", color: "#9CA3AF" }
                     }
                   >
                     {isCompleted ? "✓" : step.number}
                   </div>
                   <span
                     className="text-[11px] font-medium transition-colors duration-300"
-                    style={{ color: isActive ? "#fff" : isCompleted ? "#34D399" : "#475569" }}
+                    style={{ color: isActive ? "#00C853" : isCompleted ? "#00C853" : "#9CA3AF" }}
                   >
                     {step.label}
                   </span>
@@ -193,7 +193,7 @@ export default function SpendForm() {
 
                 {/* Connector line (not after last step) */}
                 {i < STEPS.length - 1 && (
-                  <div className="mx-2 mb-5 h-px flex-1 transition-all duration-500" style={{ background: isCompleted ? "rgba(52,211,153,0.4)" : "rgba(255,255,255,0.08)" }} />
+                  <div className="mx-2 mb-5 h-px flex-1 transition-all duration-500" style={{ background: isCompleted ? "#00C853" : "#E5E7EB" }} />
                 )}
               </div>
             )
@@ -201,13 +201,13 @@ export default function SpendForm() {
         </div>
 
         {/* Slim progress bar */}
-        <div className="mt-4 h-0.5 w-full overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.06)" }}>
+        <div className="mt-4 h-0.5 w-full overflow-hidden rounded-full" style={{ background: "#E5E7EB" }}>
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${progressPct}%`,
-              background: "linear-gradient(90deg, #4F8CFF 0%, #8B5CF6 100%)",
-              boxShadow: "0 0 12px rgba(79,140,255,0.6)",
+              background: "#00C853",
+              boxShadow: "0 0 12px rgba(0,200,83,0.35)",
             }}
             role="progressbar"
             aria-valuenow={progressPct}

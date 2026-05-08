@@ -40,12 +40,12 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
       <div>
         <h2
           id="tool-selector-title"
-          className="text-xl font-bold text-white"
+          className="text-xl font-bold text-[#0A0A0A]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           Which AI tools does your team pay for?
         </h2>
-        <p className="mt-1 text-sm text-[#64748B]">
+        <p className="mt-1 text-sm text-[#4B5563]">
           Select all that apply — we&apos;ll audit each one.
         </p>
       </div>
@@ -66,20 +66,20 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
               variants={cardVariants}
               onClick={() => onToggle(tool)}
               aria-pressed={selected}
-              className="group relative w-full text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8CFF] rounded-2xl"
+              className="group relative w-full rounded-2xl text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853]"
             >
               <div
                 className="relative flex items-center gap-3.5 rounded-2xl p-4 transition-all duration-200"
                 style={
                   selected
                     ? {
-                        background: "rgba(79,140,255,0.1)",
-                        border: "1px solid rgba(79,140,255,0.35)",
-                        boxShadow: "0 0 24px rgba(79,140,255,0.1)",
+                        background: "#F0FDF4",
+                        border: "1px solid #00C853",
+                        boxShadow: "0 0 24px rgba(0,200,83,0.12)",
                       }
                     : {
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(255,255,255,0.07)",
+                        background: "#FFFFFF",
+                        border: "1px solid #E5E7EB",
                       }
                 }
               >
@@ -92,11 +92,11 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
                 <div className="flex-1 min-w-0">
                   <p
                     className="text-sm font-semibold transition-colors duration-200"
-                    style={{ color: selected ? "#fff" : "rgba(255,255,255,0.8)" }}
+                    style={{ color: selected ? "#0A0A0A" : "#0A0A0A" }}
                   >
                     {TOOL_DISPLAY_NAMES[tool]}
                   </p>
-                  <p className="text-xs truncate" style={{ color: selected ? "#76A9FF" : "#475569" }}>
+                  <p className="truncate text-xs" style={{ color: selected ? "#4B5563" : "#4B5563" }}>
                     {TOOL_DESCRIPTIONS[tool]}
                   </p>
                 </div>
@@ -106,8 +106,8 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
                   className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full transition-all duration-200"
                   style={
                     selected
-                      ? { background: "linear-gradient(135deg, #4F8CFF 0%, #8B5CF6 100%)", boxShadow: "0 0 12px rgba(79,140,255,0.4)" }
-                      : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)" }
+                      ? { background: "#00C853", boxShadow: "0 0 12px rgba(0,200,83,0.35)" }
+                      : { background: "#FFFFFF", border: "1px solid #E5E7EB" }
                   }
                 >
                   {selected && (
@@ -127,9 +127,9 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
         <div
           className="flex items-center gap-2 rounded-full px-4 py-2 text-sm"
           style={{
-            background: count > 0 ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.04)",
-            border: count > 0 ? "1px solid rgba(52,211,153,0.25)" : "1px solid rgba(255,255,255,0.08)",
-            color: count > 0 ? "#34D399" : "#475569",
+            background: count > 0 ? "#F0FDF4" : "#F8F9FA",
+            border: count > 0 ? "1px solid #BBF7D0" : "1px solid #E5E7EB",
+            color: count > 0 ? "#00C853" : "#4B5563",
             transition: "all 0.3s ease",
           }}
         >
@@ -140,7 +140,7 @@ export function ToolSelector({ selectedTools, onToggle, onNext }: ToolSelectorPr
           type="button"
           onClick={onNext}
           disabled={count === 0}
-          className="btn-primary rounded-xl px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+          className="rounded-xl bg-[#00C853] px-6 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:transform-none disabled:shadow-none hover:bg-[#00A846]"
         >
           Next: Add spend →
         </button>

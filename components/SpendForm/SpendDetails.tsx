@@ -24,11 +24,11 @@ const cardVariants = {
 }
 
 const inputClass =
-  "w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#475569] outline-none transition-all duration-200 focus:ring-2 focus:ring-[#4F8CFF]/60"
+  "w-full rounded-xl px-3.5 py-2.5 text-sm text-[#0A0A0A] placeholder-[#9CA3AF] outline-none transition-all duration-200 focus:ring-2 focus:ring-[#00C853]/40"
 
 const inputStyle = {
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(255,255,255,0.1)",
+  background: "#FFFFFF",
+  border: "1px solid #E5E7EB",
 }
 
 export function SpendDetails({
@@ -49,12 +49,12 @@ export function SpendDetails({
       <div>
         <h2
           id="spend-details-title"
-          className="text-xl font-bold text-white"
+          className="text-xl font-bold text-[#0A0A0A]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           How much do you spend on each?
         </h2>
-        <p className="mt-1 text-sm text-[#64748B]">
+        <p className="mt-1 text-sm text-[#4B5563]">
           Enter your current plan and monthly cost. We&apos;ll compare against official pricing.
         </p>
       </div>
@@ -83,17 +83,17 @@ export function SpendDetails({
               variants={cardVariants}
               className="rounded-2xl p-5"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#FFFFFF",
+                border: "1px solid #E5E7EB",
               }}
             >
               {/* Tool header */}
               <div className="mb-4 flex items-center gap-3">
                 <ToolIcon tool={tool} size={32} />
                 <div>
-                  <p className="text-sm font-semibold text-white">{TOOL_DISPLAY_NAMES[tool]}</p>
+                  <p className="text-sm font-semibold text-[#0A0A0A]">{TOOL_DISPLAY_NAMES[tool]}</p>
                   {selectedPlan && listPrice > 0 && (
-                    <p className="text-xs" style={{ color: "#475569" }}>
+                    <p className="text-xs" style={{ color: "#4B5563" }}>
                       List: ${listPrice}{selectedPlan.isPerUser ? "/user" : ""}/mo
                     </p>
                   )}
@@ -102,7 +102,7 @@ export function SpendDetails({
                 {isOverpaying && (
                   <div
                     className="ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium"
-                    style={{ background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.2)" }}
+                    style={{ background: "#FFFBEB", color: "#F59E0B", border: "1px solid #FCD34D" }}
                   >
                     ⚠ Overpaying
                   </div>
@@ -110,7 +110,7 @@ export function SpendDetails({
                 {isUnderList && !isOverpaying && (
                   <div
                     className="ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium"
-                    style={{ background: "rgba(52,211,153,0.1)", color: "#34D399", border: "1px solid rgba(52,211,153,0.2)" }}
+                    style={{ background: "#F0FDF4", color: "#00C853", border: "1px solid #BBF7D0" }}
                   >
                     ✓ At list price
                   </div>
@@ -121,7 +121,7 @@ export function SpendDetails({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {/* Plan selector */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#64748B]" htmlFor={`${tool}-plan`}>
+                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-plan`}>
                     Plan
                   </label>
                   <select
@@ -148,11 +148,11 @@ export function SpendDetails({
 
                 {/* Monthly spend */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#64748B]" htmlFor={`${tool}-spend`}>
+                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-spend`}>
                     Monthly spend
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#475569]">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#4B5563]">
                       $
                     </span>
                     <input
@@ -172,15 +172,21 @@ export function SpendDetails({
 
                 {/* Seats */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#64748B]" htmlFor={`${tool}-seats`}>
+                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-seats`}>
                     Seats / users
                   </label>
                   <input
                     id={`${tool}-seats`}
                     type="number"
                     min={1}
-                    value={input.seats}
+                    value={input.seats || ""}
+                    placeholder="e.g. 5 users"
                     onChange={(e) =>
+                      onToolInputChange(tool, {
+                        seats: Number(e.target.value) || 0,
+                      })
+                    }
+                    onBlur={(e) =>
                       onToolInputChange(tool, {
                         seats: Math.max(1, Number(e.target.value) || 1),
                       })
@@ -193,13 +199,13 @@ export function SpendDetails({
 
               {/* Source link */}
               {selectedPlan && (
-                <p className="mt-3 text-[11px]" style={{ color: "#334155" }}>
+                <p className="mt-3 text-[11px]" style={{ color: "#4B5563" }}>
                   Pricing verified{" "}
                   <a
                     href={selectedPlan.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-[#4F8CFF] transition-colors underline underline-offset-2"
+                    className="underline underline-offset-2 transition-colors hover:text-[#00C853]"
                   >
                     {new URL(selectedPlan.sourceUrl).hostname}
                   </a>
@@ -214,24 +220,24 @@ export function SpendDetails({
       <div
         className="flex items-center justify-between rounded-2xl px-5 py-4"
         style={{
-          background: "rgba(79,140,255,0.06)",
-          border: "1px solid rgba(79,140,255,0.15)",
+          background: "#F8F9FA",
+          border: "1px solid #E5E7EB",
         }}
       >
         <div>
-          <p className="text-xs font-medium text-[#64748B]">Total monthly spend</p>
+          <p className="text-xs font-medium text-[#4B5563]">Total monthly spend</p>
           <p
-            className="text-2xl font-bold text-white"
+            className="text-2xl font-bold text-[#0A0A0A]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             ${totalSpend.toFixed(2)}
-            <span className="text-sm font-normal text-[#475569]">/mo</span>
+            <span className="text-sm font-normal text-[#4B5563]">/mo</span>
           </p>
         </div>
         {totalSpend > 0 && (
           <div className="text-right">
-            <p className="text-xs text-[#64748B]">Annual run rate</p>
-            <p className="text-lg font-semibold text-[#76A9FF]">
+            <p className="text-xs text-[#4B5563]">Annual run rate</p>
+            <p className="text-lg font-semibold text-[#00C853]">
               ${(totalSpend * 12).toFixed(0)}/yr
             </p>
           </div>
@@ -243,14 +249,14 @@ export function SpendDetails({
         <button
           type="button"
           onClick={onBack}
-          className="btn-ghost rounded-xl px-5 py-2.5 text-sm font-medium text-white/70"
+          className="rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#4B5563] hover:bg-[#F8F9FA]"
         >
           ← Back
         </button>
         <button
           type="button"
           onClick={onNext}
-          className="btn-primary rounded-xl px-6 py-2.5 text-sm font-semibold text-white"
+          className="rounded-xl bg-[#00C853] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#00A846]"
         >
           Next: Team context →
         </button>
