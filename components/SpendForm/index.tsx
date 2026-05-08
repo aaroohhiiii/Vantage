@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { AnimatePresence, motion } from "framer-motion"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { SpendDetails } from "@/components/SpendForm/SpendDetails"
 import { TeamInfo } from "@/components/SpendForm/TeamInfo"
 import { ToolSelector } from "@/components/SpendForm/ToolSelector"
 import type { AuditInput, FormState, StoredFormState, ToolInput, ToolName, UseCase } from "@/lib/types"
+import { getToolPricing } from "@/lib/pricingData"
 
 const LOCAL_STORAGE_KEY = "credex-audit-form-state"
 const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
@@ -24,13 +24,16 @@ const ALL_TOOLS: ToolName[] = [
   "windsurf",
 ]
 
+const STEPS = [
+  { number: 1, label: "Select tools" },
+  { number: 2, label: "Add spend" },
+  { number: 3, label: "Team context" },
+] as const
+
 function createDefaultToolInput(tool: ToolName): ToolInput {
-  return {
-    tool,
-    plan: "",
-    monthlySpend: 0,
-    seats: 1,
-  }
+  const pricing = getToolPricing(tool)
+  const firstPlan = pricing?.plans[0]?.planName ?? ""
+  return { tool, plan: firstPlan, monthlySpend: 0, seats: 1 }
 }
 
 function createInitialFormState(): FormState {
@@ -39,24 +42,35 @@ function createInitialFormState(): FormState {
     return acc
   }, {} as Record<ToolName, ToolInput>)
 
-  return {
-    step: 1,
-    selectedTools: [],
-    toolInputs,
-    teamSize: 1,
-    useCase: "coding",
-  }
+  return { step: 1, selectedTools: [], toolInputs, teamSize: 1, useCase: "coding" }
+}
+
+const stepVariants = {
+  enter: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? 40 : -40,
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
+  },
+  exit: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? -40 : 40,
+    transition: { duration: 0.25, ease: [0.55, 0.06, 0.68, 0.19] as [number, number, number, number] },
+  }),
 }
 
 export default function SpendForm() {
   const [state, setState] = useState<FormState>(createInitialFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [direction, setDirection] = useState(1)
   const router = useRouter()
 
   useEffect(() => {
     const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY)
     if (!raw) return
-
     try {
       const parsed = JSON.parse(raw) as StoredFormState
       const lastUpdated = new Date(parsed.lastUpdated).getTime()
@@ -64,7 +78,6 @@ export default function SpendForm() {
         window.localStorage.removeItem(LOCAL_STORAGE_KEY)
         return
       }
-
       setState({
         step: parsed.step,
         selectedTools: parsed.selectedTools,
@@ -78,20 +91,22 @@ export default function SpendForm() {
   }, [])
 
   useEffect(() => {
-    const payload: StoredFormState = {
-      ...state,
-      lastUpdated: new Date().toISOString(),
-    }
+    const payload: StoredFormState = { ...state, lastUpdated: new Date().toISOString() }
     window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload))
   }, [state])
 
-  const progressValue = useMemo(() => (state.step / 3) * 100, [state.step])
+  const progressPct = useMemo(() => (state.step / 3) * 100, [state.step])
+
+  function goTo(step: FormState["step"], dir: number) {
+    setDirection(dir)
+    setState((prev) => ({ ...prev, step }))
+  }
 
   function toggleTool(tool: ToolName) {
     setState((prev) => ({
       ...prev,
       selectedTools: prev.selectedTools.includes(tool)
-        ? prev.selectedTools.filter((selected) => selected !== tool)
+        ? prev.selectedTools.filter((s) => s !== tool)
         : [...prev.selectedTools, tool],
     }))
   }
@@ -104,7 +119,6 @@ export default function SpendForm() {
         [tool]: {
           ...prev.toolInputs[tool],
           ...next,
-          tool,
         },
       },
     }))
@@ -118,17 +132,12 @@ export default function SpendForm() {
         teamSize: state.teamSize,
         useCase: state.useCase,
       }
-
       const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to run audit")
-      }
-
+      if (!response.ok) throw new Error("Failed to run audit")
       const data = (await response.json()) as { id: string }
       window.localStorage.removeItem(LOCAL_STORAGE_KEY)
       router.push(`/audit/${data.id}`)
@@ -142,42 +151,133 @@ export default function SpendForm() {
   }
 
   return (
-    <Card id="spend-form" className="mx-auto w-full max-w-4xl">
-      <CardContent className="space-y-6 pt-6">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">Step {state.step} of 3</p>
-          <Progress value={progressValue} aria-label={`Form progress ${progressValue}%`} />
+    <div
+      id="spend-form"
+      className="mx-auto w-full max-w-4xl rounded-3xl"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+      }}
+    >
+      {/* ── Step indicator ── */}
+      <div className="px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
+        <div className="flex items-center justify-between">
+          {STEPS.map((step, i) => {
+            const isCompleted = state.step > step.number
+            const isActive = state.step === step.number
+            return (
+              <div key={step.number} className="flex flex-1 items-center">
+                {/* Step dot + label */}
+                <div className="flex flex-col items-center gap-1.5">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300"
+                    style={
+                      isCompleted
+                        ? { background: "rgba(52,211,153,0.15)", border: "1px solid rgba(52,211,153,0.4)", color: "#34D399" }
+                        : isActive
+                        ? { background: "linear-gradient(135deg, #4F8CFF 0%, #8B5CF6 100%)", color: "#fff", boxShadow: "0 0 20px rgba(79,140,255,0.4)" }
+                        : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", color: "#475569" }
+                    }
+                  >
+                    {isCompleted ? "✓" : step.number}
+                  </div>
+                  <span
+                    className="text-[11px] font-medium transition-colors duration-300"
+                    style={{ color: isActive ? "#fff" : isCompleted ? "#34D399" : "#475569" }}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+
+                {/* Connector line (not after last step) */}
+                {i < STEPS.length - 1 && (
+                  <div className="mx-2 mb-5 h-px flex-1 transition-all duration-500" style={{ background: isCompleted ? "rgba(52,211,153,0.4)" : "rgba(255,255,255,0.08)" }} />
+                )}
+              </div>
+            )
+          })}
         </div>
 
-        {state.step === 1 ? (
-          <ToolSelector
-            selectedTools={state.selectedTools}
-            onToggle={toggleTool}
-            onNext={() => setState((prev) => ({ ...prev, step: 2 }))}
+        {/* Slim progress bar */}
+        <div className="mt-4 h-0.5 w-full overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.06)" }}>
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${progressPct}%`,
+              background: "linear-gradient(90deg, #4F8CFF 0%, #8B5CF6 100%)",
+              boxShadow: "0 0 12px rgba(79,140,255,0.6)",
+            }}
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Form progress ${Math.round(progressPct)}%`}
           />
-        ) : null}
+        </div>
+      </div>
 
-        {state.step === 2 ? (
-          <SpendDetails
-            selectedTools={state.selectedTools}
-            toolInputs={state.toolInputs}
-            onToolInputChange={updateToolInput}
-            onBack={() => setState((prev) => ({ ...prev, step: 1 }))}
-            onNext={() => setState((prev) => ({ ...prev, step: 3 }))}
-          />
-        ) : null}
+      {/* ── Step content ── */}
+      <div className="relative overflow-hidden px-6 pb-8 sm:px-8">
+        <AnimatePresence mode="wait" custom={direction}>
+          {state.step === 1 && (
+            <motion.div
+              key="step-1"
+              custom={direction}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+            >
+              <ToolSelector
+                selectedTools={state.selectedTools}
+                onToggle={toggleTool}
+                onNext={() => goTo(2, 1)}
+              />
+            </motion.div>
+          )}
 
-        {state.step === 3 ? (
-          <TeamInfo
-            state={state}
-            isSubmitting={isSubmitting}
-            onBack={() => setState((prev) => ({ ...prev, step: 2 }))}
-            onTeamSizeChange={(teamSize) => setState((prev) => ({ ...prev, teamSize }))}
-            onUseCaseChange={setUseCase}
-            onSubmit={submitAudit}
-          />
-        ) : null}
-      </CardContent>
-    </Card>
+          {state.step === 2 && (
+            <motion.div
+              key="step-2"
+              custom={direction}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+            >
+              <SpendDetails
+                selectedTools={state.selectedTools}
+                toolInputs={state.toolInputs}
+                onToolInputChange={updateToolInput}
+                onBack={() => goTo(1, -1)}
+                onNext={() => goTo(3, 1)}
+              />
+            </motion.div>
+          )}
+
+          {state.step === 3 && (
+            <motion.div
+              key="step-3"
+              custom={direction}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+            >
+              <TeamInfo
+                state={state}
+                isSubmitting={isSubmitting}
+                onBack={() => goTo(2, -1)}
+                onTeamSizeChange={(teamSize) => setState((prev) => ({ ...prev, teamSize }))}
+                onUseCaseChange={setUseCase}
+                onSubmit={submitAudit}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   )
 }
