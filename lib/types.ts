@@ -1,52 +1,73 @@
-export type CurrencyCode = "USD"
+export type ToolName =
+  | "cursor"
+  | "github-copilot"
+  | "claude"
+  | "chatgpt"
+  | "anthropic-api"
+  | "openai-api"
+  | "gemini"
+  | "windsurf"
 
-export interface SourceCitation {
-  label: string
-  url: string
-  accessedOn: string
+export type UseCase = "coding" | "writing" | "data" | "research" | "mixed"
+
+export type ToolInput = {
+  tool: ToolName
+  plan: string
+  monthlySpend: number
+  seats: number
 }
 
-export interface SpendInput {
-  channel: string
-  monthlyBudgetUsd: number
+export type AuditInput = {
+  tools: ToolInput[]
+  teamSize: number
+  useCase: UseCase
 }
 
-export interface BusinessContextInput {
-  industry: string
-  targetGeo: string
-  companyStage: "pre-seed" | "seed" | "series-a" | "growth"
+export type ToolAuditResult = {
+  tool: ToolName
+  currentPlan: string
+  currentSpend: number
+  recommendedAction: "downgrade" | "switch" | "cancel-redundant" | "keep" | "use-credits"
+  recommendedPlan?: string
+  recommendedTool?: string
+  monthlySavings: number
+  annualSavings: number
+  reason: string
+  credexOpportunity: boolean
 }
 
-export interface AuditFormState {
-  companyName: string
-  websiteUrl: string
-  context: BusinessContextInput
-  spendByChannel: SpendInput[]
+export type AuditResult = {
+  id: string
+  input: AuditInput
+  results: ToolAuditResult[]
+  totalMonthlySavings: number
+  totalAnnualSavings: number
+  aiSummary: string
+  isOptimal: boolean
+  showCredex: boolean
+  createdAt: string
 }
 
-export interface ChannelAuditResult {
-  channel: string
-  score: number
-  confidence: number
-  notes: string[]
+export type Lead = {
+  id: string
+  auditId: string
+  email: string
+  companyName?: string
+  role?: string
+  teamSize?: number
+  createdAt: string
 }
 
-export interface PricingAssumption {
-  metric: string
-  unit: string
-  value: number
-  currency: CurrencyCode
-  sources: SourceCitation[]
+export type FormStep = 1 | 2 | 3
+
+export type FormState = {
+  step: FormStep
+  selectedTools: ToolName[]
+  toolInputs: Record<ToolName, ToolInput>
+  teamSize: number
+  useCase: UseCase
 }
 
-export interface AuditEngineInput {
-  form: AuditFormState
-  assumptions: PricingAssumption[]
-}
-
-export interface AuditEngineOutput {
-  overallScore: number
-  estimatedWasteUsd: number
-  quickWins: string[]
-  channelResults: ChannelAuditResult[]
+export type StoredFormState = FormState & {
+  lastUpdated: string
 }
