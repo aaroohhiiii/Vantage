@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { runAudit } from "@/lib/auditEngine"
+import { generateAiSummary } from "@/lib/aiSummary"
 import { getSupabaseServerClient } from "@/lib/supabase"
 import type { AuditInput, ToolInput, UseCase } from "@/lib/types"
 
@@ -75,12 +76,14 @@ export async function POST(request: Request) {
     }
 
     const audit = runAudit(validation.data)
-    const totalSpend = validation.data.tools.reduce((sum, tool) => sum + tool.monthlySpend, 0)
-    const topRecommendation = audit.results
-      .filter((result) => result.monthlySavings >= 10)
-      .sort((left, right) => right.monthlySavings - left.monthlySavings)[0]
-
-    const fallbackSummary = `Your team is spending $${totalSpend.toFixed(2)}/mo across ${validation.data.tools.length} AI tools. We found $${audit.totalMonthlySavings.toFixed(2)}/mo in potential savings. Top recommendation: ${topRecommendation?.reason ?? "Your current setup is already efficient."}`
+    const aiSummaryText = await generateAiSummary({
+      input: validation.data,
+      results: audit.results,
+      totalMonthlySavings: audit.totalMonthlySavings,
+      totalAnnualSavings: audit.totalAnnualSavings,
+      isOptimal: audit.isOptimal,
+      showCredex: audit.showCredex,
+    })
 
     const supabase = getSupabaseServerClient()
     const { data, error } = await supabase
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
         results: audit.results,
         total_monthly_savings: audit.totalMonthlySavings,
         total_annual_savings: audit.totalAnnualSavings,
-        ai_summary: fallbackSummary,
+        ai_summary: aiSummaryText,
         is_optimal: audit.isOptimal,
         show_credex: audit.showCredex,
       })
