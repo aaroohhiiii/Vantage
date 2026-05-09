@@ -40,9 +40,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${robotoMono.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${robotoMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#050816]">{children}</body>
+      <body className="min-h-full flex flex-col bg-white">{children}</body>
     </html>
   )
 }

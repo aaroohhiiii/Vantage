@@ -32,6 +32,7 @@ const USE_CASE_OPTIONS: { value: UseCase; label: string; icon: typeof Code2; des
 type TeamInfoProps = {
   state: FormState
   isSubmitting: boolean
+  error?: string | null
   onBack: () => void
   onTeamSizeChange: (teamSize: number) => void
   onUseCaseChange: (useCase: UseCase) => void
@@ -59,6 +60,7 @@ function getActiveTeamOption(teamSize: number) {
 export function TeamInfo({
   state,
   isSubmitting,
+  error,
   onBack,
   onTeamSizeChange,
   onUseCaseChange,
@@ -94,8 +96,9 @@ export function TeamInfo({
                   key={option.value}
                   type="button"
                   aria-pressed={isActive}
+                  disabled={isSubmitting}
                   onClick={() => onTeamSizeChange(option.value)}
-                  className="group relative rounded-2xl p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853]"
+                  className="group relative rounded-2xl p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853] disabled:opacity-50"
                   style={
                     isActive
                       ? {
@@ -139,9 +142,10 @@ export function TeamInfo({
               type="number"
               min={1}
               value={state.teamSize}
+              disabled={isSubmitting}
               onChange={(e) => onTeamSizeChange(Number(e.target.value) || 0)}
               onBlur={(e) => onTeamSizeChange(Math.max(1, Number(e.target.value) || 1))}
-              className="w-24 rounded-xl px-3 py-2 text-sm text-[#0A0A0A] outline-none transition-all focus:ring-2 focus:ring-[#00C853]/40"
+              className="w-24 rounded-xl px-3 py-2 text-sm text-[#0A0A0A] outline-none transition-all focus:ring-2 focus:ring-[#00C853]/40 disabled:opacity-50"
               style={{
                 background: "#FFFFFF",
                 border: "1px solid #E5E7EB",
@@ -162,8 +166,9 @@ export function TeamInfo({
                   key={option.value}
                   type="button"
                   aria-pressed={isActive}
+                  disabled={isSubmitting}
                   onClick={() => onUseCaseChange(option.value)}
-                  className="group rounded-xl p-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853]"
+                  className="group rounded-xl p-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853] disabled:opacity-50"
                   style={
                     isActive
                       ? {
@@ -252,13 +257,20 @@ export function TeamInfo({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Running audit…
+                Analyzing your spend...
               </span>
             ) : (
               "Run My Audit →"
             )}
           </button>
         </motion.div>
+        
+        {/* Error message */}
+        {error && (
+          <motion.div variants={itemVariants} className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600 text-center">
+            {error}
+          </motion.div>
+        )}
       </motion.div>
     </section>
   )

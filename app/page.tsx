@@ -1,4 +1,3 @@
-import Link from "next/link"
 import HeroDashboard from "@/components/HeroDashboard"
 
 export default function Home() {
@@ -23,44 +22,44 @@ export default function Home() {
       {/* ── Navbar ── */}
       <header className="relative z-10 border-b border-[#E5E7EB] bg-white">
         <div className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-8">
-        <nav className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-white text-sm font-bold"
-              style={{ background: "#00C853" }}
-            >
-              P
+          <nav className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-white text-sm font-bold"
+                style={{ background: "#00C853" }}
+              >
+                P
+              </div>
+              <span
+                className="text-lg font-semibold tracking-tight text-[#0A0A0A]"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Prune
+              </span>
             </div>
-            <span
-              className="text-lg font-semibold tracking-tight text-[#0A0A0A]"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Prune
-            </span>
-          </div>
 
-          {/* Badge */}
-          <div className="flex items-center gap-3">
-            <div
-              className="hidden items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium sm:flex"
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid #E5E7EB",
-                color: "#00C853",
-              }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#00C853] animate-pulse-glow" />
-              Powered by Credex
+            {/* Badge */}
+            <div className="flex items-center gap-3">
+              <div
+                className="hidden items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium sm:flex"
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
+                  color: "#00C853",
+                }}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#00C853] animate-pulse-glow" />
+                Powered by Credex
+              </div>
+              <a
+                href="/audit/new"
+                className="btn-primary rounded-xl px-4 py-2 text-sm font-semibold text-white"
+              >
+                Free Audit
+              </a>
             </div>
-            <a
-              href="/audit/new"
-              className="btn-primary rounded-xl px-4 py-2 text-sm font-semibold text-white"
-            >
-              Free Audit
-            </a>
-          </div>
-        </nav>
+          </nav>
         </div>
       </header>
 
@@ -70,7 +69,7 @@ export default function Home() {
           {/* Left: Copy */}
           <div className="flex flex-col items-start">
             {/* Pill badge */}
-            
+
 
             {/* Headline */}
             <h1
@@ -97,7 +96,7 @@ export default function Home() {
               >
                 Run Free Audit →
               </a>
-             
+
             </div>
 
             {/* Social proof micro-text */}
@@ -114,7 +113,7 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-[#111827] bg-[#0A0A0A]">
+      {/* <footer className="relative z-10 border-t border-[#111827] bg-[#0A0A0A]">
         <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
@@ -140,7 +139,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </main>
   )
 }

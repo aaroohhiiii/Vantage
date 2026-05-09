@@ -8,7 +8,7 @@ import { SpendDetails } from "@/components/SpendForm/SpendDetails"
 import { TeamInfo } from "@/components/SpendForm/TeamInfo"
 import { ToolSelector } from "@/components/SpendForm/ToolSelector"
 import type { AuditInput, FormState, StoredFormState, ToolInput, ToolName, UseCase } from "@/lib/types"
-import { getToolPricing } from "@/lib/pricingData"
+import { getOfficialPrice, getToolPricing } from "@/lib/pricingData"
 
 const LOCAL_STORAGE_KEY = "credex-audit-form-state"
 const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
@@ -33,7 +33,9 @@ const STEPS = [
 function createDefaultToolInput(tool: ToolName): ToolInput {
   const pricing = getToolPricing(tool)
   const firstPlan = pricing?.plans[0]?.planName ?? ""
-  return { tool, plan: firstPlan, monthlySpend: 0, seats: 0 }
+  const monthlySpend = firstPlan ? getOfficialPrice(tool, firstPlan, 1) : 0
+
+  return { tool, plan: firstPlan, monthlySpend, seats: 1 }
 }
 
 function createInitialFormState(): FormState {
@@ -65,6 +67,7 @@ const stepVariants = {
 export default function SpendForm() {
   const [state, setState] = useState<FormState>(createInitialFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [direction, setDirection] = useState(1)
   const router = useRouter()
 
@@ -112,20 +115,32 @@ export default function SpendForm() {
   }
 
   function updateToolInput(tool: ToolName, next: Partial<ToolInput>) {
-    setState((prev) => ({
-      ...prev,
-      toolInputs: {
-        ...prev.toolInputs,
-        [tool]: {
-          ...prev.toolInputs[tool],
-          ...next,
+    setState((prev) => {
+      const current = prev.toolInputs[tool]
+      const plan = next.plan ?? current.plan
+      const seats = next.seats ?? current.seats
+      const shouldRecalculate = next.plan !== undefined || next.seats !== undefined
+
+      return {
+        ...prev,
+        toolInputs: {
+          ...prev.toolInputs,
+          [tool]: {
+            ...current,
+            ...next,
+            monthlySpend: shouldRecalculate
+              ? getOfficialPrice(tool, plan, seats)
+              : current.monthlySpend,
+            tool,
+          },
         },
-      },
-    }))
+      }
+    })
   }
 
   async function submitAudit() {
     setIsSubmitting(true)
+    setError(null)
     try {
       const payload: AuditInput = {
         tools: state.selectedTools.map((tool) => state.toolInputs[tool]),
@@ -141,6 +156,8 @@ export default function SpendForm() {
       const data = (await response.json()) as { id: string }
       window.localStorage.removeItem(LOCAL_STORAGE_KEY)
       router.push(`/audit/${data.id}`)
+    } catch {
+      setError("Something went wrong — please try again")
     } finally {
       setIsSubmitting(false)
     }
@@ -269,6 +286,7 @@ export default function SpendForm() {
               <TeamInfo
                 state={state}
                 isSubmitting={isSubmitting}
+                error={error}
                 onBack={() => goTo(2, -1)}
                 onTeamSizeChange={(teamSize) => setState((prev) => ({ ...prev, teamSize }))}
                 onUseCaseChange={setUseCase}

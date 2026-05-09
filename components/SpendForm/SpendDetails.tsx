@@ -69,13 +69,14 @@ export function SpendDetails({
         {selectedTools.map((tool) => {
           const pricing = getToolPricing(tool)
           const input = toolInputs[tool] || { tool, plan: "", monthlySpend: 0, seats: 1 }
-          const listPrice = getOfficialPrice(tool, input.plan, input.seats)
+          const officialMonthlySpend = getOfficialPrice(tool, input.plan, input.seats)
           const selectedPlan = pricing?.plans.find(
             (p) => p.planName.toLowerCase() === (input.plan || "").toLowerCase(),
           )
 
-          const isOverpaying = listPrice > 0 && input.monthlySpend > listPrice * 1.15
-          const isUnderList = listPrice > 0 && input.monthlySpend > 0 && input.monthlySpend <= listPrice * 1.05
+          const isOverpaying = officialMonthlySpend > 0 && input.monthlySpend > officialMonthlySpend * 1.15
+          const isUnderList =
+            officialMonthlySpend > 0 && input.monthlySpend > 0 && input.monthlySpend <= officialMonthlySpend * 1.05
 
           return (
             <motion.div
@@ -92,9 +93,9 @@ export function SpendDetails({
                 <ToolIcon tool={tool} size={32} />
                 <div>
                   <p className="text-sm font-semibold text-[#0A0A0A]">{TOOL_DISPLAY_NAMES[tool]}</p>
-                  {selectedPlan && listPrice > 0 && (
+                  {selectedPlan && officialMonthlySpend > 0 && (
                     <p className="text-xs" style={{ color: "#4B5563" }}>
-                      List: ${listPrice}{selectedPlan.isPerUser ? "/user" : ""}/mo
+                      List: ${officialMonthlySpend}{selectedPlan.isPerUser ? "/user" : ""}/mo
                     </p>
                   )}
                 </div>
@@ -159,15 +160,21 @@ export function SpendDetails({
                       id={`${tool}-spend`}
                       type="number"
                       min={0}
-                      placeholder="0"
-                      value={input.monthlySpend || ""}
+                      value={input.monthlySpend}
                       onChange={(e) =>
-                        onToolInputChange(tool, { monthlySpend: Number(e.target.value) || 0 })
+                        onToolInputChange(tool, {
+                          monthlySpend: Number(e.target.value),
+                        })
                       }
                       className={inputClass}
                       style={{ ...inputStyle, paddingLeft: "1.75rem" }}
                     />
                   </div>
+                  <p className="mt-1 text-[11px] text-[#64748B]">
+                    {input.monthlySpend === officialMonthlySpend && officialMonthlySpend > 0
+                      ? "Auto-filled from official pricing"
+                      : "Custom spend entered"}
+                  </p>
                 </div>
 
                 {/* Seats */}
