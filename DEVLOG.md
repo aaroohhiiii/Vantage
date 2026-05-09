@@ -19,6 +19,7 @@
 
 **Blockers / what I'm stuck on:**
 - None — Day 1 foundation complete
+- Developing on a Mac (arm64) and the GitHub Actions runner is on Linux (x64), npm struggles to properly sync nested optional cross-platform dependencies (like the WebAssembly bindings @emnapi/core uses behind the scenes). npm ci is extremely strict and crashes if the Linux-specific optional binaries aren't perfectly mapped out in a Mac-generated lockfile.
 
 **Plan for tomorrow:**
 - Build the audit engine (core calculation logic)
