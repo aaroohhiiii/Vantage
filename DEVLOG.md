@@ -60,28 +60,29 @@
 ---
 
 ## Day 3 — 09-05-2026
-**Hours worked:** 6
+**Hours worked:** 8
 **What I did:**
-- Debugged 3-step form — replaced shadcn Select with native HTML select (hydration mismatch issue)
-- Form now fully functional: Tool selection → Spend entry → Team context
-- Fixed state management in `SpendForm/index.tsx` — initialized all tool inputs with first plan pre-selected
-- Users can now change plans, enter monthly spend, and adjust seats per tool
-- Form validates and calculates total spend + annual run rate in real-time
-- localStorage persistence working — form state survives page refresh
-- Cleaned up debug logs
+- Debugged 3-step form — replaced shadcn Select with native HTML select (hydration mismatch issue).
+- Form now fully functional: Tool selection → Spend entry → Team context with real-time total spend calculations.
+- Overhauled `PricingDatabase` in `lib/pricingData.ts` to support  AI tools (ChatGPT, Claude, Cursor, Windsurf, APIs) with complex pricing rules (minimum seats, usage-based caps).
+- Built core audit logic in `lib/auditEngine.ts` to process 6 specific rule groups: misconfigured seats, redundancy (e.g., Cursor + Copilot), credex negotiation flags, and noise filtering.
+- Wrote a comprehensive Jest test suite (`tests/auditEngine.test.ts`) validating all audit edge cases.
+- Built the final `/app/audit/[id]/page.tsx` results dashboard with a premium, finance-defensible UI and dark-themed hero banner.
+- Implemented `lib/aiSummary.ts` to generate tailored, actionable AI summaries using Anthropic API.
+- Integrated UI support for all new tools via `ToolIcon.tsx` and added respective assets to `public/`.
+- Cleaned up repository structure by moving all `.md` files out of `docs/` to the project root.
 
 **What I learned:**
-- shadcn Select component had z-index/click issues in dark theme — native select more reliable
-- Hydration mismatch happens when server renders different HTML than client (e.g., undefined vs empty string)
-- Initialize all form fields in parent state to avoid server/client divergence
-- Native selects style consistently across browsers without extra dependencies
+- Grouping complex audit logic into specific rule sets (e.g., redundancy vs overpaying) makes testing much more predictable and scalable.
+- shadcn Select component had z-index/click issues in dark theme — native select more reliable.
+- Hydration mismatch happens when server renders different HTML than client.
+- `Next.js` App Router requires careful delineation between Server Components (for data fetching/DB operations) and Client Components (for interactive results dashboards).
 
 **Blockers / what I'm stuck on:**
-- None — Form fully working
+- None — the entire audit pipeline from form submission to AI summary display is now robust.deployment ti vercek is left .
 
 **Plan for tomorrow:**
-- Build results page (`/app/audit/[id]/page.tsx`) to display audit results
-- Integrate Claude API for AI summary generation
-- Add lead capture form (email + company name)
-- Set up email notifications via Resend
-- Deploy to Vercel for live testing
+- Polish the lead capture form workflow (email + company name) on the results page.
+- Finalize email notifications via Resend for user engagement.
+- Perform final end-to-end user tests across mobile and desktop.
+- Deploy MVP to Vercel for live testing and gather initial feedback.
