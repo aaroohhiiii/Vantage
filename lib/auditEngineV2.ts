@@ -8,7 +8,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { getOfficialPrice } from "@/lib/pricingData"
+import { getOfficialPrice, getToolPricing } from "@/lib/pricingData"
 import { 
   getPlanCapabilities, 
   getRequiredCapabilitiesForUseCase 
@@ -20,6 +20,7 @@ import {
   recommendAction,
   getStackCapabilities
 } from "@/lib/capabilityAnalysis"
+import { analyzeAllToolsGranular, analyzeToolGranular } from "@/lib/granularAnalysis"
 import type {
   AuditInput,
   AuditOutput,
@@ -82,14 +83,28 @@ function findTool(tools: ToolInput[], name: ToolName): ToolInput | undefined {
 /* ─── Pipeline Stage 1: Normalize Input ─── */
 
 function normalizeAuditInput(input: AuditInput): AuditInput {
-  return {
-    tools: input.tools.map(tool => ({
+  const normalizedTools = input.tools.map(tool => {
+    const officialPrice = getOfficialPrice(tool.tool, tool.plan, tool.seats)
+    const reportedSpend = Math.max(tool.monthlySpend, 0)
+    const normalizedSeats = Math.max(tool.seats, 1)
+    
+    // Detect price discrepancies
+    const priceDiscrepancy = officialPrice > 0 ? Math.abs(reportedSpend - officialPrice) / officialPrice : 0
+    
+    return {
       ...tool,
-      monthlySpend: Math.max(0, tool.monthlySpend),
-      seats: Math.max(1, tool.seats)
-    })),
-    teamSize: Math.max(1, input.teamSize),
-    useCase: input.useCase
+      monthlySpend: reportedSpend,
+      seats: normalizedSeats,
+      // Add metadata about price accuracy
+      _priceDiscrepancy: priceDiscrepancy,
+      _officialPrice: officialPrice
+    }
+  })
+  
+  return {
+    tools: normalizedTools,
+    teamSize: Math.max(input.teamSize, 1),
+    useCase: input.useCase || "mixed"
   }
 }
 
@@ -186,31 +201,49 @@ function generatePricingFindings(context: AuditContext): AuditFinding[] {
   return findings
 }
 
-function generateDataQualityFindings(context: AuditContext): AuditFinding[] {
+function runAllRules(context: AuditContext): AuditFinding[] {
+  const { normalized } = context
   const findings: AuditFinding[] = []
-  const { normalized, toolCapabilities } = context
   
+  // Rule 1: Unknown plan detection
   normalized.tools.forEach(tool => {
-    const capabilities = toolCapabilities.get(tool.tool) || []
-    if (capabilities.length === 0) {
+    const toolPricingData = getToolPricing(tool.tool)
+    if (!toolPricingData) return
+    
+    const hasKnownPlan = toolPricingData.plans.some(
+      (plan: any) => plan.planName.toLowerCase() === tool.plan.toLowerCase()
+    )
+    
+    if (!hasKnownPlan) {
       findings.push({
         ruleId: "unknown-plan",
         severity: "medium",
         type: "data-quality",
-        message: `${tool.tool} ${tool.plan} is not in our capability database.`,
+        message: `${tool.tool} plan "${tool.plan}" not found in pricing database`,
         evidence: {}
+      })
+    }
+    
+    // Rule 2: Price discrepancy detection
+    if (tool._priceDiscrepancy && tool._priceDiscrepancy > 0.1) { // 10%+ discrepancy
+      findings.push({
+        ruleId: "price-discrepancy",
+        severity: "high",
+        type: "pricing",
+        message: `${tool.tool} reported spend ($${tool.monthlySpend.toFixed(2)}) is ${Math.round(tool._priceDiscrepancy * 100)}% different from official price ($${tool._officialPrice?.toFixed(2)})`,
+        evidence: {
+          reported: tool.monthlySpend,
+          official: tool._officialPrice,
+          discrepancy: tool._priceDiscrepancy
+        } as any
       })
     }
   })
   
-  return findings
-}
-
-function runAllRules(context: AuditContext): AuditFinding[] {
   return [
     ...generateCapabilityOverlapFindings(context),
     ...generatePricingFindings(context),
-    ...generateDataQualityFindings(context)
+    ...findings
   ]
 }
 
@@ -223,13 +256,16 @@ function resolveFindingsToRecommendations(
   const { normalized, totalSpend } = context
   const resultMap = new Map<ToolName, ToolAuditResult>()
   
+  // Get granular analysis for all tools
+  const granularAnalyses = analyzeAllToolsGranular(normalized.tools, normalized.useCase)
+  
   // Start with baseline results
   normalized.tools.forEach(tool => {
     const credex = tool.monthlySpend > 50 || totalSpend > 200
     resultMap.set(tool.tool, buildKeep(tool, credex))
   })
   
-  // Apply capability-based analysis
+  // Apply both capability-based and granular analysis
   normalized.tools.forEach(tool => {
     const otherTools = normalized.tools.filter(t => t.tool !== tool.tool)
     const utility = calculateMarginalUtility(
@@ -239,6 +275,8 @@ function resolveFindingsToRecommendations(
       normalized.useCase
     )
     
+    const granularAnalysis = granularAnalyses.find(a => a.tool === tool.tool)
+    
     const toolFindings = findings.filter(f => {
       // Check if this finding applies to this tool
       const toolName = tool.tool
@@ -246,22 +284,73 @@ function resolveFindingsToRecommendations(
     })
     
     const hasUnknownPlan = toolFindings.some(f => f.ruleId === "unknown-plan")
-    const action = recommendAction(
-      utility.overlapScore,
-      utility.uniqueValueScore,
-      utility.needAlignmentScore,
-      tool.monthlySpend,
-      hasUnknownPlan
-    )
     
-    // Calculate savings based on action
+    // Determine action based on both analyses
+    let action: "keep" | "remove" | "downgrade" | "upgrade" | "consolidate" | "switch" | "cancel-redundant" = "keep"
     let monthlySavings = 0
-    if (action === "remove" || action === "consolidate") {
-      monthlySavings = tool.monthlySpend
+    let reason = utility.description
+    
+    // Priority 1: Granular analysis recommendations
+    if (granularAnalysis) {
+      switch (granularAnalysis.overallRecommendation) {
+        case "downgrade-plan":
+          action = "downgrade"
+          monthlySavings = granularAnalysis.totalPotentialSavings
+          reason = granularAnalysis.planFit.reason
+          break
+        case "switch-tool":
+          action = "switch"
+          monthlySavings = granularAnalysis.totalPotentialSavings
+          reason = granularAnalysis.betterAlternative?.reason || "Switch to better alternative"
+          break
+        case "upgrade-plan":
+          action = "upgrade"
+          monthlySavings = 0 // Upgrades cost more, not savings
+          reason = granularAnalysis.planFit.reason
+          break
+        case "use-credits":
+          action = "keep" // Keep tool but use credits
+          monthlySavings = granularAnalysis.totalPotentialSavings
+          reason = "Use credits instead of retail pricing"
+          break
+      }
     }
     
-    // Build rationale
+    // Priority 2: Capability overlap analysis (if no granular recommendation)
+    if (action === "keep") {
+      const capabilityAction = recommendAction(
+        utility.overlapScore,
+        utility.uniqueValueScore,
+        utility.needAlignmentScore,
+        tool.monthlySpend,
+        hasUnknownPlan
+      )
+      
+      if (capabilityAction !== "keep") {
+        action = capabilityAction
+        if (action === "remove" || action === "consolidate") {
+          monthlySavings = tool.monthlySpend
+        }
+      }
+    }
+    
+    // Build comprehensive rationale
     const rationale: string[] = []
+    
+    // Add granular insights
+    if (granularAnalysis) {
+      if (granularAnalysis.planFit.savings > 0) {
+        rationale.push(`Plan fit: ${granularAnalysis.planFit.reason}`)
+      }
+      if (granularAnalysis.sameVendorAlternative?.savings) {
+        rationale.push(`Same vendor alternative: ${granularAnalysis.sameVendorAlternative.reason}`)
+      }
+      if (granularAnalysis.betterAlternative?.savings || granularAnalysis.betterAlternative?.additionalCost) {
+        rationale.push(`Alternative tool: ${granularAnalysis.betterAlternative.reason}`)
+      }
+    }
+    
+    // Add capability insights
     if (utility.overlapScore > 0.6) {
       rationale.push(`${Math.round(utility.overlapScore * 100)}% of capabilities overlap with other tools`)
     }
@@ -277,7 +366,7 @@ function resolveFindingsToRecommendations(
     
     const confidence = hasUnknownPlan ? "low" : 
                     utility.overlapScore > 0.8 ? "high" : 
-                    utility.overlapScore > 0.5 ? "medium" : "high"
+                    utility.overlapScore > 0.5 ? "medium" : "medium"
     
     resultMap.set(tool.tool, {
       tool: tool.tool,
@@ -286,7 +375,7 @@ function resolveFindingsToRecommendations(
       recommendedAction: action,
       monthlySavings,
       annualSavings: round2(monthlySavings * 12),
-      reason: utility.description,
+      reason,
       credexOpportunity: tool.monthlySpend > 50 || totalSpend > 200,
       
       // NEW FIELDS

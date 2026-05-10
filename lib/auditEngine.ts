@@ -39,17 +39,45 @@ function formatUseCase(useCase: UseCase): string {
   return labels[useCase]
 }
 
-function buildKeep(tool: ToolInput, credex: boolean): ToolAuditResult {
+function buildCompleteResult(
+  tool: ToolInput,
+  action: "keep" | "remove" | "downgrade" | "upgrade" | "consolidate" | "switch" | "cancel-redundant",
+  monthlySavings: number,
+  reason: string,
+  credex: boolean
+): ToolAuditResult {
   return {
     tool: tool.tool,
     currentPlan: tool.plan,
     currentSpend: tool.monthlySpend,
-    recommendedAction: "keep",
-    monthlySavings: 0,
-    annualSavings: 0,
-    reason: "Plan and pricing are appropriate for your team size and use case.",
+    recommendedAction: action,
+    monthlySavings,
+    annualSavings: round2(monthlySavings * 12),
+    reason,
     credexOpportunity: credex,
+    
+    // NEW FIELDS - Add missing properties
+    confidence: "high" as const,
+    overlapScore: 0,
+    uniqueValueScore: 1,
+    needAlignmentScore: 0.8,
+    findings: [],
+    rationale: [reason],
+    marginalUtility: {
+      capabilities: [],
+      description: reason
+    }
   }
+}
+
+function buildKeep(tool: ToolInput, credex: boolean): ToolAuditResult {
+  return buildCompleteResult(
+    tool,
+    "keep",
+    0,
+    "Plan and pricing are appropriate for your team size and use case.",
+    credex
+  )
 }
 
 function findTool(tools: ToolInput[], name: ToolName): ToolInput | undefined {
@@ -189,17 +217,13 @@ export function runAudit(input: AuditInput): AuditOutput {
   ) {
     const copilotSpend = Math.max(0, copilotEntry.monthlySpend)
     if (copilotSpend >= 10) {
-      resultMap.set("github-copilot", {
-        tool: "github-copilot",
-        currentPlan: copilotEntry.plan,
-        currentSpend: copilotEntry.monthlySpend,
-        recommendedAction: "cancel-redundant",
-        monthlySavings: round2(copilotSpend),
-        annualSavings: round2(copilotSpend * 12),
-        reason:
-          "Cursor Pro includes AI code completion that directly replaces GitHub Copilot's core coding feature; maintaining both duplicates spend on identical functionality.",
-        credexOpportunity: copilotSpend > 50 || totalSpend > 200,
-      })
+      resultMap.set("github-copilot", buildCompleteResult(
+        copilotEntry,
+        "cancel-redundant",
+        round2(copilotSpend),
+        "Cursor Pro includes AI code completion that directly replaces GitHub Copilot's core coding feature; maintaining both duplicates spend on identical functionality.",
+        copilotSpend > 50 || totalSpend > 200
+      ))
     }
   }
 
@@ -217,16 +241,13 @@ export function runAudit(input: AuditInput): AuditOutput {
           : chatgptEntry
       const cheaperSpend = Math.max(0, cheaper.monthlySpend)
       if (cheaperSpend >= 10) {
-        resultMap.set(cheaper.tool, {
-          tool: cheaper.tool,
-          currentPlan: cheaper.plan,
-          currentSpend: cheaper.monthlySpend,
-          recommendedAction: "cancel-redundant",
-          monthlySavings: round2(cheaperSpend),
-          annualSavings: round2(cheaperSpend * 12),
-          reason: `Both tools provide general-purpose reasoning and chat for ${formatUseCase(input.useCase)}. Consolidating to one subscription eliminates duplicate spend on overlapping capabilities.`,
-          credexOpportunity: cheaperSpend > 50 || totalSpend > 200,
-        })
+        resultMap.set(cheaper.tool, buildCompleteResult(
+          cheaper,
+          "cancel-redundant",
+          round2(cheaperSpend),
+          `Both tools provide general-purpose reasoning and chat for ${formatUseCase(input.useCase)}. Consolidating to one subscription eliminates duplicate spend on overlapping capabilities.`,
+          cheaperSpend > 50 || totalSpend > 200
+        ))
       }
     }
 
@@ -238,16 +259,13 @@ export function runAudit(input: AuditInput): AuditOutput {
           : geminiEntry
       const cheaperSpend = Math.max(0, cheaper.monthlySpend)
       if (cheaperSpend >= 10) {
-        resultMap.set(cheaper.tool, {
-          tool: cheaper.tool,
-          currentPlan: cheaper.plan,
-          currentSpend: cheaper.monthlySpend,
-          recommendedAction: "cancel-redundant",
-          monthlySavings: round2(cheaperSpend),
-          annualSavings: round2(cheaperSpend * 12),
-          reason: `Both tools provide general-purpose reasoning and chat for ${formatUseCase(input.useCase)}. Consolidating to one subscription eliminates duplicate spend on overlapping capabilities.`,
-          credexOpportunity: cheaperSpend > 50 || totalSpend > 200,
-        })
+        resultMap.set(cheaper.tool, buildCompleteResult(
+          cheaper,
+          "cancel-redundant",
+          round2(cheaperSpend),
+          `Both tools provide general-purpose reasoning and chat for ${formatUseCase(input.useCase)}. Consolidating to one subscription eliminates duplicate spend on overlapping capabilities.`,
+          cheaperSpend > 50 || totalSpend > 200
+        ))
       }
     }
   }
@@ -265,16 +283,13 @@ export function runAudit(input: AuditInput): AuditOutput {
     ) {
       const claudeSpend = Math.max(0, claudeEntry.monthlySpend)
       if (claudeSpend >= 10) {
-        resultMap.set("claude", {
-          tool: "claude",
-          currentPlan: claudeEntry.plan,
-          currentSpend: claudeEntry.monthlySpend,
-          recommendedAction: "cancel-redundant",
-          monthlySavings: round2(claudeSpend),
-          annualSavings: round2(claudeSpend * 12),
-          reason: `API spend of $${anthropicApi.monthlySpend}/month suggests active programmatic use; Claude ${claudeEntry.plan} ($${claudeSpend}) provides less value than API access alone. Cancel subscription, keep API.`,
-          credexOpportunity: claudeSpend > 50 || totalSpend > 200,
-        })
+        resultMap.set("claude", buildCompleteResult(
+          claudeEntry,
+          "cancel-redundant",
+          round2(claudeSpend),
+          `API spend of $${anthropicApi.monthlySpend}/month suggests active programmatic use; Claude ${claudeEntry.plan} ($${claudeSpend}) provides less value than API access alone. Cancel subscription, keep API.`,
+          claudeSpend > 50 || totalSpend > 200
+        ))
       }
     }
   }

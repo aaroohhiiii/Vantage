@@ -36,6 +36,8 @@ export type ToolInput = {
   plan: string
   monthlySpend: number
   seats: number
+  _priceDiscrepancy?: number // % difference from official pricing
+  _officialPrice?: number // Official price from pricing data
 }
 
 export type PlanCapabilityProfile = {

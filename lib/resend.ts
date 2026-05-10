@@ -17,8 +17,11 @@ function getActionLabel(action: ToolAuditResult['recommendedAction']): string {
     case 'downgrade': return '⬇️ Downgrade'
     case 'switch': return '🔄 Switch'
     case 'cancel-redundant': return '❌ Cancel'
-    case 'use-credits': return '💜 Use Credits'
     case 'keep': return '✅ Keep'
+    case 'upgrade': return '⬆️ Upgrade'
+    case 'remove': return '❌ Remove'
+    case 'consolidate': return '🔄 Consolidate'
+    default: return '📋 Review'
   }
 }
 

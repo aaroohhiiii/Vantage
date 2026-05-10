@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { generateAiSummary } from "@/lib/aiSummary"
+import { generateEnhancedAiSummary } from "@/lib/enhancedAiSummary"
 import type { AuditResult } from "@/lib/types"
 
 export async function POST(request: Request) {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const aiSummaryText = await generateAiSummary(body.auditResult)
+    const aiSummaryText = await generateEnhancedAiSummary(body.auditResult)
     
     return NextResponse.json({ summary: aiSummaryText })
   } catch (error) {
