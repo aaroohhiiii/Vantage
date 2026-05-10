@@ -13,7 +13,7 @@
 
 import type { ToolName, UseCase, ToolInput } from "@/lib/types"
 import { getPlanCapabilities, getRequiredCapabilitiesForUseCase } from "./capabilityData"
-import { getOfficialPrice, getPlanPricing, getToolPricing } from "./pricingData"
+import { getPlanPricing, getToolPricing } from "./pricingData"
 
 export type PlanFitAnalysis = {
   currentPlan: string
@@ -88,7 +88,6 @@ function analyzePlanFit(
 
   // Check if team size fits plan requirements
   const minSeats = currentPlanPricing.minSeats
-  const isPerUser = currentPlanPricing.isPerUser
   
   let fitScore: "perfect" | "good" | "overkill" | "underpowered" = "perfect"
   let recommendedPlan: string | undefined

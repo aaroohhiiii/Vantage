@@ -60,7 +60,7 @@ export default function HeroDashboard() {
 
         {/* Tool rows */}
         <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
-          {MOCK_TOOLS.map((tool, i) => (
+          {MOCK_TOOLS.map((tool, ) => (
             <div
               key={tool.name}
               className="flex items-center justify-between rounded-lg px-3 py-2.5 bg-white border border-[#E5E7EB] hover:shadow-sm transition-shadow"

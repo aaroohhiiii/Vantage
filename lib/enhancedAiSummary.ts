@@ -118,7 +118,7 @@ function compareValueForMoney(
 // Generate human consultant-style recommendations
 function generateConsultantInsights(audit: SummaryInput): string[] {
   const insights: string[] = []
-  const { input, results } = audit
+  const { input } = audit
   
   // Find similar tools for comparison
   const ideTools = input.tools.filter(t => ["cursor", "windsurf", "github-copilot"].includes(t.tool))
@@ -175,7 +175,7 @@ function generateEnhancedFallbackSummary(audit: SummaryInput): string {
 }
 
 export async function generateEnhancedAiSummary(audit: SummaryInput): Promise<string> {
-  const { totalMonthlySavings, input, results, isOptimal } = audit
+  const { totalMonthlySavings, input, isOptimal } = audit
   const totalSpend = input.tools.reduce((sum, tool) => sum + tool.monthlySpend, 0)
   const insights = generateConsultantInsights(audit)
   

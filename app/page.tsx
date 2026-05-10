@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { motion } from "framer-motion"
+// import Link from "next/link"
+// import { motion } from "framer-motion"
 import { CheckCircle2, TrendingUp, Shield, Zap } from "lucide-react"
 import HeroDashboard from "@/components/HeroDashboard"
 
@@ -162,7 +162,7 @@ export default function Home() {
               title: "Instant Insights",
               description: "Get detailed audit reports and savings opportunities in under 90 seconds."
             }
-          ].map((feature, index) => (
+          ].map((feature, ) => (
             <div
               key={feature.title}
               className="rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm hover:shadow-lg transition-shadow duration-300"

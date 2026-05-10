@@ -20,35 +20,22 @@ import {
   recommendAction,
   getStackCapabilities
 } from "@/lib/capabilityAnalysis"
-import { analyzeAllToolsGranular, analyzeToolGranular } from "@/lib/granularAnalysis"
+import { analyzeAllToolsGranular } from "@/lib/granularAnalysis"
 import type {
   AuditInput,
   AuditOutput,
-  AuditResult,
   ToolAuditResult,
   ToolInput,
   ToolName,
-  UseCase,
   AuditFinding,
   AuditStackSummary,
-  Capability,
+  Capability
 } from "@/lib/types"
 
 /* ─── Utility helpers ─── */
 
 function round2(value: number): number {
   return Number(Math.max(0, value).toFixed(2))
-}
-
-function formatUseCase(useCase: UseCase): string {
-  const labels: Record<UseCase, string> = {
-    coding: "coding",
-    writing: "writing",
-    data: "data analysis",
-    research: "research",
-    mixed: "mixed workflows",
-  }
-  return labels[useCase]
 }
 
 function buildKeep(tool: ToolInput, credex: boolean): ToolAuditResult {
@@ -76,9 +63,9 @@ function buildKeep(tool: ToolInput, credex: boolean): ToolAuditResult {
   }
 }
 
-function findTool(tools: ToolInput[], name: ToolName): ToolInput | undefined {
-  return tools.find((t) => t.tool === name)
-}
+// function findTool(tools: ToolInput[], name: ToolName): ToolInput | undefined {
+//   return tools.find((t) => t.tool === name)
+// }
 
 /* ─── Pipeline Stage 1: Normalize Input ─── */
 
@@ -211,7 +198,7 @@ function runAllRules(context: AuditContext): AuditFinding[] {
     if (!toolPricingData) return
     
     const hasKnownPlan = toolPricingData.plans.some(
-      (plan: any) => plan.planName.toLowerCase() === tool.plan.toLowerCase()
+      (plan: { planName: string }) => plan.planName.toLowerCase() === tool.plan.toLowerCase()
     )
     
     if (!hasKnownPlan) {
@@ -232,10 +219,8 @@ function runAllRules(context: AuditContext): AuditFinding[] {
         type: "pricing",
         message: `${tool.tool} reported spend ($${tool.monthlySpend.toFixed(2)}) is ${Math.round(tool._priceDiscrepancy * 100)}% different from official price ($${tool._officialPrice?.toFixed(2)})`,
         evidence: {
-          reported: tool.monthlySpend,
-          official: tool._officialPrice,
-          discrepancy: tool._priceDiscrepancy
-        } as any
+          score: tool._priceDiscrepancy
+        }
       })
     }
   })

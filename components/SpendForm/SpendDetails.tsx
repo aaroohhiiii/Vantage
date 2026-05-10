@@ -41,7 +41,7 @@ export function SpendDetails({
   onNext,
 }: SpendDetailsProps) {
   // local editable strings for monthly spend to avoid overwriting while typing
-  const [editSpend, setEditSpend] = useState<Record<string, string>>({})
+  const [, setEditSpend] = useState<Record<string, string>>({})
 
   // keep local edit values in sync when parent toolInputs change (e.g. plan/seat updates)
   useEffect(() => {
@@ -210,11 +210,11 @@ export function SpendDetails({
                     placeholder="e.g. 5 users"
                     onChange={(e) => {
                       const newSeats = Number(e.target.value) || 0
-                      const pricing = getToolPricing(tool)
-                      const selectedPlan = pricing?.plans.find(
-                        (p) => p.planName === (input.plan || "")
-                      )
-                      const minSeats = selectedPlan?.minSeats ?? 1
+                      // const pricing = getToolPricing(tool)
+                      // const selectedPlan = pricing?.plans.find(
+                      //   (p) => p.planName === (input.plan || "")
+                      // )
+                      // const minSeats = selectedPlan?.minSeats ?? 1
                       
                       // Allow typing any value, but we'll validate on blur
                       onToolInputChange(tool, { seats: newSeats })
