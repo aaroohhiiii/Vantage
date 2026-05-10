@@ -1,8 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { AlertTriangle, Info } from "lucide-react"
 import { ToolIcon, TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
-import { getOfficialPrice, getToolPricing } from "@/lib/pricingData"
+import { getToolPricing, getOfficialPrice } from "@/lib/pricingData"
 import type { ToolInput, ToolName } from "@/lib/types"
 
 type SpendDetailsProps = {
@@ -38,6 +40,19 @@ export function SpendDetails({
   onBack,
   onNext,
 }: SpendDetailsProps) {
+  // local editable strings for monthly spend to avoid overwriting while typing
+  const [editSpend, setEditSpend] = useState<Record<string, string>>({})
+
+  // keep local edit values in sync when parent toolInputs change (e.g. plan/seat updates)
+  useEffect(() => {
+    const next: Record<string, string> = {}
+    selectedTools.forEach((tool) => {
+      const val = toolInputs[tool]?.monthlySpend
+      next[tool] = typeof val === "number" ? String(val) : ""
+    })
+    setEditSpend((prev) => ({ ...next, ...prev })) // prefer new values but preserve any in-progress edits
+  }, [selectedTools, toolInputs])
+
   const totalSpend = selectedTools.reduce(
     (sum, tool) => sum + (toolInputs[tool]?.monthlySpend ?? 0),
     0,
@@ -129,7 +144,18 @@ export function SpendDetails({
                     id={`${tool}-plan`}
                     value={input.plan ?? ""}
                     onChange={(e) => {
-                      onToolInputChange(tool, { plan: e.target.value })
+                      const selectedPlan = e.target.value
+                      const pricing = getToolPricing(tool)
+                      const planData = pricing?.plans.find(
+                        (p) => p.planName === selectedPlan
+                      )
+                      const minSeats = planData?.minSeats ?? 1
+                      
+                      // Auto-fill seats with minimum required
+                      onToolInputChange(tool, { 
+                        plan: selectedPlan,
+                        seats: Math.max(input.seats, minSeats)
+                      })
                     }}
                     className={inputClass}
                     style={inputStyle}
@@ -149,32 +175,26 @@ export function SpendDetails({
 
                 {/* Monthly spend */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-spend`}>
+                  <label className="text-xs font-medium text-[#64748B]" htmlFor={`${tool}-spend`}>
                     Monthly spend
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#4B5563]">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#475569]">
                       $
                     </span>
                     <input
                       id={`${tool}-spend`}
                       type="number"
                       min={0}
-                      value={input.monthlySpend}
+                      placeholder="0"
+                      value={input.monthlySpend || ""}
                       onChange={(e) =>
-                        onToolInputChange(tool, {
-                          monthlySpend: Number(e.target.value),
-                        })
+                        onToolInputChange(tool, { monthlySpend: Number(e.target.value) || 0 })
                       }
                       className={inputClass}
                       style={{ ...inputStyle, paddingLeft: "1.75rem" }}
                     />
                   </div>
-                  <p className="mt-1 text-[11px] text-[#64748B]">
-                    {input.monthlySpend === officialMonthlySpend && officialMonthlySpend > 0
-                      ? "Auto-filled from official pricing"
-                      : "Custom spend entered"}
-                  </p>
                 </div>
 
                 {/* Seats */}
@@ -188,19 +208,61 @@ export function SpendDetails({
                     min={1}
                     value={input.seats || ""}
                     placeholder="e.g. 5 users"
-                    onChange={(e) =>
-                      onToolInputChange(tool, {
-                        seats: Number(e.target.value) || 0,
-                      })
-                    }
-                    onBlur={(e) =>
-                      onToolInputChange(tool, {
-                        seats: Math.max(1, Number(e.target.value) || 1),
-                      })
-                    }
+                    onChange={(e) => {
+                      const newSeats = Number(e.target.value) || 0
+                      const pricing = getToolPricing(tool)
+                      const selectedPlan = pricing?.plans.find(
+                        (p) => p.planName === (input.plan || "")
+                      )
+                      const minSeats = selectedPlan?.minSeats ?? 1
+                      
+                      // Allow typing any value, but we'll validate on blur
+                      onToolInputChange(tool, { seats: newSeats })
+                    }}
+                    onBlur={(e) => {
+                      const newSeats = Number(e.target.value) || 0
+                      const pricing = getToolPricing(tool)
+                      const selectedPlan = pricing?.plans.find(
+                        (p) => p.planName === (input.plan || "")
+                      )
+                      const minSeats = selectedPlan?.minSeats ?? 1
+                      
+                      // Always enforce minimum on blur
+                      const finalSeats = Math.max(minSeats, Math.max(1, newSeats))
+                      onToolInputChange(tool, { seats: finalSeats })
+                    }}
                     className={inputClass}
                     style={inputStyle}
                   />
+                  {(() => {
+                    const pricing = getToolPricing(tool)
+                    const selectedPlan = pricing?.plans.find(
+                      (p) => p.planName === (input.plan || "")
+                    )
+                    const minSeats = selectedPlan?.minSeats
+                    const isBelowMin = minSeats && input.seats < minSeats
+                    
+                    if (isBelowMin) {
+                      return (
+                        <div className="flex items-center gap-1.5 mt-1 p-2 bg-orange-50 border border-orange-200 rounded-md">
+                          <AlertTriangle className="h-3.5 w-3.5 text-orange-600 flex-shrink-0" />
+                          <p className="text-xs text-orange-700">
+                            Minimum {minSeats} seat{minSeats > 1 ? 's' : ''} required for {selectedPlan?.planName}
+                          </p>
+                        </div>
+                      )
+                    } else if (minSeats && minSeats > 1) {
+                      return (
+                        <div className="flex items-center gap-1.5 mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                          <Info className="h-3.5 w-3.5 text-blue-600 flex-shrink-0" />
+                          <p className="text-xs text-blue-700">
+                            Minimum {minSeats} seat{minSeats > 1 ? 's' : ''} required
+                          </p>
+                        </div>
+                      )
+                    }
+                    return null
+                  })()}
                 </div>
               </div>
 

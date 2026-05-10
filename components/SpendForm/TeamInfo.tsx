@@ -66,6 +66,16 @@ export function TeamInfo({
   onUseCaseChange,
   onSubmit,
 }: TeamInfoProps) {
+  const clampTeamSize = (value: number) => Math.max(1, Number.isFinite(value) ? value : 1)
+
+  const incrementTeamSize = () => {
+    onTeamSizeChange(clampTeamSize(state.teamSize + 1))
+  }
+
+  const decrementTeamSize = () => {
+    onTeamSizeChange(clampTeamSize(state.teamSize - 1))
+  }
+
   const activeTeamValue = getActiveTeamOption(state.teamSize)
 
   return (
@@ -137,20 +147,44 @@ export function TeamInfo({
             <label htmlFor="team-size-exact" className="whitespace-nowrap text-xs text-[#4B5563]">
               Exact count:
             </label>
-            <input
-              id="team-size-exact"
-              type="number"
-              min={1}
-              value={state.teamSize}
-              disabled={isSubmitting}
-              onChange={(e) => onTeamSizeChange(Number(e.target.value) || 0)}
-              onBlur={(e) => onTeamSizeChange(Math.max(1, Number(e.target.value) || 1))}
-              className="w-24 rounded-xl px-3 py-2 text-sm text-[#0A0A0A] outline-none transition-all focus:ring-2 focus:ring-[#00C853]/40 disabled:opacity-50"
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid #E5E7EB",
-              }}
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={decrementTeamSize}
+                className="h-10 w-10 rounded-lg border border-[#E5E7EB] bg-white text-lg font-semibold text-[#4B5563] hover:bg-[#F8F9FA]"
+                aria-label="Decrease team size"
+              >
+                −
+              </button>
+
+              <input
+                id="team-size"
+                type="number"
+                min={1}
+                value={state.teamSize}
+                onChange={(e) => onTeamSizeChange(clampTeamSize(Number(e.target.value)))}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault()
+                    incrementTeamSize()
+                  }
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault()
+                    decrementTeamSize()
+                  }
+                }}
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-sm text-[#0A0A0A] outline-none focus:ring-2 focus:ring-[#00C853]/40"
+              />
+
+              <button
+                type="button"
+                onClick={incrementTeamSize}
+                className="h-10 w-10 rounded-lg border border-[#E5E7EB] bg-white text-lg font-semibold text-[#4B5563] hover:bg-[#F8F9FA]"
+                aria-label="Increase team size"
+              >
+                +
+              </button>
+            </div>
             <span className="text-xs text-[#4B5563]">people</span>
           </div>
         </motion.fieldset>
