@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-import { runAudit } from "@/lib/auditEngine"
+import { runAudit } from "@/lib/auditEngineV2"
 import { generateAiSummary } from "@/lib/aiSummary"
 import { getSupabaseServerClient } from "@/lib/supabase"
 import type { AuditInput, ToolInput, UseCase } from "@/lib/types"
@@ -62,8 +62,10 @@ function sanitizeAuditInput(value: unknown): { data?: AuditInput; errors?: strin
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as unknown
-    const validation = sanitizeAuditInput(body)
+    const payload = await request.json()
+    console.log('[api/audit] incoming payload:', JSON.stringify(payload).slice(0, 2000))
+
+    const validation = sanitizeAuditInput(payload)
 
     if (!validation.data) {
       return NextResponse.json(
@@ -117,13 +119,20 @@ export async function POST(request: Request) {
       isOptimal: audit.isOptimal,
       showCredex: audit.showCredex,
     })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Unexpected server error while creating audit",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    )
+  } catch (err) {
+    // Log full error on server for debugging
+    console.error('[api/audit] Unhandled error:', err)
+
+    const isDev = process.env.NODE_ENV !== 'production'
+    const message = err instanceof Error ? err.message : String(err)
+    const stack = err instanceof Error ? err.stack : undefined
+
+    const body: Record<string, unknown> = { error: isDev ? message : 'Internal Server Error' }
+    if (isDev && stack) body.stack = stack
+
+    return new Response(JSON.stringify(body), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 }
