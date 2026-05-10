@@ -65,7 +65,7 @@ function buildAuditEmailHtml(audit: AuditResult, auditUrl: string): string {
     <!-- Header -->
     <div style="text-align:center;margin-bottom:32px;">
       <div style="display:inline-block;width:32px;height:32px;background:#00C853;border-radius:8px;line-height:32px;color:white;font-weight:bold;font-size:14px;">P</div>
-      <span style="font-size:18px;font-weight:600;color:#0A0A0A;margin-left:8px;vertical-align:middle;">Prune</span>
+      <span style="font-size:18px;font-weight:600;color:#0A0A0A;margin-left:8px;vertical-align:middle;">Vantage</span>
     </div>
 
     <!-- Main card -->

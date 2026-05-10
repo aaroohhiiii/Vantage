@@ -8,7 +8,7 @@ export default function NewAuditPage() {
       <header className="border-b border-[#E5E7EB] bg-white">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
           <Link href="/" className="text-lg font-semibold text-[#0A0A0A]">
-            Prune
+            Vantage
           </Link>
           <Link href="/" className="text-sm text-[#4B5563] hover:text-[#0A0A0A]">
             ← Back to home

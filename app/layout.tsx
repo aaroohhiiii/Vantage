@@ -21,11 +21,11 @@ const robotoMono = Roboto_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Prune — Stop Overspending on AI Tools",
+  title: "Vantage — Stop Overspending on AI Tools",
   description:
     "Audit your AI stack in 90 seconds. Find redundant subscriptions, overpriced plans, and hidden savings opportunities. Powered by Credex.",
   openGraph: {
-    title: "Prune — Stop Overspending on AI Tools",
+    title: "Vantage — Stop Overspending on AI Tools",
     description:
       "Audit your AI stack in 90 seconds. Find redundant subscriptions and hidden savings opportunities.",
     type: "website",

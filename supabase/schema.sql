@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- Prune — Supabase Schema
+-- Vantage — Supabase Schema
 -- Run this in the Supabase SQL Editor (Dashboard → SQL Editor)
 -- ═══════════════════════════════════════════════════════════════
 

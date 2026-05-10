@@ -1,9 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk"
 import type { AuditResult } from "@/lib/types"
+import Groq from "groq-sdk"
 
-// We use the edge-compatible client initialization (or the global one, it will handle it)
-// It defaults to process.env.ANTHROPIC_API_KEY
-const client = new Anthropic()
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 type SummaryInput = Omit<AuditResult, "id" | "aiSummary" | "createdAt">
 
@@ -52,19 +50,21 @@ Instructions:
 - Do not mention Credex by name.`
 
   try {
-    const message = await client.messages.create({
-      model: "claude-3-5-haiku-latest", // Use the valid haiku 3.5 identifier, or claude-3-haiku-20240307
-      max_tokens: 200,
+    if (!process.env.GROQ_API_KEY) throw new Error("GROQ_API_KEY not set")
+
+    const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 200,
     })
-    
-    // Check if the response contains text
-    const responseText = message.content[0]?.type === "text" ? message.content[0].text : ""
-    if (!responseText) throw new Error("Empty response from Anthropic")
-    
+
+    const responseText = chatCompletion.choices[0]?.message?.content ?? ""
+
+    if (!responseText) throw new Error("Empty response from Groq")
+
     return responseText
   } catch (error) {
-    console.error("[generateAiSummary] Fallback triggered. Anthropic API Error:", error instanceof Error ? error.message : "Unknown error")
+    console.error("[generateAiSummary] Fallback triggered. Groq API Error:", error instanceof Error ? error.message : "Unknown error")
     return generateFallbackSummary(audit)
   }
 }

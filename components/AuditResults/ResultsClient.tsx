@@ -8,7 +8,7 @@ type EmailCaptureProps = {
   isOptimal: boolean
 }
 
-const STORAGE_KEY = "prune-lead-captured"
+const STORAGE_KEY = "vantage-lead-captured"
 
 export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
   const [email, setEmail] = useState("")

@@ -12,7 +12,7 @@ const ratelimit = redis
       redis,
       limiter: Ratelimit.slidingWindow(3, "1 h"),
       analytics: true,
-      prefix: "prune:lead",
+      prefix: "vantage:lead",
     })
   : null
 
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     }
 
     // Send the results email (fire-and-forget — don't block response)
-    const baseUrl = headersList.get("host") ?? "prune.vercel.app"
+    const baseUrl = headersList.get("host") ?? "vantage.vercel.app"
     const protocol = baseUrl.includes("localhost") ? "http" : "https"
     const auditUrl = `${protocol}://${baseUrl}/audit/${body.auditId}`
 

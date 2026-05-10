@@ -119,7 +119,8 @@ export default function SpendForm() {
       const current = prev.toolInputs[tool]
       const plan = next.plan ?? current.plan
       const seats = next.seats ?? current.seats
-      const shouldRecalculate = next.plan !== undefined || next.seats !== undefined
+      const shouldRecalculate =
+        next.monthlySpend === undefined && (next.plan !== undefined || next.seats !== undefined)
 
       return {
         ...prev,
@@ -128,9 +129,12 @@ export default function SpendForm() {
           [tool]: {
             ...current,
             ...next,
-            monthlySpend: shouldRecalculate
-              ? getOfficialPrice(tool, plan, seats)
-              : current.monthlySpend,
+            monthlySpend:
+              next.monthlySpend !== undefined
+                ? next.monthlySpend
+                : shouldRecalculate
+                ? getOfficialPrice(tool, plan, seats)
+                : current.monthlySpend,
             tool,
           },
         },

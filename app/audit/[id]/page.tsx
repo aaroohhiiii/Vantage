@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const audit = await getAuditById(id)
 
   if (!audit) {
-    return { title: "Audit Not Found — Prune" }
+    return { title: "Audit Not Found — Vantage" }
   }
 
   const savings = audit.totalMonthlySavings
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       "Free AI spend audit powered by Credex. See where your team is overspending on AI tools.",
     openGraph: {
       title,
-      description: "Run your free AI spend audit at Prune",
+      description: "Run your free AI spend audit at Vantage",
       images: [
         {
           url: `/api/og?savings=${savings.toFixed(0)}&tools=${audit.input.tools.length}`,
@@ -94,7 +94,7 @@ export default async function AuditPage({ params }: PageProps) {
             >
               P
             </div>
-            <span className="text-base font-bold text-[#0A0A0A]">Prune</span>
+            <span className="text-base font-bold text-[#0A0A0A]">Vantage</span>
           </Link>
           <Link
             href="/"
@@ -133,7 +133,7 @@ export default async function AuditPage({ params }: PageProps) {
                     </p>
                   </>
                 )}
-                <ShareButton url={`https://prune.vercel.app/audit/${id}`} label="Share results" variant="dark" />
+                <ShareButton url={`https://vantage.vercel.app/audit/${id}`} label="Share results" variant="dark" />
               </div>
 
               {/* Center: Glowing Circle */}

@@ -1,10 +1,10 @@
 # DEVLOG
-# Prune Dev Log
+# Vantage Dev Log
 
 ## Day 1 — 07-05-2026
 **Hours worked:** 4
 **What I did:**
-- Created Next.js project and installed all dependencies (Supabase, Resend, Anthropic, Upstash)
+- Created Next.js project and installed all dependencies (Supabase, Resend, grok, Upstash)
 - Defined TypeScript types (`AuditResult`, `AuditTool`, `ToolSpend`) in `/lib/types.ts`
 - Created `/lib/pricing-data.ts` with official AI tool pricing (Claude, GPT-4, Gemini) + source URLs
 - Set up Supabase project, created `audits` and `leads` tables with full schema
@@ -75,9 +75,9 @@
 
 **What I learned:**
 - Grouping complex audit logic into specific rule sets (e.g., redundancy vs overpaying) makes testing much more predictable and scalable.
-- shadcn Select component had z-index/click issues in dark theme — native select more reliable.
-- Hydration mismatch happens when server renders different HTML than client.
-- `Next.js` App Router requires careful delineation between Server Components (for data fetching/DB operations) and Client Components (for interactive results dashboards).
+- Users need clear visual feedback about plan requirements (minimum seats, etc.)
+- Component architecture matters - separating concerns makes testing and maintenance easier
+- shadcn components provide consistent UI patterns that users expect
 
 **Blockers / what I'm stuck on:**
 - None — the entire audit pipeline from form submission to AI summary display is now robust.deployment ti vercek is left .
@@ -87,3 +87,39 @@
 - Finalize email notifications via Resend for user engagement.
 - Perform final end-to-end user tests across mobile and desktop.
 - Deploy MVP to Vercel for live testing and gather initial feedback.
+
+---
+
+## May 10, 2026
+
+### Deploy Audit Engine V2 - Capability Overlap Analysis
+**What I did:**
+- **Added new types**: Capability enum, PlanCapabilityProfile, AuditFinding, AuditStackSummary, AuditOutput
+- **Created capability data**: Complete mapping of tools/plans to their capabilities (IDE integration, code assistant, etc.)
+- **Built analysis functions**: Overlap detection, unique capability scoring, marginal utility calculation
+- **Implemented new audit pipeline**: 5-stage process (normalize → context → findings → recommendations → summary)
+- **Enhanced recommendations**: Every result now includes confidence, overlap score, unique value, rationale
+- **Updated API route**: Switched to auditEngineV2 for capability-based analysis
+- **Added comprehensive tests**: 15+ test cases covering overlap, pricing, data quality, edge cases
+
+### UI/UX Improvements  
+**What I did:**
+- **Auto-fill seats**: When plan selected, automatically fills minimum required seats
+- **Prevent below-minimum**: Users can't decrease seats below plan requirements
+- **Added shadcn warnings**: Inline alerts with AlertTriangle/Info icons instead of browser alerts
+- **Fixed duplicate functions**: Resolved TeamInfo component function duplication errors
+- **Enhanced homepage**: Added gradient badges, trust indicators, features section with icons
+- **Updated pricing data**: Adjusted Claude Pro/Team and ChatGPT Plus/Pro/Team pricing
+
+### Technical Fixes
+**What I did:**
+- **Fixed imports**: Added missing ToolIcon and TOOL_DISPLAY_NAMES imports in SpendDetails
+- **Resolved lint errors**: Cleaned up component imports and type definitions
+- **Added new action type**: "cancel-redundant" for audit recommendations
+- **Updated badge styling**: Improved visual hierarchy with gradients and shadows
+
+### What I learned:
+- Capability overlap analysis provides much more defensible recommendations than simple price comparison
+- Users need clear visual feedback about plan requirements (minimum seats, etc.)
+- Component architecture matters - separating concerns makes testing and maintenance easier
+- shadcn components provide consistent UI patterns that users expect
