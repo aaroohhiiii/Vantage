@@ -3,7 +3,9 @@ import { NextResponse } from "next/server"
 import { runAudit } from "@/lib/auditEngineV2"
 import { generateEnhancedAiSummary, generatePerToolInsights } from "@/lib/enhancedAiSummary"
 import { getSupabaseServerClient } from "@/lib/supabase"
+import { auditRateLimit } from "@/lib/ratelimit"
 import type { AuditInput, ToolInput, UseCase } from "@/lib/types"
+import { headers } from "next/headers"
 
 const VALID_USE_CASES: UseCase[] = ["coding", "writing", "data", "research", "mixed"]
 
@@ -62,6 +64,31 @@ function sanitizeAuditInput(value: unknown): { data?: AuditInput; errors?: strin
 
 export async function POST(request: Request) {
   try {
+    const headerList = headers()
+    const ip = headerList.get("x-forwarded-for") || "127.0.0.1"
+
+    // Rate limiting check
+    const { success, limit, reset, remaining } = await auditRateLimit.limit(ip)
+    
+    if (!success) {
+      return NextResponse.json(
+        { 
+          error: "Too many requests. You can run 5 audits per hour.",
+          limit,
+          remaining,
+          reset
+        },
+        { 
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          }
+        }
+      )
+    }
+
     const payload = await request.json()
     console.log('[api/audit] incoming payload:', JSON.stringify(payload).slice(0, 2000))
 
