@@ -26,7 +26,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
   return (
     <section className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
       {/* Spend Breakdown */}
-      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6">
+      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow">
         <h3 className="mb-1 text-sm font-bold uppercase tracking-wider text-[#9ca3af]">Spend Breakdown</h3>
         <div className="flex items-center gap-6">
           <div className="relative flex h-32 w-32 shrink-0 items-center justify-center">
@@ -58,7 +58,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
       </div>
 
       {/* Overlap Analysis */}
-      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6">
+      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow">
         <h3 className="mb-1 text-sm font-bold uppercase tracking-wider text-[#9ca3af]">Overlap Analysis</h3>
         <div className="mb-4 mt-6">
           <div className="flex items-center justify-between text-[10px] text-[#9ca3af]">
@@ -76,16 +76,34 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
       </div>
 
       {/* Benchmark Comparison */}
-      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6">
+      <div className="rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow">
         <h3 className="mb-1 text-sm font-bold uppercase tracking-wider text-[#9ca3af]">Benchmark Comparison</h3>
-        <p className="mb-4 mt-2 text-xs text-[#6b7280]">Teams of similar size and use case typically spend between:</p>
-        <p className="mb-1 text-3xl font-bold text-[#0A0A0A]">
-          ${benchmark.low} – ${benchmark.high}<span className="text-base font-normal text-[#9ca3af]"> /mo</span>
-        </p>
-        <p className={`text-xs font-medium ${isInRange ? "text-[#00C853]" : "text-[#F59E0B]"}`}>
-          {isInRange ? "You're within the efficient range." : "You're outside the typical range."}
-        </p>
+        
+        <div className="mt-4 flex flex-col gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">Spend per Developer</p>
+            <p className="text-2xl font-bold text-[#0A0A0A]">${(totalSpend / audit.input.teamSize).toFixed(2)}<span className="text-xs font-normal text-[#9ca3af]"> /mo</span></p>
+          </div>
 
+          <div className="h-px w-full bg-[#f3f4f6]" />
+
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">Market Average</p>
+            <p className="text-xl font-bold text-[#0A0A0A]">
+              ${benchmark.low} – ${benchmark.high}<span className="text-xs font-normal text-[#9ca3af]"> /mo</span>
+            </p>
+            <p className="text-[10px] text-[#6b7280]">For teams of {audit.input.teamSize} members</p>
+          </div>
+
+          <div className={`rounded-lg p-3 text-xs font-medium ${isInRange ? "bg-[#f0fdf4] text-[#16a34a]" : "bg-[#fef9c3] text-[#a16207]"}`}>
+            {isInRange 
+              ? "Your spend is within the efficient market range for your team size." 
+              : totalSpend < benchmark.low 
+                ? "You are spending below the typical market range ."
+                : "Your spend is above the typical market range for your team size."
+            }
+          </div>
+        </div>
       </div>
     </section>
   )
