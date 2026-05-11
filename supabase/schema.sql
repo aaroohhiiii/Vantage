@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS audits (
   show_credex     BOOLEAN NOT NULL DEFAULT false,
   summary         JSONB,                   -- AuditStackSummary
   efficiency_score INTEGER DEFAULT 0,      -- 0-100 score
+  referral_code   TEXT UNIQUE,             -- Unique code for sharing
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

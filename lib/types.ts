@@ -71,6 +71,7 @@ export type AuditInput = {
   tools: ToolInput[]
   teamSize: number
   useCase: UseCase
+  referredBy?: string
 }
 
 export type ToolAuditResult = {
@@ -133,6 +134,7 @@ export type AuditResult = {
   // Computed scores
   summary?: AuditStackSummary
   efficiencyScore?: number // 0–100
+  referralCode?: string
 }
 
 export type Lead = {

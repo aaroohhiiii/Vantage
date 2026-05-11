@@ -47,7 +47,14 @@ export async function getAuditById(id: string): Promise<AuditResult | null> {
   return {
     id: data.id,
     input: data.input,
-    results: data.results,
+    results: (data.results as any[]).map((r: any) => ({
+      ...r,
+      // Ensure these specific AI fields are mapped correctly if they exist in the JSON
+      strengths: r.strengths || [],
+      weaknesses: r.weaknesses || [],
+      alternativeTool: r.alternativeTool || "",
+      uniqueCapabilityAnalysis: r.uniqueCapabilityAnalysis || ""
+    })),
     totalMonthlySavings: data.total_monthly_savings,
     totalAnnualSavings: data.total_annual_savings,
     aiSummary: data.ai_summary,
@@ -56,6 +63,7 @@ export async function getAuditById(id: string): Promise<AuditResult | null> {
     createdAt: data.created_at,
     summary: data.summary ?? undefined,
     efficiencyScore: data.efficiency_score ?? undefined,
+    referralCode: data.referral_code ?? undefined,
   }
 }
 
