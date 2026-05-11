@@ -123,3 +123,32 @@
 - Users need clear visual feedback about plan requirements (minimum seats, etc.)
 - Component architecture matters - separating concerns makes testing and maintenance easier
 - shadcn components provide consistent UI patterns that users expect
+
+
+
+## May 11, 2026
+### Core Engine & Intelligence
+**What I did:**
+- **Efficiency Score Engine**: Implemented 0–100 scoring based on overlap, unique value, and use-case alignment
+- **Per-Tool AI Analysis**: Integrated Groq Llama-3 to generate tool-specific Strengths, Weaknesses, and Alternatives
+- **Unique Capability Deep-Dives**: AI now generates custom advice on leveraging specific features for the user's workflow
+- **Batched AI Calls**: Optimized backend to generate all per-tool insights in a single request
+
+### UI/UX Redesign
+**What I did:**
+- **Dashboard Grid Layout**: Complete results page overhaul with 5 modular sections (Hero, Analytics, Tools, Signals, Methodology)
+- **Data Visualizations**: Built SVG spend donuts, overlap gradient bars, and benchmark range displays
+- **Enhanced Tool Cards**: Redesigned insights with impact badges, fit bars, and detailed analysis paragraphs
+- **Improved Recommendations**: Updated "Top Actions" to explicitly mention tool names and primary alternatives
+
+### Technical & Infrastructure
+**What I did:**
+- **Supabase Schema Update**: Added `summary` and `efficiency_score` columns to persist deeper audit data
+- **TypeScript Stabilization**: Resolved build-blocking lint errors across new modular components
+- **Optimized Data Mapping**: Ensured all new UI elements map directly to backend engine scores (no dummy data)
+
+### What I learned:
+- Breaking a complex page into small, modular components (Hero, Analytics, etc.) makes state management and styling much easier.
+- Batching AI requests for multiple items into one prompt significantly improves UI responsiveness.
+- Users value specific tool names and alternatives in recommendations over generic advice.
+- Explicitly showing "Strengths" vs "Weaknesses" helps justify the ROI of premium tools like Cursor.

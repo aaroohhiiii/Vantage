@@ -38,12 +38,11 @@ export default function Home() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-white text-sm font-bold shadow-lg"
-              style={{ background: "linear-gradient(135deg, #00C853 0%, #00A846 100%)" }}
-            >
-              P
-            </div>
+            <img
+              src="/Logo.png"
+              alt="Vantage"
+              className="h-11 w-11 rounded-xl shadow-lg"
+            />
             <span
               className="text-xl font-bold tracking-tight text-white"
               style={{ fontFamily: "var(--font-heading)" }}
@@ -102,7 +101,7 @@ export default function Home() {
 
             {/* Subheadline */}
             <p className="mb-8 max-w-lg text-lg leading-relaxed text-gray-300">
-              Audit your AI stack in 90 seconds. Find redundant subscriptions,
+              Audit your AI stack in  seconds. Find redundant subscriptions,
               overpriced plans, and hidden savings opportunities instantly.
             </p>
 
@@ -110,7 +109,7 @@ export default function Home() {
             <div className="mb-8 flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-[#00C853]" />
-                <span className="text-sm text-gray-400">No credit card required</span>
+                <span className="text-sm text-gray-400">Free Of Cost </span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="h-5 w-5 text-[#00C853]" />

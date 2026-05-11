@@ -1,14 +1,12 @@
 "use client"
-
+import { ToolIcon, TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
 import { BadgeDollarSign, RefreshCw, Scissors, Zap } from "lucide-react"
 
 const MOCK_TOOLS = [
-  { name: "Cursor Pro", spend: 40, status: "keep", color: "#00C853" },
-  { name: "GitHub Copilot", spend: 19, status: "cancel", color: "#EF4444" },
-  { name: "Claude Pro", spend: 20, status: "keep", color: "#CC785C" },
-  { name: "ChatGPT Team", spend: 60, status: "downgrade", color: "#F59E0B" },
-  { name: "OpenAI API", spend: 180, status: "keep", color: "#00C853" },
-  { name: "Anthropic API", spend: 95, status: "keep", color: "#8B5CF6" },
+  { toolName: "cursor" as const, spend: 40, status: "keep" },
+  { toolName: "github-copilot" as const, spend: 19, status: "cancel" },
+  { toolName: "claude" as const, spend: 20, status: "keep" },
+  { toolName: "chatgpt" as const, spend: 60, status: "downgrade" },
 ]
 
 const SAVINGS_ITEMS = [
@@ -60,17 +58,14 @@ export default function HeroDashboard() {
 
         {/* Tool rows */}
         <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
-          {MOCK_TOOLS.map((tool, ) => (
+          {MOCK_TOOLS.map((tool) => (
             <div
-              key={tool.name}
+              key={tool.toolName}
               className="flex items-center justify-between rounded-lg px-3 py-2.5 bg-white border border-[#E5E7EB] hover:shadow-sm transition-shadow"
             >
               <div className="flex items-center gap-2.5">
-                <div
-                  className="h-2 w-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: tool.color }}
-                />
-                <span className="text-sm text-[#0A0A0A] font-medium">{tool.name}</span>
+                <ToolIcon tool={tool.toolName} size={24} />
+                <span className="text-sm text-[#0A0A0A] font-medium">{TOOL_DISPLAY_NAMES[tool.toolName]}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-xs text-[#4B5563] font-medium">${tool.spend}/mo</span>
