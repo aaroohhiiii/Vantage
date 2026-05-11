@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { runAudit } from "@/lib/auditEngineV2"
 import { generateAiSummary } from "@/lib/aiSummary"
+import { generatePerToolInsights } from "@/lib/enhancedAiSummary"
 import { getSupabaseServerClient } from "@/lib/supabase"
 import type { AuditInput, ToolInput, UseCase } from "@/lib/types"
 
@@ -87,22 +88,48 @@ export async function POST(request: Request) {
       showCredex: audit.showCredex,
     })
 
+    // Generate per-tool AI insights
+    const perToolInsights = await generatePerToolInsights({
+      input: validation.data,
+      results: audit.results,
+      totalMonthlySavings: audit.totalMonthlySavings,
+      totalAnnualSavings: audit.totalAnnualSavings,
+      isOptimal: audit.isOptimal,
+      showCredex: audit.showCredex,
+    })
+
+    // Merge insights into results
+    const enrichedResults = audit.results.map(r => {
+      const insight = perToolInsights[r.tool]
+      if (!insight) return r
+      return {
+        ...r,
+        strengths: insight.strengths,
+        weaknesses: insight.weaknesses,
+        alternativeTool: insight.alternativeTool,
+        uniqueCapabilityAnalysis: insight.uniqueCapabilityAnalysis
+      }
+    })
+
     const supabase = getSupabaseServerClient()
     const { data, error } = await supabase
       .from("audits")
       .insert({
         input: validation.data,
-        results: audit.results,
+        results: enrichedResults,
         total_monthly_savings: audit.totalMonthlySavings,
         total_annual_savings: audit.totalAnnualSavings,
         ai_summary: aiSummaryText,
         is_optimal: audit.isOptimal,
         show_credex: audit.showCredex,
+        summary: audit.summary ?? null,
+        efficiency_score: audit.efficiencyScore ?? null,
       })
       .select("id")
       .single()
 
     if (error || !data) {
+      console.error('[api/audit] Supabase error:', error)
       return NextResponse.json(
         {
           message: "Failed to save audit",

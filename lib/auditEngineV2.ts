@@ -521,6 +521,20 @@ function buildAuditStackSummary(
   }
 }
 
+/* ─── Pipeline Stage 5b: Compute Efficiency Score ─── */
+
+function computeEfficiencyScore(recommendations: ToolAuditResult[]): number {
+  if (recommendations.length === 0) return 50
+  
+  const avgOverlap = recommendations.reduce((s, r) => s + r.overlapScore, 0) / recommendations.length
+  const avgUnique = recommendations.reduce((s, r) => s + r.uniqueValueScore, 0) / recommendations.length
+  const avgAlignment = recommendations.reduce((s, r) => s + r.needAlignmentScore, 0) / recommendations.length
+  
+  // Higher overlap lowers score; higher unique value and alignment raise it
+  const raw = (1 - avgOverlap) * 50 + avgUnique * 30 + avgAlignment * 20
+  return Math.min(100, Math.max(0, Math.round(raw)))
+}
+
 /* ═══════════════════════════════════════════════════════════════
    MAIN ENTRY POINT
    ═══════════════════════════════════════════════════════════════ */
@@ -564,6 +578,7 @@ export function runAudit(input: AuditInput): AuditOutput {
     input: normalized,
     results: filteredResults,
     summary,
+    efficiencyScore: computeEfficiencyScore(filteredResults),
     totalMonthlySavings,
     totalAnnualSavings,
     isOptimal: summary.stackStatus === "optimized" || totalMonthlySavings < 100,

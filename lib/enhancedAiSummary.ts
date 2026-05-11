@@ -221,3 +221,46 @@ Strict Writing Directives:
     return generateEnhancedFallbackSummary(audit)
   }
 }
+
+export async function generatePerToolInsights(audit: SummaryInput): Promise<Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>> {
+  const { input, results } = audit
+  
+  const prompt = `You are a specialized AI stack auditor. Analyze each tool in the client's stack relative to their primary use case: ${input.useCase}.
+  
+  Stack:
+  ${results.map(r => `- ${r.tool} (${r.currentPlan}): ${r.recommendedAction.toUpperCase()} recommendation.`).join("\n")}
+  
+  For EACH tool listed above, provide:
+  1. 3 "Strengths" (specific to ${input.useCase})
+  2. 3 "Weaknesses" (specific to ${input.useCase})
+  3. "alternativeTool": The name of the single best alternative tool for this specific user's needs.
+  4. "uniqueCapabilityAnalysis": A 2-3 line paragraph analyzing the tool's unique capabilities and explaining exactly how the user can leverage them for their ${input.useCase} workflow.
+  
+  RETURN ONLY A VALID JSON OBJECT where keys are the tool names exactly as provided in the list above.
+  Example format:
+  {
+    "cursor": {
+      "strengths": ["Advanced Agent Mode", "Local indexing", "Privacy controls"],
+      "weaknesses": ["VS Code only", "Steeper learning curve", "High resource usage"],
+      "alternativeTool": "Windsurf",
+      "uniqueCapabilityAnalysis": "Cursor's 'Composer' mode allows you to build full-stack features from a single prompt, which is ideal for your ${input.useCase} workflow. Use its codebase indexing to perform large-scale refactors that standard Copilot would struggle with."
+    }
+  }`
+
+  try {
+    if (!process.env.GROQ_API_KEY) return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>
+
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      response_format: { type: "json_object" },
+      max_tokens: 1500,
+    })
+
+    const data = JSON.parse(completion.choices[0]?.message?.content || "{}")
+    return data
+  } catch (error) {
+    console.error("[generatePerToolInsights] error:", error)
+    return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>
+  }
+}
