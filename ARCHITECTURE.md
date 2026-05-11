@@ -13,8 +13,8 @@ graph TB
 
     %% API Layer
     subgraph "API Routes"
-        E[/api/audit] --> F[/api/generate-summary]
-        E --> G[/api/capture-lead]
+        E[api-audit] --> F[api-generate-summary]
+        E --> G[api-capture-lead]
     end
 
     %% Processing Layer
