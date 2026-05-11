@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { runAudit } from "@/lib/auditEngineV2"
-import { generateAiSummary } from "@/lib/aiSummary"
-import { generatePerToolInsights } from "@/lib/enhancedAiSummary"
+import { generateEnhancedAiSummary, generatePerToolInsights } from "@/lib/enhancedAiSummary"
 import { getSupabaseServerClient } from "@/lib/supabase"
 import type { AuditInput, ToolInput, UseCase } from "@/lib/types"
 
@@ -79,24 +78,25 @@ export async function POST(request: Request) {
     }
 
     const audit = runAudit(validation.data)
-    const aiSummaryText = await generateAiSummary({
-      input: validation.data,
-      results: audit.results,
-      totalMonthlySavings: audit.totalMonthlySavings,
-      totalAnnualSavings: audit.totalAnnualSavings,
-      isOptimal: audit.isOptimal,
-      showCredex: audit.showCredex,
-    })
-
-    // Generate per-tool AI insights
-    const perToolInsights = await generatePerToolInsights({
-      input: validation.data,
-      results: audit.results,
-      totalMonthlySavings: audit.totalMonthlySavings,
-      totalAnnualSavings: audit.totalAnnualSavings,
-      isOptimal: audit.isOptimal,
-      showCredex: audit.showCredex,
-    })
+    // Generate AI analysis in parallel to speed up response time on Vercel
+    const [aiSummaryText, perToolInsights] = await Promise.all([
+      generateEnhancedAiSummary({
+        input: validation.data,
+        results: audit.results,
+        totalMonthlySavings: audit.totalMonthlySavings,
+        totalAnnualSavings: audit.totalAnnualSavings,
+        isOptimal: audit.isOptimal,
+        showCredex: audit.showCredex,
+      }),
+      generatePerToolInsights({
+        input: validation.data,
+        results: audit.results,
+        totalMonthlySavings: audit.totalMonthlySavings,
+        totalAnnualSavings: audit.totalAnnualSavings,
+        isOptimal: audit.isOptimal,
+        showCredex: audit.showCredex,
+      })
+    ])
 
     // Merge insights into results
     const enrichedResults = audit.results.map(r => {
