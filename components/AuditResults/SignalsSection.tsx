@@ -10,11 +10,11 @@ export function SignalsSection({ audit }: Props) {
   const hasSavings = audit.totalMonthlySavings > 0
 
   return (
-    <section className="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <section className="mb-10">
       {/* Signals Detected */}
       <div>
-        <h2 className="mb-1 text-lg font-bold text-[#0A0A0A]">Signals Detected</h2>
-        <p className="mb-5 text-xs text-[#6b7280]">Key signals our engine identified in your stack.</p>
+   
+       
         <div className="space-y-3">
           {signals.map((signal, i) => {
             const IconComp = signal.icon === "check" ? Check : signal.icon === "warning" ? AlertTriangle : Info
@@ -31,7 +31,7 @@ export function SignalsSection({ audit }: Props) {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-[#111827]">{signal.title}</p>
-                  <p className="text-xs text-[#6b7280]">{signal.description}</p>
+                  <p className="text-xs text-[#111827]">{signal.description}</p>
                 </div>
                 <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${impactColor}`}>
                   {signal.impact}
@@ -40,13 +40,11 @@ export function SignalsSection({ audit }: Props) {
             )
           })}
         </div>
-        <button className="mt-4 flex items-center gap-1 text-xs font-medium text-[#6b7280] hover:text-[#111827]">
-          View all signals <ArrowRight className="h-3 w-3" />
-        </button>
+        
       </div>
 
       {/* Recommendations */}
-      <div>
+      {/* <div>
         <h2 className="mb-1 text-lg font-bold text-[#0A0A0A]">Recommendations</h2>
         <p className="mb-5 text-xs text-[#6b7280]">Prioritized actions to optimize your spend.</p>
 
@@ -109,7 +107,7 @@ export function SignalsSection({ audit }: Props) {
             Re-run audit in 90 days
           </div>
         </div>
-      </div>
+      </div> */}
     </section>
   )
 }

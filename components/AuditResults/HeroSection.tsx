@@ -44,8 +44,9 @@ export function HeroSection({ audit, totalSpend }: Props) {
   ]
 
   return (
-    <section className="mb-10 overflow-hidden rounded-[20px] bg-[#032e21] text-white">
-      <div className="grid grid-cols-1 gap-6 p-8 sm:p-10 lg:grid-cols-[auto_1fr_1fr]">
+    <section className="mb-10 overflow-hidden rounded-[24px] bg-gradient-to-br from-[#032e21] via-[#0a3d2a] to-[#032e21] text-white shadow-[0_20px_40px_rgba(0,0,0,0.15)] border border-green-900/20">
+      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 pointer-events-none" />
+      <div className="relative grid grid-cols-1 gap-6 p-8 sm:p-10 lg:grid-cols-[auto_1fr_1fr]">
         {/* Left: Gauge */}
         <div className="flex flex-col items-center justify-center gap-2">
           <div className="relative flex h-40 w-40 items-center justify-center">
@@ -66,9 +67,7 @@ export function HeroSection({ audit, totalSpend }: Props) {
           <span className="rounded-full bg-[#00C853]/20 px-3 py-1 text-xs font-bold text-[#00C853]">
             {label}
           </span>
-          <p className="mt-1 max-w-[160px] text-center text-[11px] leading-snug text-white/50">
-            Your AI spend is efficient and well-aligned with your team&apos;s needs.
-          </p>
+
         </div>
 
         {/* Center: Headline + Stats */}
@@ -86,14 +85,26 @@ export function HeroSection({ audit, totalSpend }: Props) {
               <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Monthly Spend</p>
               <p className="text-xl font-bold text-white">${totalSpend.toFixed(2)}<span className="text-sm font-normal text-white/50">/mo</span></p>
             </div>
-            <div>
+            <div className="relative">
               <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Potential Savings</p>
-              <p className="text-xl font-bold text-white">${audit.totalMonthlySavings.toFixed(2)}<span className="text-sm font-normal text-white/50">/mo</span></p>
+              <div className="flex items-baseline gap-2">
+                <p className="text-3xl font-bold text-[#00C853]">${audit.totalMonthlySavings.toFixed(2)}<span className="text-lg font-normal text-white/50">/mo</span></p>
+                <span className="rounded-full bg-[#00C853]/20 px-2 py-1 text-[35px] font-bold text-[#00C853]">
+                  ${(audit.totalMonthlySavings * 12).toFixed(0)}/yr
+                </span>
+
+              </div>
+              {audit.totalMonthlySavings >= 500 && (
+                <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#00C853] animate-pulse">
+                  <span className="text-[10px] font-bold text-white">!</span>
+                </div>
+              )}
             </div>
-            <div>
+            {/* <div>
               <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Tools Audited</p>
               <p className="text-xl font-bold text-white">{toolCount}</p>
-            </div>
+            </div> */}
+
           </div>
 
           <div className="mb-4 flex flex-wrap gap-2">
@@ -103,25 +114,25 @@ export function HeroSection({ audit, totalSpend }: Props) {
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
               <Briefcase className="h-3 w-3" /> {useCaseLabels[audit.input.useCase] || audit.input.useCase}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
-              <Clock className="h-3 w-3" /> Audit generated in 4.2s
-            </span>
+
           </div>
 
-          <div className="flex flex-wrap gap-3 text-[11px] text-white/40">
-            <span>Pricing verified {new Date(audit.createdAt).toLocaleString("en-US", { month: "long", year: "numeric" })}</span>
-            <span>·</span>
-            <span>7 pricing models analyzed</span>
-            <span>·</span>
-            <span>Currency: USD</span>
-          </div>
+ 
         </div>
 
-        {/* Right: Summary checklist */}
-        <div className="flex flex-col justify-center rounded-xl border border-white/10 bg-white/5 p-6">
-          <h3 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-white/60">
-            <Layers className="h-4 w-4" /> Summary
-          </h3>
+        {/* Right: Summary checklist + AI Summary */}
+        <div className="flex flex-col gap-6 rounded-xl border border-white/10 bg-white/5 p-6">
+          <div>
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-white/60">
+              <Layers className="h-4 w-4" /> Executive Summary
+            </h3>
+            <p className="text-sm leading-relaxed text-white/90">
+              {audit.aiSummary || "Analyzing your stack efficiency and identifying optimization pathways..."}
+            </p>
+          </div>
+
+          <div className="h-px w-full bg-white/10" />
+
           <div className="space-y-4">
             {summaryItems.map((item, i) => (
               <div key={i} className="flex items-start gap-3">
