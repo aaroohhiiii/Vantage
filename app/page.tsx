@@ -1,5 +1,4 @@
-// import Link from "next/link"
-// import { motion } from "framer-motion"
+import Link from "next/link"
 import { CheckCircle2, TrendingUp, Shield, Zap } from "lucide-react"
 import Image from "next/image"
 import HeroDashboard from "@/components/HeroDashboard"
@@ -68,12 +67,12 @@ export default function Home() {
               <span className="h-1.5 w-1.5 rounded-full bg-[#00C853] animate-pulse-glow" />
               Powered by Credex
             </div>
-            <a
+            <Link
               href="/audit/new"
               className="btn-primary rounded-xl px-6 py-2.5 text-sm font-semibold text-white shadow-lg"
             >
               Free Audit
-            </a>
+            </Link>
           </div>
         </nav>
         </div>
@@ -126,13 +125,13 @@ export default function Home() {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-4">
-              <a
-                href="/audit/new"
-                className="rounded-2xl bg-gradient-to-r from-[#00C853] to-[#00A846] px-8 py-4 text-sm font-semibold text-white shadow-xl hover:shadow-2xl transition-all duration-300"
-                id="hero-cta-audit"
-              >
-                Run Free Audit →
-              </a>
+            <Link
+              href="/audit/new"
+              className="rounded-2xl bg-gradient-to-r from-[#00C853] to-[#00A846] px-8 py-4 text-sm font-semibold text-white shadow-xl hover:shadow-2xl transition-all duration-300"
+              id="hero-cta-audit"
+            >
+              Run Free Audit →
+            </Link>
               <div className="text-sm text-gray-400">
                 Trusted by 500+ engineering teams
               </div>
