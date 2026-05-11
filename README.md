@@ -11,7 +11,7 @@ Vantage helps startups and engineering teams analyze their AI tool stack, identi
 - **Finance leaders** needing visibility into AI tool spending
 - **DevOps managers** managing tool subscriptions and licenses
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Homepage & Audit Flow
 ![Homepage](https://via.placeholder.com/800x400/1a1a1a/00C853?text=Vantage+Homepage)
@@ -27,7 +27,7 @@ Vantage helps startups and engineering teams analyze their AI tool stack, identi
 
 *Note: Replace these placeholders with actual screenshots after deployment*
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+ 
@@ -154,7 +154,7 @@ npm start
 - **Market Analysis**: Based on industry benchmarks and competitive analysis
 - **AI Insights**: Generated using Llama 3.3 with structured prompts
 
-## 🛠️ Development
+##  Development
 
 ### Running Tests
 ```bash
@@ -180,7 +180,7 @@ npm run lint          # Run ESLint
 - **Bundle Size**: ~450KB gzipped
 - **Database**: Optimized indexes for sub-100ms query times
 
-## 🔒 Security
+##  Security
 
 - **Row Level Security**: Public audit reads, private lead data
 - **No PII Exposure**: Audit results contain no personal information
@@ -188,7 +188,7 @@ npm run lint          # Run ESLint
 - **Input Validation**: Comprehensive validation on all user inputs
 - **HTTPS Only**: Enforced in production
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -200,13 +200,12 @@ npm run lint          # Run ESLint
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+##  Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/vantage/issues)
-- **Email**: support@vantage.dev
-- **Documentation**: [Wiki](https://github.com/your-username/vantage/wiki)
 
-## 🌟 Deployed URL
+
+##  Deployed URL
 
 **Live Demo**: [https://vantage-theta-eosin.vercel.app/](https://vantage-theta-eosin.vercel.app/)
 
