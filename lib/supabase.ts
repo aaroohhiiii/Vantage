@@ -53,7 +53,9 @@ export async function getAuditById(id: string): Promise<AuditResult | null> {
     aiSummary: data.ai_summary,
     isOptimal: data.is_optimal,
     showCredex: data.show_credex,
-    createdAt: data.created_at
+    createdAt: data.created_at,
+    summary: data.summary ?? undefined,
+    efficiencyScore: data.efficiency_score ?? undefined,
   }
 }
 
@@ -69,7 +71,9 @@ export async function saveAudit(audit: Omit<AuditResult, 'id' | 'createdAt'>):
       total_annual_savings: audit.totalAnnualSavings,
       ai_summary: audit.aiSummary,
       is_optimal: audit.isOptimal,
-      show_credex: audit.showCredex
+      show_credex: audit.showCredex,
+      summary: audit.summary ?? null,
+      efficiency_score: audit.efficiencyScore ?? null,
     })
     .select('id')
     .single()

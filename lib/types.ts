@@ -92,6 +92,14 @@ export type ToolAuditResult = {
   needAlignmentScore: number // 0-1: how well unique features match user needs
   findings: AuditFinding[]
   rationale: string[] // Bullet points explaining the recommendation
+  
+  // AI ENHANCEMENTS
+  aiInsight?: string // 2-3 line summary from Groq
+  strengths?: string[]
+  weaknesses?: string[]
+  alternativeTool?: string // Primary alternative tool name
+  uniqueCapabilityAnalysis?: string // Paragraph on how to use unique features for the use case
+
   marginalUtility: {
     capabilities: Capability[]
     description: string
@@ -122,8 +130,9 @@ export type AuditResult = {
   showCredex: boolean
   createdAt: string
   
-  // NEW FIELD
+  // Computed scores
   summary?: AuditStackSummary
+  efficiencyScore?: number // 0–100
 }
 
 export type Lead = {

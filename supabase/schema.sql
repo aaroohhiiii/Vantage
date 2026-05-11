@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS audits (
   ai_summary      TEXT NOT NULL DEFAULT '',
   is_optimal      BOOLEAN NOT NULL DEFAULT false,
   show_credex     BOOLEAN NOT NULL DEFAULT false,
+  summary         JSONB,                   -- AuditStackSummary
+  efficiency_score INTEGER DEFAULT 0,      -- 0-100 score
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
