@@ -1,13 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Download, ArrowLeft } from "lucide-react"
-
 import { getAuditById } from "@/lib/supabase"
 import { HeroSection } from "@/components/AuditResults/HeroSection"
 import { AnalyticsGrid } from "@/components/AuditResults/AnalyticsGrid"
 import { ToolInsightsSection } from "@/components/AuditResults/ToolInsightsSection"
 import { SignalsSection } from "@/components/AuditResults/SignalsSection"
 import { MethodologySection } from "@/components/AuditResults/MethodologySection"
+import { ResultsNavbar } from "@/components/AuditResults/ResultsNavbar"
 import PixelBlast from "@/components/ui/PixelBlast"
 
 type PageProps = {
@@ -76,40 +75,35 @@ export default async function AuditPage({ params }: PageProps) {
 
       <div className="dot-grid pointer-events-none absolute inset-0 z-0 opacity-10" />
 
-      {/* Content */}
       <div className="relative z-10">
-        {/* Navbar */}
-        <header className="sticky top-0 z-50 border-b border-gray-800 bg-black/80 backdrop-blur-md px-6 py-4">
-          <div className="mx-auto flex max-w-7xl items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src="/Logo.png"
-                alt="Vantage"
-                className="h-8 w-8 rounded-lg"
-              />
-              <span className="text-lg font-bold tracking-tight text-white">Vantage</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors">
-                <ArrowLeft className="h-3 w-3" /> New Audit
-              </Link>
-              <button className="flex items-center gap-1.5 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors">
-                <Download className="h-3.3 w-3" />
-              </button>
-            </div>
-          </div>
-        </header>
+        <ResultsNavbar />
 
-      <main className="mx-auto max-w-7xl px-6 py-10">
+        <main className="mx-auto max-w-7xl px-6 py-10">
+        {/* PDF Only Header */}
+        <div className="hidden print:flex items-center justify-between mb-8 border-b border-[#f3f4f6] pb-4">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00C853] text-white font-bold">V</div>
+            <span className="text-xl font-bold tracking-tight text-[#0A0A0A]">Vantage AI Audit Report</span>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] font-bold uppercase text-[#9ca3af]">Generated On</p>
+            <p className="text-xs font-medium">{new Date(audit.createdAt).toLocaleDateString()}</p>
+          </div>
+        </div>
         <HeroSection audit={audit} totalSpend={totalSpend} />
         
         <AnalyticsGrid audit={audit} totalSpend={totalSpend} />
         
         <ToolInsightsSection audit={audit} />
         
-        <SignalsSection audit={audit} />
-        
-        <MethodologySection audit={audit} />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-start">
+          <div className="lg:col-span-2">
+            <SignalsSection audit={audit} />
+          </div>
+          <div className="lg:col-span-1">
+            <MethodologySection audit={audit} />
+          </div>
+        </div>
 
         {/* Footer */}
         <footer className="mt-20 border-t border-gray-800 py-10 text-center">

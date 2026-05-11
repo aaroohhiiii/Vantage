@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Suspense } from "react"
 
 import SpendForm from "@/components/SpendForm"
 import PixelBlast from "@/components/ui/PixelBlast"
@@ -57,7 +58,9 @@ export default function NewAuditPage() {
             </p>
           </div>
 
-          <SpendForm />
+          <Suspense fallback={<div className="h-96 w-full animate-pulse rounded-3xl bg-gray-900/50" />}>
+            <SpendForm />
+          </Suspense>
         </section>
       </div>
     </main>

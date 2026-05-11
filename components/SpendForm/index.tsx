@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 
 import { SpendDetails } from "@/components/SpendForm/SpendDetails"
@@ -70,6 +70,8 @@ export default function SpendForm() {
   const [error, setError] = useState<string | null>(null)
   const [direction, setDirection] = useState(1)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const refCode = searchParams.get("ref") || undefined
 
   useEffect(() => {
     const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY)
@@ -150,6 +152,7 @@ export default function SpendForm() {
         tools: state.selectedTools.map((tool) => state.toolInputs[tool]),
         teamSize: state.teamSize,
         useCase: state.useCase,
+        referredBy: refCode,
       }
       const response = await fetch("/api/audit", {
         method: "POST",
