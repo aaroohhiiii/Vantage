@@ -208,7 +208,8 @@ Strict Writing Directives:
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "llama-3.3-70b-versatile",
-      max_tokens: 250,
+      max_tokens: 300,
+      temperature: 0.5,
     })
 
     const responseText = chatCompletion.choices[0]?.message?.content ?? ""
@@ -252,9 +253,10 @@ export async function generatePerToolInsights(audit: SummaryInput): Promise<Reco
 
     const completion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
       response_format: { type: "json_object" },
-      max_tokens: 1500,
+      max_tokens: 1000,
+      temperature: 0.4,
     })
 
     const data = JSON.parse(completion.choices[0]?.message?.content || "{}")
