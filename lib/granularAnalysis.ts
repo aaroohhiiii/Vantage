@@ -256,6 +256,21 @@ function findBetterAlternative(
       const useCaseCapabilities = altCapabilities.filter(cap => requiredCapabilities.includes(cap))
       const useCaseAlignment = useCaseCapabilities.length / requiredCapabilities.length
 
+      // Current tool's coverage of required capabilities
+      const currentCoverage = currentCapabilities.filter(cap => 
+        requiredCapabilities.includes(cap)
+      ).length
+
+      // Alternative coverage of required capabilities  
+      const altCoverage = altCapabilities.filter(cap => 
+        requiredCapabilities.includes(cap)
+      ).length
+
+      // Only recommend if alternative covers MORE required capabilities
+      if (altCoverage <= currentCoverage) {
+        continue // Don't consider this alternative
+      }
+
       // Must provide good use case alignment (80%+) or significant savings
       if (useCaseAlignment < 0.8 && altPrice >= monthlySpend) continue
 
@@ -343,11 +358,19 @@ export function analyzeToolGranular(
   // Priority 3: Better alternative (upgrade or switch)
   else if (betterAlternative) {
     if (betterAlternative.isUpgrade) {
-      overallRecommendation = "switch-tool" // Even if upgrade, it's a different tool
-      recommendedAdditionalCost = betterAlternative.additionalCost
-    } else {
+      // Only recommend switch if use case alignment is >90% (much better for use case)
+      if (betterAlternative.useCaseAlignment > 0.9) {
+        overallRecommendation = "switch-tool"
+        recommendedAdditionalCost = betterAlternative.additionalCost
+      } else {
+        overallRecommendation = "keep" // Don't switch for marginal improvements
+      }
+    } else if (betterAlternative.savings > 10) {
+      // Only switch if savings are meaningful ($10+/month)
       overallRecommendation = "switch-tool"
       totalPotentialSavings = betterAlternative.savings
+    } else {
+      overallRecommendation = "keep" // Don't switch for tiny savings
     }
   }
   // Priority 4: Same vendor alternative

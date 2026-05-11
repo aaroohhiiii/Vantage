@@ -17,10 +17,8 @@ import {
   calculateMarginalUtility,
   findDuplicateCapabilities,
   findUncoveredCapabilities,
-  recommendAction,
   getStackCapabilities
 } from "@/lib/capabilityAnalysis"
-import { analyzeAllToolsGranular } from "@/lib/granularAnalysis"
 import type {
   AuditInput,
   AuditOutput,
@@ -235,148 +233,231 @@ function runAllRules(context: AuditContext): AuditFinding[] {
 /* ─── Pipeline Stage 4: Resolve Findings to Recommendations ─── */
 
 function resolveFindingsToRecommendations(
-  findings: AuditFinding[], 
+  findings: AuditFinding[],
   context: AuditContext
 ): ToolAuditResult[] {
   const { normalized, totalSpend } = context
   const resultMap = new Map<ToolName, ToolAuditResult>()
-  
-  // Get granular analysis for all tools
-  const granularAnalyses = analyzeAllToolsGranular(normalized.tools, normalized.useCase)
-  
-  // Start with baseline results
-  normalized.tools.forEach(tool => {
+
+  // Initialize all results as "keep" by default
+  normalized.tools.forEach((tool) => {
     const credex = tool.monthlySpend > 50 || totalSpend > 200
     resultMap.set(tool.tool, buildKeep(tool, credex))
   })
-  
-  // Apply both capability-based and granular analysis
-  normalized.tools.forEach(tool => {
-    const otherTools = normalized.tools.filter(t => t.tool !== tool.tool)
+
+  // ─────────────────────────────────────────────────────────
+  // PRIORITY 1: API vs Subscription Overlap (HIGHEST PRIORITY)
+  // ─────────────────────────────────────────────────────────
+  const hasAnthropicAPI = normalized.tools.some((t) => t.tool === "anthropic-api")
+  const hasOpenAIAPI = normalized.tools.some((t) => t.tool === "openai-api")
+
+  const anthropicAPISpend = normalized.tools.find(
+    (t) => t.tool === "anthropic-api"
+  )?.monthlySpend || 0
+  const openaiAPISpend = normalized.tools.find((t) => t.tool === "openai-api")
+    ?.monthlySpend || 0
+
+  // If high API spend, remove corresponding chat subscriptions
+  if (anthropicAPISpend > 30) {
+    const claudeTool = normalized.tools.find((t) => t.tool === "claude")
+    if (claudeTool && hasAnthropicAPI) {
+      const claudeResult = resultMap.get("claude")!
+      claudeResult.recommendedAction = "remove"
+      claudeResult.monthlySavings = claudeTool.monthlySpend
+      claudeResult.annualSavings = claudeTool.monthlySpend * 12
+      claudeResult.reason = `High Anthropic API spend ($${anthropicAPISpend}/mo) makes Claude subscription redundant` 
+      claudeResult.rationale = [
+        `Anthropic API spend of $${anthropicAPISpend}/mo exceeds subscription cost`,
+        "API access provides same capabilities as subscription",
+        "Consolidate to API direct to eliminate duplicate costs"
+      ]
+    }
+  }
+
+  if (openaiAPISpend > 30) {
+    const chatgptTool = normalized.tools.find((t) => t.tool === "chatgpt")
+    if (chatgptTool && hasOpenAIAPI) {
+      const chatgptResult = resultMap.get("chatgpt")!
+      chatgptResult.recommendedAction = "remove"
+      chatgptResult.monthlySavings = chatgptTool.monthlySpend
+      chatgptResult.annualSavings = chatgptTool.monthlySpend * 12
+      chatgptResult.reason = `High OpenAI API spend ($${openaiAPISpend}/mo) makes ChatGPT subscription redundant` 
+      chatgptResult.rationale = [
+        `OpenAI API spend of $${openaiAPISpend}/mo exceeds subscription cost`,
+        "API access provides same capabilities as subscription",
+        "Consolidate to API direct to eliminate duplicate costs"
+      ]
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // PRIORITY 2: Capability-Based Analysis
+  // ─────────────────────────────────────────────────────────
+  normalized.tools.forEach((tool) => {
+    const otherTools = normalized.tools.filter((t) => t.tool !== tool.tool)
     const utility = calculateMarginalUtility(
       tool.tool,
       tool.plan,
       otherTools,
       normalized.useCase
     )
+
+    const toolFindings = findings.filter((f) =>
+      f.message.toLowerCase().includes(tool.tool.toLowerCase())
+    )
+
+    const hasUnknownPlan = toolFindings.some((f) => f.ruleId === "unknown-plan")
+
+    // Get current result (already initialized as "keep")
+    const currentResult = resultMap.get(tool.tool)!
     
-    const granularAnalysis = granularAnalyses.find(a => a.tool === tool.tool)
-    
-    const toolFindings = findings.filter(f => {
-      // Check if this finding applies to this tool
-      const toolName = tool.tool
-      return f.message.toLowerCase().includes(toolName.toLowerCase())
-    })
-    
-    const hasUnknownPlan = toolFindings.some(f => f.ruleId === "unknown-plan")
-    
-    // Determine action based on both analyses
-    let action: "keep" | "remove" | "downgrade" | "upgrade" | "consolidate" | "switch" | "cancel-redundant" = "keep"
-    let monthlySavings = 0
-    let reason = utility.description
-    
-    // Priority 1: Granular analysis recommendations
-    if (granularAnalysis) {
-      switch (granularAnalysis.overallRecommendation) {
-        case "downgrade-plan":
-          action = "downgrade"
-          monthlySavings = granularAnalysis.totalPotentialSavings
-          reason = granularAnalysis.planFit.reason
-          break
-        case "switch-tool":
-          action = "switch"
-          monthlySavings = granularAnalysis.totalPotentialSavings
-          reason = granularAnalysis.betterAlternative?.reason || "Switch to better alternative"
-          break
-        case "upgrade-plan":
-          action = "upgrade"
-          monthlySavings = 0 // Upgrades cost more, not savings
-          reason = granularAnalysis.planFit.reason
-          break
-        case "use-credits":
-          action = "keep" // Keep tool but use credits
-          monthlySavings = granularAnalysis.totalPotentialSavings
-          reason = "Use credits instead of retail pricing"
-          break
-      }
-    }
-    
-    // Priority 2: Capability overlap analysis (if no granular recommendation)
-    if (action === "keep") {
-      const capabilityAction = recommendAction(
-        utility.overlapScore,
-        utility.uniqueValueScore,
-        utility.needAlignmentScore,
-        tool.monthlySpend,
-        hasUnknownPlan
-      )
-      
-      if (capabilityAction !== "keep") {
-        action = capabilityAction
-        if (action === "remove" || action === "consolidate") {
-          monthlySavings = tool.monthlySpend
-        }
-      }
-    }
-    
-    // Build comprehensive rationale
+    // Skip recommendation logic if API overlap already handled this tool
+    // But still update the scores and rationale
+    const apiOverlapHandled = currentResult.recommendedAction === "remove" && 
+                             currentResult.rationale.some(r => r.includes("API"))
+
+    // Build rationale array
     const rationale: string[] = []
-    
-    // Add granular insights
-    if (granularAnalysis) {
-      if (granularAnalysis.planFit.savings > 0) {
-        rationale.push(`Plan fit: ${granularAnalysis.planFit.reason}`)
-      }
-      if (granularAnalysis.sameVendorAlternative?.savings) {
-        rationale.push(`Same vendor alternative: ${granularAnalysis.sameVendorAlternative.reason}`)
-      }
-      if (granularAnalysis.betterAlternative?.savings || granularAnalysis.betterAlternative?.additionalCost) {
-        rationale.push(`Alternative tool: ${granularAnalysis.betterAlternative.reason}`)
-      }
+
+    // ─── Calculate overlap impact ───
+    if (utility.overlapScore >= 0.6) {
+      rationale.push(
+        `${Math.round(utility.overlapScore * 100)}% of capabilities overlap with other tools` 
+      )
     }
-    
-    // Add capability insights
-    if (utility.overlapScore > 0.6) {
-      rationale.push(`${Math.round(utility.overlapScore * 100)}% of capabilities overlap with other tools`)
-    }
+
+    // ─── Add unique value info ───
     if (utility.uniqueValueScore > 0.5) {
-      rationale.push(`Provides unique capabilities: ${utility.marginalCapabilities.map(c => c.replace(/_/g, ' ')).join(', ')}`)
+      const uniqueCaps = utility.marginalCapabilities
+        .map((c) => c.replace(/_/g, " "))
+        .join(", ")
+      rationale.push(`Provides unique capabilities: ${uniqueCaps}`)
+    } else if (utility.overlapScore > 0.6 && utility.uniqueValueScore < 0.3) {
+      rationale.push(
+        `High overlap with minimal unique value suggests potential redundancy` 
+      )
     }
+
+    // ─── Add alignment info ───
     if (utility.needAlignmentScore > 0.7) {
-      rationale.push(`Strong alignment with your ${normalized.useCase} use case`)
+      rationale.push(
+        `Strong alignment with your ${normalized.useCase} use case` 
+      )
     }
-    if (utility.overlapScore > 0.7 && utility.uniqueValueScore < 0.3) {
-      rationale.push(`High overlap with minimal unique value suggests redundancy`)
-    }
-    
-    const confidence = hasUnknownPlan ? "low" : 
-                    utility.overlapScore > 0.8 ? "high" : 
-                    utility.overlapScore > 0.5 ? "medium" : "medium"
-    
-    resultMap.set(tool.tool, {
-      tool: tool.tool,
-      currentPlan: tool.plan,
-      currentSpend: tool.monthlySpend,
-      recommendedAction: action,
-      monthlySavings,
-      annualSavings: round2(monthlySavings * 12),
-      reason,
-      credexOpportunity: tool.monthlySpend > 50 || totalSpend > 200,
-      
-      // NEW FIELDS
-      confidence,
-      overlapScore: utility.overlapScore,
-      uniqueValueScore: utility.uniqueValueScore,
-      needAlignmentScore: utility.needAlignmentScore,
-      findings: toolFindings,
-      rationale,
-      marginalUtility: {
-        capabilities: utility.marginalCapabilities,
-        description: utility.description
+
+    // ─── Determine recommendation ───
+    let recommendation: "keep" | "remove" | "consolidate" = "keep"
+
+    // Only change recommendation if API overlap didn't already handle it
+    if (!apiOverlapHandled) {
+      // Count how many tools in the same category to adjust thresholds
+      const sameCategoryTools = normalized.tools.filter(t => {
+        if (tool.tool === "chatgpt" || tool.tool === "claude" || tool.tool === "gemini") {
+          return t.tool === "chatgpt" || t.tool === "claude" || t.tool === "gemini"
+        }
+        if (tool.tool === "cursor" || tool.tool === "github-copilot" || tool.tool === "windsurf") {
+          return t.tool === "cursor" || t.tool === "github-copilot" || t.tool === "windsurf"
+        }
+        return false
+      }).length
+
+      // Adjust thresholds based on number of similar tools
+      const overlapThreshold = sameCategoryTools >= 3 ? 0.3 : 0.7
+      const uniqueValueThreshold = sameCategoryTools >= 3 ? 0.5 : 0.1
+
+      // Only recommend removal if:
+      // 1. High overlap (adjusted threshold) AND
+      // 2. Low unique value (adjusted threshold) AND
+      // 3. Poor need alignment (<0.3)
+      if (
+        utility.overlapScore > overlapThreshold &&
+        utility.uniqueValueScore < uniqueValueThreshold &&
+        utility.needAlignmentScore < 0.3
+      ) {
+        recommendation = "remove"
+        currentResult.monthlySavings = tool.monthlySpend
+        currentResult.annualSavings = tool.monthlySpend * 12
+        rationale.push(
+          `High overlap with ${sameCategoryTools} similar tools - removing frees $${tool.monthlySpend}/mo` 
+        )
       }
-    })
+      // Consolidate if moderate overlap and reasonable value, BUT only if poor use case alignment
+      else if (
+        utility.overlapScore > 0.3 &&
+        utility.uniqueValueScore < 0.8 &&
+        utility.needAlignmentScore <= 0.5  // Only consolidate if poor use case alignment
+      ) {
+        recommendation = "consolidate"
+        currentResult.monthlySavings = tool.monthlySpend
+        currentResult.annualSavings = tool.monthlySpend * 12
+        rationale.push(
+          `Moderate overlap suggests consolidation opportunity` 
+        )
+      }
+      // Otherwise keep
+      else {
+        recommendation = "keep"
+        currentResult.monthlySavings = 0
+        currentResult.annualSavings = 0
+      }
+
+      // ─── Build final result ───
+      currentResult.recommendedAction = recommendation
+      
+      // Only set confidence if API overlap didn't already handle it
+      if (!apiOverlapHandled) {
+        currentResult.confidence = hasUnknownPlan
+          ? "low"
+          : utility.overlapScore > 0.5
+            ? "high"
+            : utility.overlapScore > 0.08
+              ? "medium"
+              : "low"
+      }
+      
+      // Set scores for capability analysis
+      currentResult.overlapScore = utility.overlapScore
+      currentResult.uniqueValueScore = utility.uniqueValueScore
+      currentResult.needAlignmentScore = utility.needAlignmentScore
+      currentResult.findings = toolFindings
+    }
+    
+    // For API overlap handled tools, still set the scores but confidence was already set
+    if (apiOverlapHandled) {
+      currentResult.overlapScore = utility.overlapScore
+      currentResult.uniqueValueScore = utility.uniqueValueScore
+      currentResult.needAlignmentScore = utility.needAlignmentScore
+      currentResult.findings = toolFindings
+    }
+    
+    // Merge rationale: preserve API rationale if it exists, add capability rationale
+    if (apiOverlapHandled) {
+      // Keep the original API rationale, but add capability insights
+      const apiRationale = currentResult.rationale
+      currentResult.rationale = [...apiRationale, ...rationale]
+    } else {
+      currentResult.rationale = rationale.length > 0 ? rationale : ["Plan is appropriate for your setup"]
+    }
+    
+    currentResult.marginalUtility = {
+      capabilities: utility.marginalCapabilities,
+      description: utility.description,
+    }
+
+    // Add reason string (don't override if API overlap handled)
+    if (!apiOverlapHandled) {
+      if (recommendation === "remove") {
+        currentResult.reason = `Tool has high capability overlap with minimal unique value. Removing saves $${tool.monthlySpend}/month.` 
+      } else if (recommendation === "consolidate") {
+        currentResult.reason = `Tool has significant capability overlap. Consider consolidating to primary alternative to save $${tool.monthlySpend}/month.` 
+      } else {
+        currentResult.reason = `${tool.tool} provides ${
+          utility.uniqueValueScore > 0.5 ? "valuable unique" : "appropriate"
+        } capabilities for your ${normalized.useCase} use case.`
+      }
+    }
   })
-  
+
   return Array.from(resultMap.values())
 }
 
@@ -389,24 +470,33 @@ function buildAuditStackSummary(
   const { normalized, duplicateCapabilities, uncoveredCapabilities } = context
   
   const currentMonthlySpend = normalized.tools.reduce((sum, t) => sum + t.monthlySpend, 0)
-  const optimizedMonthlySpend = recommendations.reduce((sum, r) => 
-    sum + (r.currentSpend - r.monthlySavings), 0)
+  const optimizedMonthlySpend = recommendations.reduce((sum, r) => {
+    if (r.recommendedAction === "remove") {
+      return sum + 0
+    } else {
+      return sum + r.currentSpend
+    }
+  }, 0)
   const estimatedMonthlySavings = currentMonthlySpend - optimizedMonthlySpend
   
   // Determine stack status
-  const highOverlapTools = recommendations.filter(r => r.overlapScore > 0.7).length
+  const highOverlapTools = recommendations.filter(r => r.overlapScore > 0.6).length
+  const mediumOverlapTools = recommendations.filter(r => r.overlapScore > 0.3).length
   const totalTools = recommendations.length
   const hasUncovered = uncoveredCapabilities.length > 0
+  const hasSomeOverlap = mediumOverlapTools > 0
   
   let stackStatus: "optimized" | "overlapping" | "underprovided" | "mixed"
-  if (highOverlapTools === 0 && !hasUncovered) {
-    stackStatus = "optimized"
-  } else if (highOverlapTools > totalTools / 2) {
-    stackStatus = "overlapping"
-  } else if (hasUncovered) {
+  if (hasUncovered) {
     stackStatus = "underprovided"
-  } else {
+  } else if (highOverlapTools >= totalTools / 2 && mediumOverlapTools >= totalTools * 0.8) {
+    stackStatus = "overlapping"
+  } else if (hasSomeOverlap) {
     stackStatus = "mixed"
+  } else if (highOverlapTools === 0 && mediumOverlapTools <= 1) {
+    stackStatus = "optimized"
+  } else {
+    stackStatus = "optimized"
   }
   
   // Find primary consolidation opportunity
@@ -426,7 +516,7 @@ function buildAuditStackSummary(
     duplicateCapabilities,
     uncoveredCapabilities,
     stackStatus,
-    primaryConsolidationOpportunity: consolidationCandidate?.tool,
+    primaryConsolidationOpportunity: consolidationCandidate?.tool || undefined,
     biggestValueAdder: valueAdder?.tool
   }
 }

@@ -11,12 +11,22 @@ export function findUniqueCapabilities(plan: Capability[], otherPlans: Capabilit
   return plan.filter(cap => !otherPlans.includes(cap))
 }
 
-// Calculate overlap ratio for a plan vs rest of stack
+// Calculate overlap ratio for a plan vs rest of stack (symmetric)
 export function calculateOverlapScore(plan: Capability[], otherPlans: Capability[]): number {
   if (plan.length === 0) return 0
+  if (otherPlans.length === 0) return 0
   
-  const overlapping = findOverlapCapabilities(plan, otherPlans)
-  return overlapping.length / plan.length
+  // CORRECT: Use union of both, not just one
+  const totalCapabilities = new Set([...plan, ...otherPlans]).size
+  const uniqueCapabilities = new Set([
+    ...plan.filter(cap => !otherPlans.includes(cap)),
+    ...otherPlans.filter(cap => !plan.includes(cap))
+  ]).size
+  
+  // Overlap is inverse of unique
+  const overlapRatio = (totalCapabilities - uniqueCapabilities) / totalCapabilities
+  
+  return overlapRatio
 }
 
 // Score how well a plan's unique capabilities match user needs
@@ -49,7 +59,16 @@ export function calculateMarginalUtility(
   
   const uniqueCapabilities = findUniqueCapabilities(planCapabilities, otherCapabilities)
   const overlapScore = calculateOverlapScore(planCapabilities, otherCapabilities)
-  const uniqueValueScore = uniqueCapabilities.length / Math.max(planCapabilities.length, 1)
+  // Boost unique value score for tools with more unique capabilities
+  const baseUniqueScore = planCapabilities.length > 0 ? uniqueCapabilities.length / planCapabilities.length : 0
+  
+  // Additional boost for premium capabilities that are valuable even if overlapping
+  const hasPremiumCapabilities = planCapabilities.some(cap => 
+    ["projects", "deep_research", "image_generation", "ide_integration", "code_assistant"].includes(cap)
+  )
+  
+  const premiumBoost = hasPremiumCapabilities ? 0.3 : 0
+  const uniqueValueScore = Math.min(baseUniqueScore * 1.5 + premiumBoost, 1.0) // Boost by 50% + premium boost
   const needAlignmentScore = scoreNeedAlignment(uniqueCapabilities, requiredCapabilities)
   
   // Generate description
@@ -118,23 +137,23 @@ export function recommendAction(
   }
   
   // High overlap, low unique value, poor alignment -> remove
-  if (overlapScore > 0.7 && uniqueValueScore < 0.3 && needAlignmentScore < 0.5) {
-    return monthlySavings > 10 ? "remove" : "keep"
+  if (overlapScore > 0.7 && uniqueValueScore < 0.15 && needAlignmentScore < 0.3) {
+    return "remove"
   }
   
-  // High overlap but some unique value -> consolidate
-  if (overlapScore > 0.6 && uniqueValueScore < 0.5) {
+  // High overlap but some unique value -> consolidate (only for 0.15–0.2 range)
+  if (overlapScore > 0.6 && uniqueValueScore >= 0.15 && uniqueValueScore <= 0.2) {
     return "consolidate"
   }
   
-  // Low unique value but good alignment -> consider switch
-  if (uniqueValueScore < 0.4 && needAlignmentScore > 0.7) {
-    return "switch"
+  // If plan provides meaningful unique value or aligns well to needs, keep it
+  if (uniqueValueScore > 0.2 || needAlignmentScore > 0.4) {
+    return "keep"
   }
   
-  // Good unique value and alignment -> keep
-  if (uniqueValueScore > 0.5 && needAlignmentScore > 0.6) {
-    return "keep"
+  // Low unique value but good alignment -> consider switch
+  if (uniqueValueScore < 0.05 && needAlignmentScore > 0.9) {
+    return "switch"
   }
   
   // Default to keep for edge cases

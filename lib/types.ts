@@ -18,6 +18,12 @@ export type Capability =
   | "expanded_uploads"
   | "codex_usage"
   | "early_access"
+  | "admin_controls"
+  | "usage_analytics"
+  | "extended_context"
+  | "voice_input"
+  | "image_analysis"
+  | "multimodal_vision"
 
 export type ToolName =
   | "cursor"
