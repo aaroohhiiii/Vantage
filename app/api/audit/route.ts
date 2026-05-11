@@ -124,6 +124,7 @@ export async function POST(request: Request) {
         show_credex: audit.showCredex,
         summary: audit.summary ?? null,
         efficiency_score: audit.efficiencyScore ?? null,
+        referral_code: Math.random().toString(36).substring(2, 10).toUpperCase(),
       })
       .select("id")
       .single()
