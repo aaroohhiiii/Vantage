@@ -1,6 +1,6 @@
 import { getEfficiencyLabel, getHeadline, getSubheadline } from "./auditHelpers"
 import type { AuditResult } from "@/lib/types"
-import { Check, Users, Briefcase, Clock, Layers } from "lucide-react"
+import { Check, Users, Briefcase, Layers } from "lucide-react"
 
 type Props = { audit: AuditResult; totalSpend: number }
 
@@ -10,7 +10,6 @@ export function HeroSection({ audit, totalSpend }: Props) {
   const headline = getHeadline(audit)
   const subheadline = getSubheadline(audit)
   const dupes = audit.summary?.duplicateCapabilities ?? []
-  const toolCount = audit.input.tools.length
   const radius = 54
   const circumference = 2 * Math.PI * radius
   const dashOffset = circumference - (score / 100) * circumference

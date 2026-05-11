@@ -2,7 +2,7 @@
 
 import type { AuditResult } from "@/lib/types"
 import { EmailCapture } from "./ResultsClient"
-import { ShieldCheck, Mail, Gift, TrendingUp, DollarSign, Users, Bell, CheckCircle } from "lucide-react"
+import { ShieldCheck, Mail, TrendingUp, DollarSign, Users, Bell } from "lucide-react"
 
 type Props = { audit: AuditResult }
 
@@ -24,7 +24,7 @@ export function MethodologySection({ audit }: Props) {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">🎯 Capture More Savings</h3>
-                <p className="text-sm text-white/90">You're leaving ${(audit.totalMonthlySavings * 0.4).toFixed(0)}/mo on the table</p>
+                <p className="text-sm text-white/90">You&apos;re leaving ${(audit.totalMonthlySavings * 0.4).toFixed(0)}/mo on the table</p>
               </div>
             </div>
             
@@ -55,7 +55,7 @@ export function MethodologySection({ audit }: Props) {
                 <h2 className="text-lg font-bold text-[#0A0A0A] tracking-tight">Stay Optimized</h2>
                 <p className="text-xs text-[#6b7280]">
                   {hasLowSavings 
-                    ? "You're spending well! We'll notify you when new optimizations apply."
+                    ? "You&apos;re spending well! We&apos;ll notify you when new optimizations apply."
                     : "Your stack is optimal. We'll alert you to new opportunities."
                   }
                 </p>

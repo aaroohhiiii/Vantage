@@ -1,13 +1,11 @@
 import type { AuditResult } from "@/lib/types"
 import { getSignals } from "./auditHelpers"
-import { Check, AlertTriangle, Info, ArrowRight, CalendarClock } from "lucide-react"
-import { TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
+import { Check, AlertTriangle, Info } from "lucide-react"
 
 type Props = { audit: AuditResult }
 
 export function SignalsSection({ audit }: Props) {
   const signals = getSignals(audit)
-  const hasSavings = audit.totalMonthlySavings > 0
 
   return (
     <section className="mb-10">

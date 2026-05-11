@@ -47,14 +47,14 @@ export async function getAuditById(id: string): Promise<AuditResult | null> {
   return {
     id: data.id,
     input: data.input,
-    results: (data.results as any[]).map((r: any) => ({
+    results: (data.results as Record<string, unknown>[]).map((r) => ({
       ...r,
       // Ensure these specific AI fields are mapped correctly if they exist in the JSON
-      strengths: r.strengths || [],
-      weaknesses: r.weaknesses || [],
-      alternativeTool: r.alternativeTool || "",
-      uniqueCapabilityAnalysis: r.uniqueCapabilityAnalysis || ""
-    })),
+      strengths: (r.strengths as string[]) || [],
+      weaknesses: (r.weaknesses as string[]) || [],
+      alternativeTool: (r.alternativeTool as string) || "",
+      uniqueCapabilityAnalysis: (r.uniqueCapabilityAnalysis as string) || ""
+    })) as AuditResult['results'],
     totalMonthlySavings: data.total_monthly_savings,
     totalAnnualSavings: data.total_annual_savings,
     aiSummary: data.ai_summary,

@@ -1,7 +1,6 @@
 import type { AuditResult } from "@/lib/types"
 import { getFitLabel, getActionLabel } from "./auditHelpers"
 import { ToolIcon, TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
-import { Info } from "lucide-react"
 
 type Props = { audit: AuditResult }
 

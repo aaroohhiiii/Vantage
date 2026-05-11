@@ -1,6 +1,7 @@
 // import Link from "next/link"
 // import { motion } from "framer-motion"
 import { CheckCircle2, TrendingUp, Shield, Zap } from "lucide-react"
+import Image from "next/image"
 import HeroDashboard from "@/components/HeroDashboard"
 import PixelBlast from "@/components/ui/PixelBlast"
 export default function Home() {
@@ -38,10 +39,12 @@ export default function Home() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/Logo.png"
               alt="Vantage"
-              className="h-11 w-11 rounded-xl shadow-lg"
+              width={44}
+              height={44}
+              className="rounded-xl shadow-lg"
             />
             <span
               className="text-xl font-bold tracking-tight text-white"

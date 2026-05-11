@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Download, ArrowLeft, Shield } from "lucide-react"
+import Image from "next/image"
+import { Download, Shield } from "lucide-react"
 
 export function ResultsNavbar() {
   return (
@@ -10,10 +11,12 @@ export function ResultsNavbar() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/Logo.png"
               alt="Vantage"
-              className="h-11 w-11 rounded-xl shadow-lg"
+              width={44}
+              height={44}
+              className="rounded-xl shadow-lg"
             />
             <span
               className="text-xl font-bold tracking-tight text-white"
