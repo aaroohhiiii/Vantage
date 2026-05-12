@@ -196,7 +196,7 @@ export const pricingData: ToolPricing[] = [
       },
       {
         planName: "Pro",
-        pricePerUserPerMonth: 113.31,
+        pricePerUserPerMonth: 200,
         isPerUser: false,
         sourceUrl: CHATGPT_URL,
         verifiedDate: VERIFIED_DATE,
@@ -276,7 +276,7 @@ export const pricingData: ToolPricing[] = [
       },
       {
         planName: "Ultra",
-        pricePerUserPerMonth: 249.99,
+        pricePerUserPerMonth: 20,
         isPerUser: false,
         sourceUrl: GEMINI_URL,
         verifiedDate: VERIFIED_DATE,

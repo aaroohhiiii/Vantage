@@ -369,10 +369,12 @@ function resolveFindingsToRecommendations(
       // 1. High overlap (adjusted threshold) AND
       // 2. Low unique value (adjusted threshold) AND
       // 3. Poor need alignment (<0.3)
+      // OR: 4. High cost (>$50) and very low unique value (<0.3)
       if (
-        utility.overlapScore > overlapThreshold &&
+        (utility.overlapScore > overlapThreshold &&
         utility.uniqueValueScore < uniqueValueThreshold &&
-        utility.needAlignmentScore < 0.3
+        utility.needAlignmentScore < 0.3) ||
+        (tool.monthlySpend > 50 && utility.uniqueValueScore < 0.3)
       ) {
         recommendation = "remove"
         currentResult.monthlySavings = tool.monthlySpend
@@ -447,7 +449,11 @@ function resolveFindingsToRecommendations(
     // Add reason string (don't override if API overlap handled)
     if (!apiOverlapHandled) {
       if (recommendation === "remove") {
-        currentResult.reason = `Tool has high capability overlap with minimal unique value. Removing saves $${tool.monthlySpend}/month.` 
+        if (tool.monthlySpend > 50 && utility.uniqueValueScore < 0.3) {
+          currentResult.reason = `High-cost tool ($${tool.monthlySpend}/mo) provides very low unique value to your stack. Removing or switching to a more focused alternative is recommended.`
+        } else {
+          currentResult.reason = `Tool has high capability overlap with minimal unique value. Removing saves $${tool.monthlySpend}/month.` 
+        }
       } else if (recommendation === "consolidate") {
         currentResult.reason = `Tool has significant capability overlap. Consider consolidating to primary alternative to save $${tool.monthlySpend}/month.` 
       } else {
