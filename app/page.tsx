@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CheckCircle2, TrendingUp, Shield, Zap, ChevronDown } from "lucide-react"
+import { TrendingUp, Shield, Zap, ChevronDown } from "lucide-react"
 import Image from "next/image"
 import HeroDashboard from "@/components/HeroDashboard"
 import PixelBlast from "@/components/ui/PixelBlast"

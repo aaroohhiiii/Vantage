@@ -14,7 +14,7 @@ export type EventName =
 export async function trackEvent(
   eventName: EventName, 
   auditId?: string, 
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ) {
   try {
     const { error } = await supabasePublic
