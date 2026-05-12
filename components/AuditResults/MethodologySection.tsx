@@ -23,13 +23,13 @@ export function MethodologySection({ audit }: Props) {
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">🎯 Capture More Savings</h3>
+                <h3 className="text-xl font-bold text-white"> Capture More Savings</h3>
                 <p className="text-sm text-white/90">You&apos;re leaving ${(audit.totalMonthlySavings * 0.4).toFixed(0)}/mo on the table</p>
               </div>
             </div>
 
             <div className="mb-4 rounded-xl bg-white/10 backdrop-blur-sm p-4">
-              <p className="mb-2 text-sm font-semibold text-white">Your ${audit.totalMonthlySavings.toFixed(0)}/mo savings can grow to:</p>
+              <p className="mb-2 text-sm font-semibold text-white">Your ${audit.totalMonthlySavings.toFixed(0)}/mo savings can grow upto:</p>
               <p className="text-3xl font-bold text-white">${(audit.totalMonthlySavings * 1.4).toFixed(0)}/mo</p>
               <p className="text-xs text-white/80">With Credex discounted AI credits</p>
             </div>
@@ -63,7 +63,9 @@ export function MethodologySection({ audit }: Props) {
             ) : (
               <>
                 <h2 className="text-lg font-bold text-[#0A0A0A] tracking-tight">Get This Report</h2>
-                <p className="text-xs text-[#6b7280]">We&apos;ll email you a copy of this audit.</p>
+                <p className="text-xs text-[#6b7280]">We will email you a copy of this audit.</p>
+                <p className="text-xs text-[#6b7280]">A Credex advisor will review your audit and reach out to you.</p>
+
               </>
             )}
           </div>

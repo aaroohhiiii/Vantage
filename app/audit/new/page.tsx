@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Suspense } from "react"
 
 import SpendForm from "@/components/SpendForm"
@@ -34,14 +35,31 @@ export default function NewAuditPage() {
 
       {/* Content */}
       <div className="relative z-10">
-        <header className="border-b border-gray-800 bg-black/80 backdrop-blur-lg">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-            <Link href="/" className="text-lg font-semibold text-white">
-              Vantage
-            </Link>
+        <header className="relative z-10 border-b border-gray-800 bg-black/80 backdrop-blur-lg">
+          <div className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-8">
+          <nav className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <Image
+                src="/Logo.png"
+                alt="Vantage"
+                width={44}
+                height={44}
+                className="rounded-xl shadow-lg"
+              />
+              <span
+                className="text-xl font-bold tracking-tight text-white"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Vantage
+              </span>
+            </div>
+
+            {/* Back link */}
             <Link href="/" className="text-sm text-gray-400 hover:text-white">
               ← Back to home
             </Link>
+          </nav>
           </div>
         </header>
 
@@ -53,9 +71,6 @@ export default function NewAuditPage() {
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               What AI tools does your team pay for?
             </h1>
-            <p className="mt-3 text-gray-300">
-              3 quick steps · completely free · no email required to see results
-            </p>
           </div>
 
           <Suspense fallback={<div className="h-96 w-full animate-pulse rounded-3xl bg-gray-900/50" />}>

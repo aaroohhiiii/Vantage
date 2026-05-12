@@ -187,14 +187,14 @@ export default function SpendForm() {
     >
       {/* ── Step indicator ── */}
       <div className="px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between relative">
           {STEPS.map((step, i) => {
             const isCompleted = state.step > step.number
             const isActive = state.step === step.number
             return (
-              <div key={step.number} className="flex flex-1 items-center">
+              <div key={step.number} className="relative flex items-center justify-center">
                 {/* Step dot + label */}
-                <div className="flex flex-col items-center gap-1.5">
+                <div className="flex flex-col items-center gap-1.5 z-10">
                   <div
                     className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300"
                     style={
@@ -208,7 +208,7 @@ export default function SpendForm() {
                     {isCompleted ? "✓" : step.number}
                   </div>
                   <span
-                    className="text-[11px] font-medium transition-colors duration-300"
+                    className="text-[11px] font-medium transition-colors duration-300 whitespace-nowrap"
                     style={{ color: isActive ? "#00C853" : isCompleted ? "#00C853" : "#9CA3AF" }}
                   >
                     {step.label}
@@ -217,7 +217,15 @@ export default function SpendForm() {
 
                 {/* Connector line (not after last step) */}
                 {i < STEPS.length - 1 && (
-                  <div className="mx-2 mb-5 h-px flex-1 transition-all duration-500" style={{ background: isCompleted ? "#00C853" : "#E5E7EB" }} />
+                  <div 
+                    className="absolute top-4 h-0.5 transition-all duration-500" 
+                    style={{ 
+                      background: isCompleted ? "#00C853" : "#E5E7EB",
+                      left: "100%",
+                      right: "-100%",
+                      width: "600%"
+                    }} 
+                  />
                 )}
               </div>
             )
