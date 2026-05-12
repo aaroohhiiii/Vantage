@@ -85,25 +85,22 @@ export function HeroSection({ audit, totalSpend }: Props) {
               <p className="text-xl font-bold text-white">${totalSpend.toFixed(2)}<span className="text-sm font-normal text-white/50">/mo</span></p>
             </div>
             <div className="relative">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Potential Savings</p>
-              <div className="flex items-baseline gap-2">
-                <p className="text-3xl font-bold text-[#00C853]">${audit.totalMonthlySavings.toFixed(2)}<span className="text-lg font-normal text-white/50">/mo</span></p>
-                <span className="rounded-full bg-[#00C853]/20 px-2 py-1 text-[35px] font-bold text-[#00C853]">
-                  ${(audit.totalMonthlySavings * 12).toFixed(0)}/yr
-                </span>
-
+              <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Projected Annual Savings</p>
+              <div className="flex items-center gap-3">
+                <p className="text-5xl font-bold text-[#00C853] tracking-tight">
+                  ${(audit.totalMonthlySavings * 12).toLocaleString()}
+                  <span className="text-xl font-normal text-white/50">/yr</span>
+                </p>
+                {audit.totalMonthlySavings > 100 && (
+                  <span className="inline-flex items-center rounded-md bg-[#00C853]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#00C853] border border-[#00C853]/20">
+                    High Impact
+                  </span>
+                )}
               </div>
-              {audit.totalMonthlySavings >= 500 && (
-                <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#00C853] animate-pulse">
-                  <span className="text-[10px] font-bold text-white">!</span>
-                </div>
-              )}
+              <p className="mt-1 text-sm text-white/40">
+                Found ${audit.totalMonthlySavings.toFixed(0)} in monthly optimization opportunities
+              </p>
             </div>
-            {/* <div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-white/50">Tools Audited</p>
-              <p className="text-xl font-bold text-white">{toolCount}</p>
-            </div> */}
-
           </div>
 
           <div className="mb-4 flex flex-wrap gap-2">

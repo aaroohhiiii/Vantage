@@ -85,8 +85,8 @@ export function ToolInsightsSection({ audit }: Props) {
                 <p className={`text-sm font-bold ${isKeep ? "text-[#00C853]" : "text-[#EF4444]"}`}>
                   {actionLabel}
                 </p>
-                <p className="mt-1 max-w-[180px] text-[11px] text-[#6b7280]">
-                  {isKeep ? "Plan and pricing are appropriate." : `Save $${result.monthlySavings.toFixed(0)}/mo`}
+                <p className="mt-1 max-w-[200px] text-[11px] text-[#6b7280] leading-relaxed">
+                  {result.reason}
                 </p>
               </div>
             </div>
