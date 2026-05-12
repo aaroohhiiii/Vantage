@@ -1,6 +1,8 @@
 # DEVLOG
 # Vantage Dev Log
 
+
+
 ## Day 1 — 07-05-2026
 **Hours worked:** 4
 **What I did:**
@@ -90,7 +92,7 @@
 
 ---
 
-## May 10, 2026
+## Day 4 - May 10, 2026
 **Hours worked:** 8
 ### Deploy Audit Engine V2 - Capability Overlap Analysis
 **What I did:**
@@ -126,7 +128,7 @@
 
 
 
-## May 11, 2026
+## Day 5 - May 11, 2026
 **Hours worked:** 8
 
 ### Core Engine & Intelligence
@@ -154,3 +156,27 @@
 - Batching AI requests for multiple items into one prompt significantly improves UI responsiveness.
 - Users value specific tool names and alternatives in recommendations over generic advice.
 - Explicitly showing "Strengths" vs "Weaknesses" helps justify the ROI of premium tools like Cursor.
+
+
+## Day 6 - May 12, 2026
+**Hours worked:** 10
+**What I did:**
+- **Landing Page Overhaul**: Implemented new conversion-focused copy (Hero, Subheadline, CTA) and added professional social proof and FAQ sections.
+- **Funnel Analytics**: Implemented a full-funnel tracking system using Supabase `analytics_events`. Instrumented everything from landing page views to the final Credex CTA click.
+- **Heuristic Engine Fixes**: Implemented a "Poor Fit / High Cost" rule in `auditEngineV2.ts` to ensure expensive tools with low unique value are correctly flagged for removal.
+- **Pricing Integrity**: Corrected major pricing typos in `pricingData.ts` (Gemini Ultra, ChatGPT Pro, etc.) to ensure defensible audit results.
+- **UI/UX Polish**: 
+  - Refactored `HeroSection` to prioritize **Annual Savings** as the primary decision metric.
+  - Updated `ToolInsightsSection` to show dynamic, logic-backed reasons for every recommendation.
+  - Switched landing page navigation to Next.js `<Link>` components for instant transitions.
+- **Stability Fixes**: Resolved "use client" hydration errors and fixed a critical Supabase client initialization crash in the browser.
+
+**What I learned:**
+- In B2B, annual savings figures generate significantly more urgency than monthly ones.
+- Instrumenting the funnel early is critical for identifying drop-off points before a major launch.
+- Complex tool stacks require qualitative "fit" analysis, not just quantitative pricing math.
+
+**Plan for tomorrow:**
+- Monitor initial traffic and conversion rates using the new analytics table.
+- Implement the GTM outreach plan (Hacker News, Reddit, LinkedIn).
+

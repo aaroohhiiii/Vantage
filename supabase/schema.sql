@@ -65,6 +65,24 @@ CREATE POLICY "Allow service role insert leads"
   ON leads FOR INSERT
   WITH CHECK (true);
 
-CREATE POLICY "Allow service role read leads"
-  ON leads FOR SELECT
+-- ── Analytics table ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  event_name      TEXT NOT NULL,
+  audit_id        UUID REFERENCES audits(id) ON DELETE SET NULL,
+  metadata        JSONB DEFAULT '{}'::jsonb,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_event_name ON analytics_events (event_name);
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events (created_at DESC);
+
+ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public insert of analytics"
+  ON analytics_events FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Allow service role read analytics"
+  ON analytics_events FOR SELECT
   USING (true);

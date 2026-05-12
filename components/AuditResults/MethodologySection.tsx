@@ -3,6 +3,7 @@
 import type { AuditResult } from "@/lib/types"
 import { EmailCapture } from "./ResultsClient"
 import { ShieldCheck, Mail, TrendingUp, DollarSign, Users, Bell } from "lucide-react"
+import { trackEvent } from "@/lib/analytics"
 
 type Props = { audit: AuditResult }
 
@@ -38,6 +39,7 @@ export function MethodologySection({ audit }: Props) {
               href="https://credex.rocks"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent('credex_cta_clicked', audit.id)}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#7c3aed] transition-all hover:bg-white/90 hover:scale-[1.02]"
             >
               Get Discounted Credits <TrendingUp className="h-4 w-4" />
@@ -129,6 +131,7 @@ export function MethodologySection({ audit }: Props) {
               href="https://credex.rocks"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent('credex_cta_clicked', audit.id)}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#6d28d9]"
             >
               Get Discounted Credits <TrendingUp className="h-4 w-4" />

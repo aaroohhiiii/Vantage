@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { trackEvent } from "@/lib/analytics"
 
 type EmailCaptureProps = {
   auditId: string
@@ -45,6 +46,7 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
 
       if (res.ok) {
         setStatus("success")
+        trackEvent('email_capture_submitted', auditId, { role, companyName })
         window.localStorage.setItem(STORAGE_KEY, auditId)
       } else if (res.status === 429) {
         setStatus("rate_limit")
@@ -180,6 +182,7 @@ export function ShareButton({ url, label = "Share results", variant = "light" }:
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
+      trackEvent('share_button_clicked')
       setTimeout(() => setCopied(false), 2000)
     } catch {
       // Fallback

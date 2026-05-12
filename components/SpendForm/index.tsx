@@ -9,6 +9,7 @@ import { TeamInfo } from "@/components/SpendForm/TeamInfo"
 import { ToolSelector } from "@/components/SpendForm/ToolSelector"
 import type { AuditInput, FormState, StoredFormState, ToolInput, ToolName, UseCase } from "@/lib/types"
 import { getOfficialPrice, getToolPricing } from "@/lib/pricingData"
+import { trackEvent } from "@/lib/analytics"
 
 const LOCAL_STORAGE_KEY = "credex-audit-form-state"
 const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
@@ -74,6 +75,10 @@ export default function SpendForm() {
   const refCode = searchParams.get("ref") || undefined
 
   useEffect(() => {
+    trackEvent('audit_start')
+  }, [])
+
+  useEffect(() => {
     const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY)
     if (!raw) return
     try {
@@ -103,6 +108,10 @@ export default function SpendForm() {
   const progressPct = useMemo(() => (state.step / 3) * 100, [state.step])
 
   function goTo(step: FormState["step"], dir: number) {
+    if (dir > 0) {
+      if (state.step === 1) trackEvent('audit_step_1_complete', undefined, { tools: state.selectedTools })
+      if (state.step === 2) trackEvent('audit_step_2_complete', undefined, { toolsCount: state.selectedTools.length })
+    }
     setDirection(dir)
     setState((prev) => ({ ...prev, step }))
   }
@@ -147,6 +156,11 @@ export default function SpendForm() {
   async function submitAudit() {
     setIsSubmitting(true)
     setError(null)
+    trackEvent('audit_submitted', undefined, { 
+      tools: state.selectedTools,
+      teamSize: state.teamSize,
+      useCase: state.useCase 
+    })
     try {
       const payload: AuditInput = {
         tools: state.selectedTools.map((tool) => state.toolInputs[tool]),

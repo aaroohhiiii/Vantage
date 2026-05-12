@@ -8,6 +8,9 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 if (!supabaseUrl) {
 	throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL')
 }
+if (!supabaseAnonKey && typeof window !== 'undefined') {
+  console.warn('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY - public features will be disabled')
+}
 
 // ============================================
 // PUBLIC CLIENT
@@ -22,12 +25,14 @@ export const supabasePublic = createClient(supabaseUrl, supabaseAnonKey)
 // from API routes ONLY — never expose this
 // to the browser
 // ============================================
-export const supabaseService = createClient(supabaseUrl, supabaseServiceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-})
+export const supabaseService = typeof window === 'undefined' 
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null as unknown as ReturnType<typeof createClient>
 
 // ============================================
 // HELPER FUNCTIONS

@@ -8,6 +8,7 @@ import { SignalsSection } from "@/components/AuditResults/SignalsSection"
 import { MethodologySection } from "@/components/AuditResults/MethodologySection"
 import { ResultsNavbar } from "@/components/AuditResults/ResultsNavbar"
 import PixelBlast from "@/components/ui/PixelBlast"
+import { trackEvent } from "@/lib/analytics"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -34,11 +35,15 @@ export default async function AuditPage({ params }: PageProps) {
   const { id } = await params
   const audit = await getAuditById(id)
 
+  if (audit) {
+    trackEvent('results_viewed', audit.id)
+  }
+
   if (!audit) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-white px-6">
         <h1 className="mb-2 text-2xl font-bold text-[#0A0A0A]">Audit not found</h1>
-        <p className="mb-6 text-[#4B5563]">This audit doesn&apos;t exist or has expired.</p>
+        <p className="mb-6 text-[#4B5563]">This audit doesnt exist or has expired.</p>
         <Link href="/" className="rounded-xl bg-[#00C853] px-6 py-3 text-sm font-semibold text-white">
           Run a New Audit
         </Link>

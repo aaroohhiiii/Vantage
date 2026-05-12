@@ -1,39 +1,46 @@
-## METRICS.md
+# METRICS.md
 
-**North Star Metric: Audits completed per week**
+## North Star Metric: Audits Completed per Week
 
-Why this and not signups or page views:
-An audit completed means the user saw value. Signups can be gamed. 
-Page views don't indicate intent. Completion = value delivered = 
-a potential lead warmed. This is a B2B lead-gen tool used occasionally, 
-not a daily-use app — DAU is a vanity metric here.
+### Why this metric?
+An audit completed means the user saw value. Unlike signups or page views, a completion indicates that a potential B2B lead has invested time into the product and received a personalized value proposition. For a tool used occasionally (not daily), DAU is a vanity metric; **Value Delivery Frequency** is the true indicator of product-market fit.
 
-**3 Input Metrics:**
+---
 
-1. Audit start rate (visitors who begin Step 1 / total visitors)
-   Target: >40%. Below 25% means the landing page isn't converting.
+## 3 Core Input Metrics
 
-2. Audit completion rate (Step 3 submitted / Step 1 started)
-   Target: >60%. Below 40% means the form is too long or confusing.
+### 1. Audit Start Rate
+*   **Definition:** (Visitors who begin Step 1) / (Total Unique Visitors)
+*   **Target:** >40%
+*   **Insight:** If this is below 25%, the landing page copy isn't creating enough urgency or the "No Login" value prop isn't clear enough.
 
-3. Email capture rate (emails submitted / audits completed)
-   Target: >25%. Below 15% means the results aren't compelling enough 
-   to earn the lead, or the value prop of capturing isn't clear.
+### 2. Audit Completion Rate
+*   **Definition:** (Step 3 Submitted) / (Step 1 Started)
+*   **Target:** >60%
+*   **Insight:** If this falls below 40%, the form is either too long, the UI is confusing, or the questions are perceived as too intrusive for a "free" tool.
 
-**What to instrument first:**
-- Page view on landing page
-- Step 1 started (tool selected)
-- Step 2 completed (spend entered)
-- Step 3 submitted (audit run)
-- Results page viewed
-- Email capture submitted
-- Share button clicked
-- Credex CTA clicked
+### 3. Email Capture Rate
+*   **Definition:** (Emails Submitted) / (Audits Completed)
+*   **Target:** >25%
+*   **Insight:** This is our primary lead-gen metric. Below 15% means the results page isn't compelling enough to "earn" the user's email, or the incentive for the report (PDF/Updates) is weak.
 
-Use Vercel Analytics (free) or a simple event log table in Supabase.
+---
 
-**Pivot trigger:**
-If email capture rate stays below 15% after 500 audits: 
-the results page isn't creating enough urgency or perceived value. 
-Pivot: add benchmark data ("companies your size spend $X on average"), 
-improve the visual design of savings numbers, or add social proof.
+## Initial Instrumentation Plan
+We use a simple event log in Supabase (`analytics_events`) to track:
+1.  **`page_view_landing`**: Top-of-funnel baseline.
+2.  **`audit_start`**: User selected their first tool.
+3.  **`audit_submitted`**: User reached the finish line.
+4.  **`results_viewed`**: User saw their savings report.
+5.  **`email_capture_submitted`**: Successful lead generation.
+6.  **`credex_cta_clicked`**: High-intent handoff to our monetization partner.
+
+---
+
+## The Pivot Trigger
+If the **Email Capture Rate** stays below 15% after 500 completed audits, we will trigger a design pivot.
+
+**Pivot Options:**
+-   **Benchmark Data:** Add "Companies your size typically spend $X" to create FOMO.
+-   **Visual Urgency:** Make the "Annual Waste" number significantly larger and more prominent.
+-   **Social Proof on Results:** Add testimonials specifically about the accuracy of the savings found.

@@ -1,6 +1,6 @@
 # PRICING DATA
 
-**Last verified:** 2026-05-09
+**Last verified:** 2026-05-12
 
 ## IDE Tools
 
@@ -72,6 +72,4 @@
 - **Enterprise**: Custom pricing typically for large teams (>100 users)
 - **Usage-based**: API costs depend on actual usage volume
 
-## Verification Methodology
 
-All pricing data is manually verified from official vendor websites. Prices are checked monthly and updated when changes are detected. Enterprise pricing is marked as custom since it requires direct sales contact.
