@@ -88,13 +88,7 @@ export default async function AuditResultsPage({ params }: { params: { id: strin
           <MethodologySection audit={audit} />
         </div>
 
-        {/* Footer */}
-        <footer className="mt-32 border-t border-black/5 py-12 text-center">
-          <p className="flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF]">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#f9fafb] border border-black/5">🛡️</span>
-            Confidential & Secure &middot; Powered by Vantage
-          </p>
-        </footer>
+
       </main>
     </div>
   )

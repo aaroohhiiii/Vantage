@@ -9,18 +9,17 @@ if (!apiKey) {
 
 const resend = new Resend(apiKey)
 
-// TODO: Replace with custom domain once DNS is configured
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
 
 function getActionLabel(action: ToolAuditResult['recommendedAction']): string {
   switch (action) {
-    case 'downgrade': return '⬇️ Downgrade'
-    case 'switch': return '🔄 Switch'
-    case 'cancel-redundant': return '❌ Cancel'
-    case 'keep': return '✅ Keep'
-    case 'upgrade': return '⬆️ Upgrade'
-    case 'remove': return '❌ Remove'
-    case 'consolidate': return '🔄 Consolidate'
+    case 'downgrade': return ' Downgrade'
+    case 'switch': return ' Switch'
+    case 'cancel-redundant': return ' Cancel'
+    case 'keep': return ' Keep'
+    case 'upgrade': return ' Upgrade'
+    case 'remove': return ' Remove'
+    case 'consolidate': return ' Consolidate'
     default: return '📋 Review'
   }
 }
@@ -33,7 +32,7 @@ function buildAuditEmailHtml(audit: AuditResult, auditUrl: string): string {
 
   const recsHtml = topRecs.length > 0
     ? topRecs.map((r) =>
-        `<tr>
+      `<tr>
           <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#0A0A0A;">
             ${r.tool.replace('-', ' ')}
           </td>
@@ -44,7 +43,7 @@ function buildAuditEmailHtml(audit: AuditResult, auditUrl: string): string {
             -$${r.monthlySavings.toFixed(0)}/mo
           </td>
         </tr>`
-      ).join('')
+    ).join('')
     : '<tr><td colspan="3" style="padding:12px;color:#4B5563;font-size:14px;">Your stack is already optimized! No changes recommended.</td></tr>'
 
   const credexSection = audit.showCredex
@@ -54,10 +53,10 @@ function buildAuditEmailHtml(audit: AuditResult, auditUrl: string): string {
         <a href="https://credex.rocks" style="display:inline-block;padding:8px 20px;background:#00C853;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600;">Learn About Credex →</a>
       </div>`
     : audit.isOptimal
-    ? `<div style="margin-top:24px;padding:16px;background:#F8F9FA;border:1px solid #E5E7EB;border-radius:12px;">
+      ? `<div style="margin-top:24px;padding:16px;background:#F8F9FA;border:1px solid #E5E7EB;border-radius:12px;">
         <p style="margin:0;font-size:14px;color:#4B5563;">We'll notify you when new optimization opportunities apply to your stack.</p>
       </div>`
-    : ''
+      : ''
 
   return `
 <!DOCTYPE html>

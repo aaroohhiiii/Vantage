@@ -588,3 +588,37 @@ Initial tests were AI-generated, but I wrote all 17 final tests by hand.
 Why? Tests must be realistic and test real edge cases, not what an LLM thinks is an edge case.
 
 ---
+## 10. Audit Engine V3: Capability Analysis & Scoring Logic
+
+### What It Was For
+Total overhaul of the mathematical scoring engine to ensure recommendations are data-driven, context-specific, and use only the 6 core inputs (toolName, plan, monthlySpend, seats, teamSize, primaryUseCase).
+
+### The Exact Prompt
+```markdown
+Replace the entire contents of capabilityAnalysis.ts with this EXACT code. This fixes all scoring flaws using ONLY your 6 inputs (toolName, plan, monthlySpend, seats, teamSize, primaryUseCase) and makes recommendations context-specific:
+
+[Detailed TypeScript Code Implementation for:
+- Jaccard Similarity (Intersection/Union)
+- Use Case-Weighted Overlap Scoring
+- Maturity Weights based on Team Size
+- Utilization Penalties based on Seats/TeamSize
+- Dynamic Action Thresholds]
+
+CRITICAL NOTES FOR ANTIGRAVITY:
+- This is a COMPLETE REPLACEMENT - paste OVER the entire existing file
+- Requires your USE_CASE_CAPABILITY_PRIORITIES map to exist globally
+- Uses ONLY your 6 inputs - no external data, no assumptions
+- Fixes all mathematical errors (True Jaccard similarity 0-1)
+- needAlignmentScore incorporates teamSize maturity + seats utilization
+- recommendAction uses dynamic thresholds based on teamSize/useCase
+- Description field now names SPECIFIC capabilities critical to YOUR use case
+- Preserves all function signatures - zero breaking changes
+```
+
+### Why I Wrote It This Way
+I needed to eliminate "black-box" arbitrary boosts and replace them with a transparent, mathematically sound framework. By explicitly defining Jaccard similarity and adding dynamic penalties for underutilization (teamSize vs. seats), the engine now produces recommendations that feel "engineered" and defensible to a technical lead or CFO.
+
+---
+
+*This document serves as the prompt-engineering blueprint for the Vantage platform, tracking its evolution from a basic prototype to an engineered, data-driven audit engine.* 🚀🏁
+

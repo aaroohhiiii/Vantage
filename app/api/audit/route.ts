@@ -91,8 +91,6 @@ export async function POST(request: Request) {
     }
 
     const payload = await request.json()
-    console.log('[api/audit] incoming payload:', JSON.stringify(payload).slice(0, 2000))
-
     const validation = sanitizeAuditInput(payload)
 
     if (!validation.data) {

@@ -48,7 +48,7 @@ export function HeroSection({ audit, totalSpend }: Props) {
   }
 
   return (
-    <section className="mb-10 overflow-hidden rounded-[40px] bg-white border border-black/[0.08] shadow-xl shadow-black/[0.03] relative">
+    <section className="mb-10 overflow-hidden rounded-[40px] bg-white border border-[#111] shadow-xl shadow-black/[0.03] relative">
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-0">
 
         {/* Left: Efficiency Score Gauge */}
@@ -70,7 +70,7 @@ export function HeroSection({ audit, totalSpend }: Props) {
           </div>
           <div className={`mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 border ${theme.bg} ${theme.border}`}>
             <div className={`h-2 w-2 rounded-full`} style={{ background: theme.color }} />
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.text}`}>{label}</span>
+            <span className={`text-[20px] font-bold uppercase tracking-widest ${theme.text}`}>{label}</span>
           </div>
         </div>
 
@@ -110,22 +110,22 @@ export function HeroSection({ audit, totalSpend }: Props) {
         <div className="lg:col-span-4 p-6 lg:p-8 bg-[#F9FAFB] flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-black/5">
           <div className="space-y-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF] mb-4">Key Takeaways</p>
+              <p className="text-[35px] font-bold uppercase tracking-widest text-[#111] mb-4">Key Takeaways</p>
               <div className="space-y-3">
                 {aiSummaryPoints.map((point, idx) => (
                   <div key={idx} className="flex items-start gap-3 bg-white p-4 rounded-2xl border border-black/5 shadow-sm">
                     <div className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 bg-[#111]" />
-                    <p className="text-xs font-medium text-[#111] leading-relaxed">{point}</p>
+                    <p className="text-s font-medium text-[#111] leading-relaxed">{point}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-black/5 text-[10px] font-bold text-[#666] uppercase tracking-widest">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-black/5 text-[15px] font-bold text-[#666] uppercase tracking-widest">
                 <Users className="h-3 w-3" /> {audit.input.teamSize} SEATS
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-black/5 text-[10px] font-bold text-[#666] uppercase tracking-widest">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-black/5 text-[15px] font-bold text-[#666] uppercase tracking-widest">
                 <Briefcase className="h-3 w-3" /> {useCaseLabels[audit.input.useCase] || "GENERAL"}
               </div>
             </div>

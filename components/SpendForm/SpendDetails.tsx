@@ -168,18 +168,20 @@ export function SpendDetails({
                   <input
                     id={`${tool}-seats`}
                     type="number"
-                    min={1}
+                    min={selectedPlan?.minSeats ?? 1}
                     value={input.seats || ""}
-                    onChange={(e) => onToolInputChange(tool, { seats: Number(e.target.value) || 0 })}
-                    onBlur={(e) => {
-                      const newSeats = Number(e.target.value) || 0
-                      const pricing = getToolPricing(tool)
-                      const selectedPlan = pricing?.plans.find((p) => p.planName === (input.plan || ""))
-                      const minSeats = selectedPlan?.minSeats ?? 1
-                      onToolInputChange(tool, { seats: Math.max(minSeats, Math.max(1, newSeats)) })
+                    onChange={(e) => {
+                      const val = Number(e.target.value) || 0
+                      const min = selectedPlan?.minSeats ?? 1
+                      onToolInputChange(tool, { seats: Math.max(min, val) })
                     }}
                     className={inputClass}
                   />
+                  {selectedPlan?.minSeats && selectedPlan.minSeats > 1 && (
+                    <p className="text-[10px] font-medium text-amber-600 ml-1">
+                      Minimum {selectedPlan.minSeats} seats required for this plan
+                    </p>
+                  )}
                 </div>
               </div>
 

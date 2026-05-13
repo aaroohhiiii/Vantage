@@ -28,10 +28,10 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
   return (
     <section className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
       {/* Spend Breakdown */}
-      <div className="rounded-[32px] border border-black/[0.06] bg-[#F9FAFB] p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-        <h3 className="mb-8 text-xl font-black text-[#111]">Spend Breakdown</h3>
+      <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <h3 className="text-[35px] font-bold tracking-widest text-[#111] mb-4">Spend Breakdown</h3>
         <div className="flex flex-col items-center gap-8">
-          <div className="relative flex h-40 w-40 shrink-0 items-center justify-center">
+          <div className="relative flex h-50 w-50 shrink-0 items-center justify-center">
             <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
               {segments.map((seg, i) => (
                 <circle key={i} cx="60" cy="60" r={radius} fill="none" stroke={seg.color}
@@ -40,8 +40,8 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
               ))}
             </svg>
             <div className="absolute text-center">
-              <p className="text-xl font-medium text-[#111]">${totalSpend.toFixed(0)}</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#666]">Total</p>
+              <p className="text-[40px] font-medium text-[#111]">${totalSpend.toFixed(0)}</p>
+              <p className="text-[20px] font-bold uppercase tracking-widest text-[#666]">Total</p>
             </div>
           </div>
           <div className="w-full space-y-3">
@@ -49,9 +49,9 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
               <div key={i} className="flex items-center justify-between group">
                 <div className="flex items-center gap-3">
                   <div className="h-2 w-2 rounded-full" style={{ background: seg.color }} />
-                  <p className="text-xs font-medium text-[#111]">{TOOL_DISPLAY_NAMES[seg.tool]}</p>
+                  <p className="text-s font-medium text-[#111]">{TOOL_DISPLAY_NAMES[seg.tool]}</p>
                 </div>
-                <p className="text-[11px] font-medium text-[#666]">${seg.spend.toFixed(0)}</p>
+                <p className="text-[18px] font-medium text-[#111]">${seg.spend.toFixed(0)}</p>
               </div>
             ))}
           </div>
@@ -59,15 +59,15 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
       </div>
 
       {/* Overlap Analysis */}
-      <div className="rounded-[32px] border border-black/[0.06] bg-[#F9FAFB] p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-        <h3 className="mb-8 text-xl font-black text-[#111]">Overlap Analysis</h3>
+      <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <h3 className="text-[35px] font-bold  tracking-widest text-[#111] mb-4">Overlap Analysis</h3>
 
         <p className={`text-2xl font-black mb-6 ${verdictColor}`}>
           {overlapVerdict}
         </p>
 
         <div className="mb-6">
-          <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-3">
+          <div className="flex items-center justify-between text-[18px] font-semibold uppercase tracking-widest text-[#111] mb-3">
             <span>Efficient</span><span>Redundant</span>
           </div>
           <div className="relative h-2 w-full overflow-hidden rounded-full bg-[#f3f4f6]">
@@ -79,16 +79,16 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed text-[#666] font-medium opacity-80">{overlap.desc}</p>
+        <p className="text-[20px] leading-relaxed text-[#111] font-medium opacity-80">{overlap.desc}</p>
       </div>
 
       {/* Benchmark Comparison */}
-      <div className="rounded-[32px] border border-black/[0.06] bg-[#F9FAFB] p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-        <h3 className="mb-8 text-xl font-black text-[#111]">Market Benchmark</h3>
+      <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <h3 className="text-[35px] font-bold  tracking-widest text-[#111] mb-4">Market Benchmark</h3>
 
         <div className="space-y-8">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF] mb-2">Cost Per Seat You are Spending</p>
+            <p className="text-[18px] font-bold uppercase tracking-widest text-[111] mb-2">Cost Per Seat You are Spending</p>
             <p className="text-3xl font-medium text-[#111] tracking-tighter">
               ${(totalSpend / audit.input.teamSize).toFixed(0)}<span className="text-sm font-medium text-[#9CA3AF] ml-1">/mo</span>
             </p>
@@ -99,7 +99,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
           <div>
             <div className="flex justify-between items-end mb-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] mb-1">Standard Range</p>
+                <p className="text-[20px] font-semibold uppercase tracking-wider text-[#111] mb-1">Standard Range</p>
                 <p className="text-base font-bold text-[#111]">${benchmark.low} – ${benchmark.high}/mo</p>
               </div>
               <p className="text-xs font-medium text-[#666]">Target for {audit.input.teamSize} member team</p>
@@ -108,10 +108,10 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
             <div className="relative h-4 w-full rounded-full bg-[#f3f4f6] mb-4">
               {/* Market Range "Safe Zone" Bar */}
               <div
-                className="absolute top-0 h-full bg-[#00C853]/15 border-x border-[#00C853]/20"
-                style={{ 
-                  left: `${(benchmark.low / (benchmark.high * 1.5)) * 100}%`, 
-                  width: `${((benchmark.high - benchmark.low) / (benchmark.high * 1.5)) * 100}%` 
+                className="absolute top-0 h-full bg-[#111]/10 border-x border-[#00C853]/20"
+                style={{
+                  left: `${(benchmark.low / (benchmark.high * 1.5)) * 100}%`,
+                  width: `${((benchmark.high - benchmark.low) / (benchmark.high * 1.5)) * 100}%`
                 }}
               />
 
@@ -128,7 +128,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF]">
               <span>Lean</span>
               <span className="text-[#00C853]">Standard Range</span>

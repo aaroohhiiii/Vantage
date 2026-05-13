@@ -18,8 +18,6 @@ export function getStackOverlap(results: ToolAuditResult[]): { avg: number; labe
   return { avg, label: "High Redundancy", desc: "Significant overlap detected. You are paying for multiple tools that perform the same primary functions." }
 }
 
-// Replace these in auditHelpers.ts
-
 export function getEfficiencyLabel(score: number): string {
   if (score >= 85) return "Optimized" // Only 85+ is truly optimized
   if (score >= 70) return "Good"

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { trackEvent } from "@/lib/analytics"
+import { ChevronRight } from "lucide-react"
 
 type EmailCaptureProps = {
   auditId: string
@@ -11,7 +12,7 @@ type EmailCaptureProps = {
 
 const STORAGE_KEY = "vantage-lead-captured"
 
-export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
+export function EmailCapture({ auditId, showCredex, variant = "light" }: EmailCaptureProps & { variant?: "light" | "dark" }) {
   const [email, setEmail] = useState("")
   const [companyName, setCompanyName] = useState("")
   const [role, setRole] = useState("")
@@ -62,11 +63,14 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
     return (
       <div
         className="rounded-2xl p-8 text-center"
-        style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}
+        style={variant === "dark" 
+          ? { background: "rgba(0, 200, 83, 0.1)", border: "1px solid rgba(0, 200, 83, 0.3)" }
+          : { background: "#F0FDF4", border: "1px solid #BBF7D0" }
+        }
       >
         <div className="mb-2 text-3xl">✓</div>
-        <p className="text-lg font-semibold text-[#086841]">Check your inbox</p>
-        <p className="mt-1 text-sm text-[#4B5563]">
+        <p className="text-lg font-semibold text-[#00C853]">Check your inbox</p>
+        <p className={`mt-1 text-sm ${variant === "dark" ? "text-white/60" : "text-[#4B5563]"}`}>
           {showCredex
             ? "A Credex advisor will review your audit and reach out within 48 hours."
             : "Your audit results have been sent to your email."}
@@ -75,10 +79,16 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
     )
   }
 
+  const labelClass = `mb-1.5 block text-[10px] font-bold uppercase tracking-widest ${variant === "dark" ? "text-white/40" : "text-[#4B5563]"}`
+  const inputClass = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 focus:ring-4 focus:ring-[#00C853]/20 ${
+    variant === "dark" 
+      ? "bg-white/5 border border-white/10 text-white placeholder-white/20 focus:border-[#00C853]/50" 
+      : "bg-white border border-[#E5E7EB] text-[#0A0A0A] placeholder-[#9CA3AF] focus:border-[#00C853]"
+  }`
+
   return (
     <div className="w-full">
-
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Honeypot — hidden from users */}
         <input
           type="text"
@@ -92,8 +102,8 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
         />
 
         <div>
-          <label htmlFor="lead-email" className="mb-1 block text-xs font-medium text-[#4B5563]">
-            Email *
+          <label htmlFor="lead-email" className={labelClass}>
+            Work Email *
           </label>
           <input
             id="lead-email"
@@ -102,14 +112,13 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
             placeholder="you@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] placeholder-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#00C853]/40"
-            style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
+            className={inputClass}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="lead-company" className="mb-1 block text-xs font-medium text-[#4B5563]">
+            <label htmlFor="lead-company" className={labelClass}>
               Company name
             </label>
             <input
@@ -118,12 +127,11 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
               placeholder="Optional"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className="w-full rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] placeholder-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#00C853]/40"
-              style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
+              className={inputClass}
             />
           </div>
           <div>
-            <label htmlFor="lead-role" className="mb-1 block text-xs font-medium text-[#4B5563]">
+            <label htmlFor="lead-role" className={labelClass}>
               Your role
             </label>
             <input
@@ -132,23 +140,22 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
               placeholder="Optional"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] placeholder-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#00C853]/40"
-              style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
+              className={inputClass}
             />
           </div>
         </div>
 
         {status === "error" && (
-          <p className="text-sm text-red-500">Couldn&apos;t save — try again?</p>
+          <p className="text-sm font-medium text-red-400">Could not save — try again?</p>
         )}
         {status === "rate_limit" && (
-          <p className="text-sm text-red-500">You&apos;ve submitted recently — check your inbox.</p>
+          <p className="text-sm font-medium text-red-400">You have submitted recently — check your inbox.</p>
         )}
 
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00C853] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#00A846] disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00C853] px-6 py-4 text-sm font-bold text-white transition-all hover:bg-[#00E676] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 disabled:scale-100 shadow-lg shadow-[#00C853]/20"
         >
           {status === "submitting" ? (
             <>
@@ -156,10 +163,10 @@ export function EmailCapture({ auditId, showCredex }: EmailCaptureProps) {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Saving...
+              Preparing Your Report...
             </>
           ) : (
-            "Send Me This Report →"
+            <>Send Me This Report <ChevronRight className="h-4 w-4" /></>
           )}
         </button>
       </form>
@@ -205,25 +212,25 @@ export function ShareButton({ url, label = "Share results", variant = "light" }:
       style={
         variant === "dark"
           ? {
-              background: copied ? "rgba(0, 200, 83, 0.2)" : "rgba(255, 255, 255, 0.1)",
-              border: copied ? "1px solid #00C853" : "1px solid rgba(255, 255, 255, 0.2)",
-              color: "#FFFFFF",
-            }
+            background: copied ? "rgba(0, 200, 83, 0.2)" : "rgba(255, 255, 255, 0.1)",
+            border: copied ? "1px solid #00C853" : "1px solid rgba(255, 255, 255, 0.2)",
+            color: "#FFFFFF",
+          }
           : {
-              background: copied ? "#F0FDF4" : "#FFFFFF",
-              border: copied ? "1px solid #BBF7D0" : "1px solid #E5E7EB",
-              color: copied ? "#00C853" : "#4B5563",
-            }
+            background: copied ? "#F0FDF4" : "#FFFFFF",
+            border: copied ? "1px solid #BBF7D0" : "1px solid #E5E7EB",
+            color: copied ? "#00C853" : "#4B5563",
+          }
       }
     >
       {copied ? (
         <>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke={variant === "dark" ? "#FFFFFF" : "#00C853"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke={variant === "dark" ? "#FFFFFF" : "#00C853"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Copied!
         </>
       ) : (
         <>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="2" stroke={variant === "dark" ? "#FFFFFF" : "#4B5563"} strokeWidth="1.5"/><path d="M3 11V3a2 2 0 012-2h8" stroke={variant === "dark" ? "#FFFFFF" : "#4B5563"} strokeWidth="1.5" strokeLinecap="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="2" stroke={variant === "dark" ? "#FFFFFF" : "#4B5563"} strokeWidth="1.5" /><path d="M3 11V3a2 2 0 012-2h8" stroke={variant === "dark" ? "#FFFFFF" : "#4B5563"} strokeWidth="1.5" strokeLinecap="round" /></svg>
           {label}
         </>
       )}

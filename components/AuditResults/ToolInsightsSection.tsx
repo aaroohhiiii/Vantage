@@ -8,11 +8,9 @@ export function ToolInsightsSection({ audit }: Props) {
   const results = audit.results
   return (
     <section className="mb-10">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-2xl font-medium tracking-tight text-[#111]">Inventory Analysis</h2>
-        <span className="badge-pill">
-          {results.length} Tools Analyzed
-        </span>
+      <div className="mb-12 flex flex-col items-center gap-4 text-center">
+        <h2 className="text-[45px] font-bold  tracking-widest text-[#111]">Inventory Analysis</h2>
+
       </div>
 
       <div className="space-y-6">
@@ -23,9 +21,7 @@ export function ToolInsightsSection({ audit }: Props) {
           const seats = audit.input.tools.find(t => t.tool === result.tool)?.seats ?? 1
 
           const cardBase = "group rounded-[32px] p-8 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1"
-          const cardStyle = isKeep
-            ? `${cardBase} bg-[#EAFEF3] border border-black/[0.05]`
-            : `${cardBase} bg-white border border-black/[0.08]`
+          const cardStyle = `${cardBase} bg-white border border-[#111]`
 
           return (
             <div key={result.tool} className={cardStyle}>
@@ -49,7 +45,7 @@ export function ToolInsightsSection({ audit }: Props) {
                 {/* Analysis Column */}
                 <div className="lg:col-span-6 border-x-0 lg:border-x border-black/5 px-0 lg:px-8">
                   <div className="mb-6 flex items-center justify-between">
-                    <span className="text-sm font-bold tracking-wide text-[#111]">Stack Alignment</span>
+                    <span className="text-[18px] font-bold  uppercase tracking-wide text-[#111]">Stack Alignment</span>
 
                   </div>
 
@@ -61,23 +57,23 @@ export function ToolInsightsSection({ audit }: Props) {
                   </div>
 
                   <div className="space-y-6">
-                    <p className="text-sm font-medium leading-relaxed text-[#111] bg-[#f9fafb] p-4 rounded-xl border border-black/[0.03]">
+                    <p className="text-[15px] font-medium leading-relaxed text-[#111] bg-[#f9fafb] p-4 rounded-xl border border-black/[0.03]">
                       {result.uniqueCapabilityAnalysis || "Full analysis being compiled..."}
                     </p>
 
                     <div className="grid grid-cols-2 gap-6 mt-6">
                       <div>
-                        <p className="text-sm font-bold tracking-wide text-[#111] mb-3">Key Strengths</p>
+                        <p className="text-sm font-bold uppercase tracking-wide text-[#111] mb-3">Key Strengths</p>
                         <ul className="space-y-2">
                           {(result.strengths ?? []).slice(0, 3).map((s, i) => (
-                            <li key={i} className="text-sm font-medium text-[#666] flex items-center gap-2">
+                            <li key={i} className="text-sm font-medium text-[#111] flex items-center gap-2">
                               <div className="h-1.5 w-1.5 rounded-full bg-[#111]" /> {s}
                             </li>
                           ))}
                         </ul>
                       </div>
                       <div>
-                        <p className="text-sm font-bold tracking-wide text-[#111] mb-3">Redundancy Risks</p>
+                        <p className="text-sm font-bold uppercase tracking-wide text-[#111] mb-3">Redundancy Risks</p>
                         <ul className="space-y-2">
                           {(result.weaknesses ?? []).slice(0, 3).map((w, i) => (
                             <li key={i} className="text-sm font-medium text-[#666] flex items-center gap-2">

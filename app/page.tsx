@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CheckCircle2, ChevronDown, MessageSquareQuote } from "lucide-react"
+import { CheckCircle2, ChevronDown, MessageSquareQuote, Layers, BarChart3, Zap, UserMinus } from "lucide-react"
 import Image from "next/image"
 import { useEffect } from "react"
 import { trackEvent } from "@/lib/analytics"
@@ -23,8 +23,8 @@ export default function Home() {
         />
       </div>
       {/* Header */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
-        <nav className="glass-card rounded-full px-6 py-3 flex items-center justify-between shadow-sm border border-black/5">
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
+        <nav className="glass-card rounded-full px-8 py-4 flex items-center justify-between shadow-sm border border-black/5">
           <div className="flex items-center gap-3">
             <Image
               src="/Logo.png"
@@ -35,12 +35,11 @@ export default function Home() {
             />
             <span className="text-xl font-bold tracking-tighter text-[#111]">Vantage</span>
           </div>
-          {/*           
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#666]">
-            <Link href="#how-it-works" className="hover:text-black">How it works</Link>
-            <Link href="#coverage" className="hover:text-black">Tool Coverage</Link>
-            <Link href="#testimonials" className="hover:text-black">Testimonials</Link>
-          </div> */}
+
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="#testimonials" className="text-xs font-bold text-[#111] hover:opacity-60 transition-opacity">Testimonials</Link>
+            <Link href="#faq" className="text-xs font-bold text-[#111] hover:opacity-60 transition-opacity">FAQs</Link>
+          </div>
 
           <Link href="/audit/new" className="bg-[#111] text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-black transition-all">
             Audit My AI Spend
@@ -49,17 +48,17 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-44 pb-32 px-6 credex-grid overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <section className="relative pt-44 pb-24 px-6 credex-grid overflow-hidden">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
 
 
           <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-[#111] mb-8 leading-[1.05]">
-            Find out if you&apos;re <br />
+            Find out if you are <br />
             <span className="text-[#00C853]">overpaying</span> for AI tools.
           </h1>
 
           <p className="text-xl text-[#666] max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
-            Free audit. No login. See your exact savings and tool consolidation opportunities in 60 seconds.
+            Free audit. No login. See your exact savings and tool consolidation opportunities in  seconds.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -89,10 +88,62 @@ export default function Home() {
 
 
 
+      {/* The Science of Savings */}
+      <section className="py-20 px-12 bg-[#00C853] text-[#111] relative z-10 rounded-[48px] max-w-6xl mx-auto mb-24 shadow-2xl shadow-[#00C853]/20">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">The Science of Savings</h2>
+              <p className="text-[#111]/70 text-xl font-bold leading-relaxed">
+                Most companies overpay for AI by 30-60%. We don&apos;t guess where those leaks are—we audit the architecture of your spend across four primary vectors.
+              </p>
+            </div>
+            <Link href="/audit/new" className="inline-flex items-center gap-2 bg-[#111] text-white px-8 py-4 rounded-full font-bold hover:bg-black transition-all shadow-xl shadow-black/10">
+              Run Free Audit
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Redundancy Mapping",
+                desc: "We detect overlapping model capabilities (e.g. GPT-4 vs Claude 3.5) across your entire tool inventory.",
+                icon: <Layers className="h-6 w-6" />
+              },
+              {
+                title: "Market Benchmarking",
+                desc: "We compare your per-seat spend against industry data for teams of your specific size.",
+                icon: <BarChart3 className="h-6 w-6" />
+              },
+              {
+                title: "Tier Optimization",
+                desc: "We analyze your subscription tiers against actual feature utilization and API patterns.",
+                icon: <Zap className="h-6 w-6" />
+              },
+              {
+                title: "License Hygiene",
+                desc: "We identify ghost seats and overestimated license requirements based on your team size.",
+                icon: <UserMinus className="h-6 w-6" />
+              }
+            ].map((item, i) => (
+              <div key={i} className="group p-8 rounded-[32px] bg-white shadow-sm border border-black/5 hover:shadow-xl transition-all hover:-translate-y-1">
+                <div className="h-12 w-12 rounded-2xl bg-[#00C853]/10 flex items-center justify-center text-[#00C853] mb-6">
+                  {item.icon}
+                </div>
+                <h3 className="text-lg font-black mb-3">{item.title}</h3>
+                <p className="text-xs text-black/50 font-bold leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-32 px-6 bg-[#fcfcfc] relative z-10">
+      <section id="testimonials" className="py-24 px-6 bg-[#fcfcfc] relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-[#111] mb-6">Built for Engineering Leaders</h2>
             <p className="text-[#666] font-medium max-w-2xl mx-auto text-lg">Vantage is the trusted optimization partner for high-growth startups and enterprise teams.</p>
           </div>
@@ -131,20 +182,35 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-32 px-6 bg-white relative z-10 border-t border-black/5">
+      <section id="faq" className="py-24 px-6 bg-white relative z-10 border-t border-black/5">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-[#111] mb-6">Frequently Asked</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-[#111] mb-6">Frequently Asked Questions.</h2>
             <p className="text-[#666] font-medium text-lg">Everything you need to know about Vantage audits.</p>
           </div>
 
           <div className="space-y-4">
             {[
-              { q: "Is this actually free?", a: "Yes. There's no plan, no credit card, and no login required. We show you the results first, then optionally ask for your email if you want the PDF report." },
-              { q: "How do you calculate savings?", a: "We look at public pricing for each tool and compare it to the most cost-effective alternative. We factor in unused seats, redundancy, and API usage patterns." },
-              { q: "How current is the pricing data?", a: "Pricing is verified weekly against official vendor pages (OpenAI, Anthropic, Cursor, etc.). Every recommendation cites its source URL." },
-              { q: "Is my data shared or sold?", a: "No. Your audit data is only used to generate your report. We don't sell your data to third parties." },
-              { q: "What tools do you cover?", a: "We currently cover Cursor, GitHub Copilot, Claude, ChatGPT, Anthropic API, OpenAI API, Gemini, and Windsurf." }
+              { 
+                q: "How exactly do you calculate my potential savings?", 
+                a: "Our engine performs a multi-vector analysis: identifying redundant model capabilities (e.g., ChatGPT Plus vs Claude Pro), comparing your per-seat spend against enterprise benchmarks for your team size, and verifying feature-parity across different tier levels. On average, we identify 34% in recoverable spend." 
+              },
+              { 
+                q: "Is my corporate spend data stored or sold?", 
+                a: "Absolutely not. Vantage uses session-based processing. Your data is used exclusively to generate your audit report in real-time. We don't store identifiable business metrics or sell user data to third-party vendors." 
+              },
+              { 
+                q: "How accurate and current is the vendor pricing?", 
+                a: "Our database is verified weekly against official vendor documentation. Every savings recommendation in your report includes a direct citation to the official pricing page for OpenAI, Anthropic, Cursor, and other major providers." 
+              },
+              { 
+                q: "Which AI tools are included in the audit?", 
+                a: "We currently provide deep-dive analysis for Cursor, GitHub Copilot, Claude, ChatGPT, Anthropic API, OpenAI API, Gemini, and Windsurf, covering both individual Pro plans and Enterprise tiers." 
+              },
+              { 
+                q: "Is this audit really free of charge?", 
+                a: "Yes. There is no credit card required, no account creation, and no paywall. We provide the full dashboard analysis for free, only requesting an email if you wish to receive a persistent PDF copy of your report." 
+              }
             ].map((item, i) => (
               <details key={i} className="group glass-card rounded-[24px] border border-black/5 overflow-hidden">
                 <summary className="flex items-center justify-between p-7 cursor-pointer list-none font-bold text-[#111] text-lg">
@@ -178,7 +244,6 @@ export default function Home() {
           </div>
 
           <div className="flex gap-12 text-sm font-bold text-white/60">
-
           </div>
         </div>
       </footer>
