@@ -16,13 +16,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white selection:bg-green-100 antialiased overflow-x-hidden relative">
-      {/* Background Effect */}
+
       <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.4]">
         <PixelBlast
 
         />
       </div>
-      {/* Header */}
+
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
         <nav className="glass-card rounded-full px-8 py-4 flex items-center justify-between shadow-sm border border-black/5">
           <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Hero Section */}
+
       <section className="relative pt-44 pb-24 px-6 credex-grid overflow-hidden">
         <div className="max-w-5xl mx-auto text-center relative z-10">
 
@@ -70,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Bar */}
+
       <div className="border-y border-black/5 bg-[#fcfcfc] py-8 overflow-hidden relative z-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-center items-center gap-x-16 gap-y-6">
 
@@ -88,7 +88,7 @@ export default function Home() {
 
 
 
-      {/* The Science of Savings */}
+
       <section className="py-20 px-12 bg-[#00C853] text-[#111] relative z-10 rounded-[48px] max-w-6xl mx-auto mb-24 shadow-2xl shadow-[#00C853]/20">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">
@@ -140,7 +140,7 @@ export default function Home() {
 
 
 
-      {/* Testimonials Section */}
+
       <section id="testimonials" className="py-24 px-6 bg-[#fcfcfc] relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -181,7 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
+
       <section id="faq" className="py-24 px-6 bg-white relative z-10 border-t border-black/5">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
@@ -226,7 +226,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+
       <footer className="py-24 px-6 bg-[#111] text-white relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div>

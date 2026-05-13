@@ -12,7 +12,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
   const benchmark = getBenchmarkRange(audit.input.teamSize)
 
 
-  // Donut chart calculations
+
   const colors = ["#00C853", "#111111", "#4F8CFF", "#F59E0B", "#8B5CF6", "#EF4444", "#06B6D4", "#EC4899"]
   const radius = 50
   const circumference = 2 * Math.PI * radius
@@ -27,7 +27,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
 
   return (
     <section className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-      {/* Spend Breakdown */}
+
       <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
         <h3 className="text-[35px] font-bold tracking-widest text-[#111] mb-4">Spend Breakdown</h3>
         <div className="flex flex-col items-center gap-8">
@@ -58,7 +58,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
         </div>
       </div>
 
-      {/* Overlap Analysis */}
+
       <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
         <h3 className="text-[35px] font-bold  tracking-widest text-[#111] mb-4">Overlap Analysis</h3>
 
@@ -82,7 +82,7 @@ export function AnalyticsGrid({ audit, totalSpend }: Props) {
         <p className="text-[20px] leading-relaxed text-[#111] font-medium opacity-80">{overlap.desc}</p>
       </div>
 
-      {/* Benchmark Comparison */}
+
       <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
         <h3 className="text-[35px] font-bold  tracking-widest text-[#111] mb-4">Market Benchmark</h3>
 

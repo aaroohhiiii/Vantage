@@ -14,7 +14,7 @@ export function MethodologySection({ audit }: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Prominent Credex for High Savings */}
+
       {hasHighSavings && (
         <div className="rounded-[32px] border border-[#111] bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] p-8 shadow-xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
@@ -53,9 +53,9 @@ export function MethodologySection({ audit }: Props) {
         </div>
       )}
 
-      {/* Email Capture */}
+
       <div className="rounded-[32px] border border-[#111] bg-[#1936F0D] p-8 shadow-xl relative overflow-hidden group">
-        {/* Subtle decorative element */}
+
         <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-[#00C853]/10 blur-3xl group-hover:bg-[#00C853]/20 transition-all duration-500" />
 
         <div className="relative z-10">
@@ -96,7 +96,7 @@ export function MethodologySection({ audit }: Props) {
         </div>
       </div>
 
-      {/* Standard CredEx for non-high savings */}
+
       {!hasHighSavings && !hasLowSavings && (
         <div className="rounded-[32px] border border-[#111] bg-white p-8 shadow-xl relative overflow-hidden">
           <div className="mb-8 flex items-center gap-4">
