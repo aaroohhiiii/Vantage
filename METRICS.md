@@ -26,6 +26,26 @@ An audit completed means the user saw value. Unlike signups or page views, a com
 
 ---
 
+## Audit Logic Metrics (Engine V3)
+
+### 1. Efficiency Score Thresholds
+*   **Optimized (85-100)**: Expert-level stack with zero redundant overlap.
+*   **Good (70-84)**: Solid efficiency with minor consolidation opportunities.
+*   **Fair (50-69)**: Functional but with identifiable waste.
+*   **Inefficient (0-49)**: Significant cost leakage and tool redundancy.
+
+### 2. Overlap Detection (Containment Score)
+We have moved from Jaccard Similarity to a **Containment Score** to more accurately detect redundancy.
+*   **Metric**: `intersection / audited_tool_capabilities`
+*   **Rationale**: If 9 out of 10 features of Tool A are already in the stack, Tool A is 90% redundant, regardless of how many *other* features the stack has.
+
+### 3. Secondary Tool Penalty
+To prevent "feature hoarding," the engine applies a team-size dynamic penalty to redundant tools in the same category.
+*   **Penalty Factor**: Scales from 0.4 (60% penalty for teams <= 5) to 0.95 (5% penalty for teams >= 50).
+*   **Result**: Small teams are aggressively pushed toward consolidation, while enterprise stacks are respected.
+
+---
+
 ## Initial Instrumentation Plan
 We use a simple event log in Supabase (`analytics_events`) to track:
 1.  **`page_view_landing`**: Top-of-funnel baseline.

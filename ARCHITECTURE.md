@@ -110,37 +110,33 @@ sequenceDiagram
     F->>U: Display results page
 ```
 
-### 4. **Audit Engine Processing**
+### 4. **Audit Engine V3 Processing**
 ```typescript
 // Core processing steps
-1. Normalize input data
+1. Normalize input data (minimum seat enforcement)
 2. Fetch tool pricing and capabilities
-3. Calculate overlap scores between tools
-4. Generate recommendations (keep/cancel/switch/downgrade)
-5. Compute efficiency score (0-100)
-6. Calculate potential savings
-7. Store results in database
+3. Calculate Containment-based overlap scores
+4. Apply Category "Winner-Take-All" logic
+5. Apply Team-Size Dynamic Secondary Tool Penalty
+6. Generate rule-based recommendations
+7. Run AI Refinement Step (AI overrides Engine if redundancy detected)
+8. Recalculate aggregate savings and efficiency score (85+ for Optimized)
+9. Store results in database
 ```
 
-### 5. **AI Enhancement**
+### 5. **AI Enhancement & Sync**
 ```typescript
-// Parallel AI processing
+// Parallel AI processing with Refinement Step
 const aiPromises = [
   generateStackSummary(auditInput),
   generatePerToolInsights(auditInput)
 ]
 
-// AI returns structured data:
-{
-  stackSummary: "Your team of 5 developers is spending efficiently...",
-  toolInsights: {
-    "cursor": {
-      strengths: ["Advanced Agent Mode", "Local indexing"],
-      weaknesses: ["VS Code only", "High resource usage"],
-      alternativeTool: "Windsurf",
-      uniqueCapabilityAnalysis: "Cursor's Composer mode..."
-    }
-  }
+// AI Refinement Step in API:
+if (aiInsight.suggestedAction === "remove" && engineAction === "keep") {
+  // Override engine with expert AI analysis
+  finalAction = "remove";
+  finalSavings = currentSpend;
 }
 ```
 
