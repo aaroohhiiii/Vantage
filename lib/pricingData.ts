@@ -25,7 +25,7 @@ export type PricingPlan = {
 export type ToolPricing = {
   toolName: ToolName
   displayName: string
-  category: "ide" | "chat" | "api"
+  category: "IDE" | "chat" | "api"
   plans: PricingPlan[]
 }
 
@@ -54,7 +54,7 @@ export const pricingData: ToolPricing[] = [
   {
     toolName: "cursor",
     displayName: "Cursor",
-    category: "ide",
+    category: "IDE",
     plans: [
       {
         planName: "Hobby",
@@ -93,7 +93,7 @@ export const pricingData: ToolPricing[] = [
   {
     toolName: "github-copilot",
     displayName: "GitHub Copilot",
-    category: "ide",
+    category: "IDE",
     plans: [
       {
         planName: "Free",
@@ -276,7 +276,7 @@ export const pricingData: ToolPricing[] = [
       },
       {
         planName: "Ultra",
-        pricePerUserPerMonth: 20,
+        pricePerUserPerMonth: 249.99,
         isPerUser: false,
         sourceUrl: GEMINI_URL,
         verifiedDate: VERIFIED_DATE,
@@ -296,7 +296,7 @@ export const pricingData: ToolPricing[] = [
   {
     toolName: "windsurf",
     displayName: "Windsurf",
-    category: "ide",
+    category: "IDE",
     plans: [
       {
         planName: "Free",
