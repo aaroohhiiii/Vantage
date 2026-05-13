@@ -17,15 +17,21 @@ Vantage helps startups and engineering teams analyze their AI tool stack, identi
 ![Homepage](https://via.placeholder.com/800x400/1a1a1a/00C853?text=Vantage+Homepage)
 *Landing page with audit CTA and real-time savings calculator*
 
+
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 46 39 PM" src="https://github.com/user-attachments/assets/98c2d74c-a0c4-4eb4-978e-c07c7d31c165" />
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 47 44 PM" src="https://github.com/user-attachments/assets/d1e658ef-a01c-41c9-853f-99c25034cab2" />
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 47 54 PM" src="https://github.com/user-attachments/assets/d4e7afb1-9e02-4c20-91da-0a4a56ea1ecd" />
+
+
+
 ### Audit Results Dashboard
-![Results Dashboard](https://via.placeholder.com/800x400/1a1a1a/00C853?text=Audit+Results)
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 48 19 PM" src="https://github.com/user-attachments/assets/e040b509-f7a6-402c-a196-8a7e5e36fac8" />
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 48 46 PM" src="https://github.com/user-attachments/assets/bd27b084-c69d-4f9d-8929-f67666c18527" />
+
+
 *Comprehensive analysis with tool-specific insights and recommendations*
 
-### Tool Recommendations
-![Tool Insights](https://via.placeholder.com/800x400/1a1a1a/00C853?text=Tool+Insights)
-*Detailed breakdown of each tool with strengths, weaknesses, and alternatives*
 
-*Note: Replace these placeholders with actual screenshots after deployment*
 
 ## Quick Start
 
@@ -207,7 +213,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ##  Deployed URL
 
-**Live Demo**: [https://vantage-theta-eosin.vercel.app/](https://vantage-theta-eosin.vercel.app/)
+**Live Demo**: [https://vantage-theta-eosin.vercel.app/](vantagecredex.vercel.app/<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 46 05 PM" src="https://github.com/user-attachments/assets/cd48e880-ce9e-48df-ae07-57c3b1dcab8e" />
+)
 
 *Note: This is a demo deployment. For production use, deploy with your own Supabase instance and API keys.*
 
