@@ -207,7 +207,7 @@ Strict Writing Directives:
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
       max_tokens: 300,
       temperature: 0.5,
     })
@@ -223,19 +223,23 @@ Strict Writing Directives:
   }
 }
 
-export async function generatePerToolInsights(audit: SummaryInput): Promise<Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>> {
+export async function generatePerToolInsights(audit: SummaryInput): Promise<Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string; suggestedAction: string }>> {
   const { input, results } = audit
   
   const prompt = `You are a specialized AI stack auditor. Analyze each tool in the client's stack relative to their primary use case: ${input.useCase}.
-  
+  Team Size: ${input.teamSize} members.
+
+  STRATEGIC GUIDELINE: For teams under 20 members, we advocate for a LEAN stack. If there are multiple tools in the same category (e.g., ChatGPT and Claude), you MUST recommend removing or consolidating the weaker or more redundant ones to maximize ROI.
+
   Stack:
   ${results.map(r => `- ${r.tool} (${r.currentPlan}): ${r.recommendedAction.toUpperCase()} recommendation.`).join("\n")}
   
   For EACH tool listed above, provide:
-  1. 3 "Strengths" (specific to ${input.useCase})
-  2. 3 "Weaknesses" (specific to ${input.useCase})
+  1. 3 "strengths" (specific to ${input.useCase})
+  2. 3 "weaknesses" (specific to ${input.useCase})
   3. "alternativeTool": The name of the single best alternative tool for this specific user's needs.
-  4. "uniqueCapabilityAnalysis": A 2-3 line paragraph analyzing the tool's unique capabilities and explaining exactly how the user can leverage them for their ${input.useCase} workflow.
+  4. "uniqueCapabilityAnalysis": A 2-3 line paragraph analyzing the tool's unique capabilities.
+  5. "suggestedAction": Based on your expert analysis, should they "keep", "remove", or "consolidate" this tool? If you see functional overlap, ALWAYS suggest "remove" or "consolidate".
   
   RETURN ONLY A VALID JSON OBJECT where keys are the tool names exactly as provided in the list above.
   Example format:
@@ -244,12 +248,13 @@ export async function generatePerToolInsights(audit: SummaryInput): Promise<Reco
       "strengths": ["Advanced Agent Mode", "Local indexing", "Privacy controls"],
       "weaknesses": ["VS Code only", "Steeper learning curve", "High resource usage"],
       "alternativeTool": "Windsurf",
-      "uniqueCapabilityAnalysis": "Cursor's 'Composer' mode allows you to build full-stack features from a single prompt, which is ideal for your ${input.useCase} workflow. Use its codebase indexing to perform large-scale refactors that standard Copilot would struggle with."
+      "uniqueCapabilityAnalysis": "Cursor's 'Composer' mode allows you to build full-stack features from a single prompt...",
+      "suggestedAction": "keep"
     }
   }`
 
   try {
-    if (!process.env.GROQ_API_KEY) return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>
+    if (!process.env.GROQ_API_KEY) return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string; suggestedAction: string }>
 
     const completion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
@@ -263,6 +268,6 @@ export async function generatePerToolInsights(audit: SummaryInput): Promise<Reco
     return data
   } catch (error) {
     console.error("[generatePerToolInsights] error:", error)
-    return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string }>
+    return {} as Record<ToolName, { strengths: string[]; weaknesses: string[]; alternativeTool: string; uniqueCapabilityAnalysis: string; suggestedAction: string }>
   }
 }

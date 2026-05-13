@@ -70,7 +70,8 @@ export async function POST(request: Request) {
     // Rate limiting check
     const { success, limit, reset, remaining } = await auditRateLimit.limit(ip)
     
-    if (!success) {
+    // Bypass rate limiting in local development
+    if (!success && process.env.NODE_ENV !== 'development') {
       return NextResponse.json(
         { 
           error: "Too many requests. You can run 5 audits per hour.",
@@ -126,11 +127,29 @@ export async function POST(request: Request) {
     ])
 
     // Merge insights into results
+    // 1. REFINEMENT STEP: Sync Engine with AI Insights
+    // If AI identified a tool as redundant, force the rule-based engine to mark it as such.
     const enrichedResults = audit.results.map(r => {
       const insight = perToolInsights[r.tool]
       if (!insight) return r
+
+      let action = r.recommendedAction
+      let monthlySavings = r.monthlySavings
+      let reason = r.reason
+
+      // If AI suggests removal/consolidation but engine didn't catch it
+      if ((insight.suggestedAction === "remove" || insight.suggestedAction === "consolidate") && action === "keep") {
+         action = insight.suggestedAction
+         monthlySavings = r.currentSpend // Full savings if tool is cut
+         reason = `Expert AI Analysis identified critical functional overlap: ${insight.uniqueCapabilityAnalysis.split('.')[0]}.`
+      }
+
       return {
         ...r,
+        recommendedAction: action,
+        monthlySavings: monthlySavings,
+        annualSavings: monthlySavings * 12,
+        reason: reason,
         strengths: insight.strengths,
         weaknesses: insight.weaknesses,
         alternativeTool: insight.alternativeTool,
@@ -138,16 +157,21 @@ export async function POST(request: Request) {
       }
     })
 
+    // 2. RECALCULATE AGGREGATE METRICS
+    const totalMonthlySavings = enrichedResults.reduce((sum, r) => sum + r.monthlySavings, 0)
+    const totalAnnualSavings = totalMonthlySavings * 12
+    const isOptimal = totalMonthlySavings === 0
+
     const supabase = getSupabaseServerClient()
     const { data, error } = await supabase
       .from("audits")
       .insert({
         input: validation.data,
         results: enrichedResults,
-        total_monthly_savings: audit.totalMonthlySavings,
-        total_annual_savings: audit.totalAnnualSavings,
+        total_monthly_savings: totalMonthlySavings,
+        total_annual_savings: totalAnnualSavings,
         ai_summary: aiSummaryText,
-        is_optimal: audit.isOptimal,
+        is_optimal: isOptimal,
         show_credex: audit.showCredex,
         summary: audit.summary ?? null,
         efficiency_score: audit.efficiencyScore ?? null,
