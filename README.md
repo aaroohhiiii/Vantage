@@ -17,6 +17,7 @@ Vantage helps startups and engineering teams analyze their AI tool stack, identi
 ![Homepage](https://via.placeholder.com/800x400/1a1a1a/00C853?text=Vantage+Homepage)
 *Landing page with audit CTA and real-time savings calculator*
 
+<img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 49 42 PM" src="https://github.com/user-attachments/assets/b08298ff-e7a1-4ae0-bf8a-8112b253f793" />
 
 <img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 46 39 PM" src="https://github.com/user-attachments/assets/98c2d74c-a0c4-4eb4-978e-c07c7d31c165" />
 <img width="1703" height="980" alt="Screenshot 2026-05-13 at 5 47 44 PM" src="https://github.com/user-attachments/assets/d1e658ef-a01c-41c9-853f-99c25034cab2" />
