@@ -14,6 +14,7 @@ export default async function EmbedPage({ params }: PageProps) {
   if (!audit) return <div className="p-4 text-xs text-gray-500">Audit not found</div>
 
   const score = audit.efficiencyScore ?? 75
+
   const label = getEfficiencyLabel(score)
   const radius = 30
   const circumference = 2 * Math.PI * radius

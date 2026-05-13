@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 
@@ -11,7 +11,7 @@ import type { AuditInput, FormState, StoredFormState, ToolInput, ToolName, UseCa
 import { getOfficialPrice, getToolPricing } from "@/lib/pricingData"
 import { trackEvent } from "@/lib/analytics"
 
-const LOCAL_STORAGE_KEY = "credex-audit-form-state"
+const LOCAL_STORAGE_KEY = "vantage-audit-form-state"
 const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
 
 const ALL_TOOLS: ToolName[] = [
@@ -51,17 +51,17 @@ function createInitialFormState(): FormState {
 const stepVariants = {
   enter: (dir: number) => ({
     opacity: 0,
-    x: dir > 0 ? 40 : -40,
+    x: dir > 0 ? 20 : -20,
   }),
   center: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
+    transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const },
   },
   exit: (dir: number) => ({
     opacity: 0,
-    x: dir > 0 ? -40 : 40,
-    transition: { duration: 0.25, ease: [0.55, 0.06, 0.68, 0.19] as [number, number, number, number] },
+    x: dir > 0 ? -20 : 20,
+    transition: { duration: 0.3, ease: [0.23, 1, 0.32, 1] as const },
   }),
 }
 
@@ -105,7 +105,7 @@ export default function SpendForm() {
     window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload))
   }, [state])
 
-  const progressPct = useMemo(() => (state.step / 3) * 100, [state.step])
+
 
   function goTo(step: FormState["step"], dir: number) {
     if (dir > 0) {
@@ -191,53 +191,44 @@ export default function SpendForm() {
   return (
     <div
       id="spend-form"
-      className="mx-auto w-full max-w-4xl rounded-3xl"
-      style={{
-        background: "#FFFFFF",
-        border: "1px solid #E5E7EB",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-      }}
+      className="mx-auto w-full max-w-4xl glass-card rounded-[40px] shadow-2xl shadow-black/[0.02]"
     >
       {/* ── Step indicator ── */}
-      <div className="px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
+      <div className="px-10 pt-10 pb-8 sm:px-12 sm:pt-12">
         <div className="flex items-center justify-between relative">
           {STEPS.map((step, i) => {
             const isCompleted = state.step > step.number
             const isActive = state.step === step.number
             return (
               <div key={step.number} className="relative flex items-center justify-center">
-                {/* Step dot + label */}
-                <div className="flex flex-col items-center gap-1.5 z-10">
+                <div className="flex flex-col items-center gap-3 z-10">
                   <div
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-medium transition-all duration-500"
                     style={
                       isCompleted
                         ? { background: "#F0FDF4", border: "1px solid #BBF7D0", color: "#00C853" }
                         : isActive
-                        ? { background: "#00C853", color: "#fff", boxShadow: "0 0 20px rgba(0,200,83,0.25)" }
+                        ? { background: "#111111", color: "#fff" }
                         : { background: "#FFFFFF", border: "1px solid #E5E7EB", color: "#9CA3AF" }
                     }
                   >
                     {isCompleted ? "✓" : step.number}
                   </div>
                   <span
-                    className="text-[11px] font-medium transition-colors duration-300 whitespace-nowrap"
-                    style={{ color: isActive ? "#00C853" : isCompleted ? "#00C853" : "#9CA3AF" }}
+                    className="text-[10px] font-medium uppercase tracking-widest transition-colors duration-500 whitespace-nowrap"
+                    style={{ color: isActive ? "#111111" : isCompleted ? "#00C853" : "#9CA3AF" }}
                   >
                     {step.label}
                   </span>
                 </div>
 
-                {/* Connector line (not after last step) */}
                 {i < STEPS.length - 1 && (
                   <div 
-                    className="absolute top-4 h-0.5 transition-all duration-500" 
+                    className="absolute top-5 h-px transition-all duration-700" 
                     style={{ 
                       background: isCompleted ? "#00C853" : "#E5E7EB",
                       left: "100%",
-                      right: "-100%",
-                      width: "600%"
+                      width: "300%"
                     }} 
                   />
                 )}
@@ -245,27 +236,10 @@ export default function SpendForm() {
             )
           })}
         </div>
-
-        {/* Slim progress bar */}
-        <div className="mt-4 h-0.5 w-full overflow-hidden rounded-full" style={{ background: "#E5E7EB" }}>
-          <div
-            className="h-full rounded-full transition-all duration-500"
-            style={{
-              width: `${progressPct}%`,
-              background: "#00C853",
-              boxShadow: "0 0 12px rgba(0,200,83,0.35)",
-            }}
-            role="progressbar"
-            aria-valuenow={progressPct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`Form progress ${Math.round(progressPct)}%`}
-          />
-        </div>
       </div>
 
       {/* ── Step content ── */}
-      <div className="relative overflow-hidden px-6 pb-8 sm:px-8">
+      <div className="relative overflow-hidden px-10 pb-12 sm:px-12">
         <AnimatePresence mode="wait" custom={direction}>
           {state.step === 1 && (
             <motion.div

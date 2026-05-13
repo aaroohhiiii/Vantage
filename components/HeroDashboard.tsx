@@ -1,6 +1,6 @@
 "use client"
 import { ToolIcon, TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
-import { BadgeDollarSign, RefreshCw, Scissors, Zap } from "lucide-react"
+import { Zap, ShieldCheck, ArrowUpRight } from "lucide-react"
 
 const MOCK_TOOLS = [
   { toolName: "cursor" as const, spend: 40, status: "keep" },
@@ -9,70 +9,67 @@ const MOCK_TOOLS = [
   { toolName: "chatgpt" as const, spend: 60, status: "downgrade" },
 ]
 
-const SAVINGS_ITEMS = [
-  { label: "Redundant tools", amount: "$228/yr", icon: RefreshCw },
-  { label: "Plan overpay", amount: "$360/yr", icon: BadgeDollarSign },
-  { label: "Credex credits", amount: "$720/yr", icon: Zap },
-]
-
-
 export default function HeroDashboard() {
   return (
     <div
-      className="relative w-full max-w-[480px] select-none"
+      className="relative w-full max-w-[520px] select-none"
       aria-hidden="true"
     >
-      {/* Floating glow behind the dashboard */}
-      <div 
-        className="absolute inset-0 rounded-3xl opacity-25 blur-3xl" 
-        style={{ background: "radial-gradient(ellipse at 60% 40%, #00C853 0%, #7C3AED 45%, transparent 80%)" }}
-      />
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none credex-grid" />
 
-      {/* Main dashboard card */}
       <div
-        className="animate-float relative rounded-2xl border border-[#E5E7EB] bg-white/95 backdrop-blur-lg p-5 shadow-lg"
+        className="animate-float relative rounded-[32px] border border-black/5 bg-white p-6 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]"
       >
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-[#4B5563]">AI Spend Report</p>
-            <p className="mt-0.5 text-sm font-medium text-[#4B5563]">May 2026 · 6 tools</p>
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#00C853]/10 border border-[#00C853]/20">
+              <ShieldCheck className="h-4 w-4 text-[#00C853]" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#111]">Vantage Snapshot</p>
+              <p className="text-[11px] font-medium text-[#666]">Verified Stack Analysis &middot; 2026</p>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#00C853] to-[#00A846] px-3 py-1 shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse-glow" />
-            <span className="text-xs font-medium text-white">Live audit</span>
+          <div className="flex items-center gap-2 rounded-full bg-[#f3f4f6] px-3 py-1 border border-black/5">
+            <div className="h-1.5 w-1.5 rounded-full bg-[#00C853] animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#111]">LIVE AUDIT</span>
           </div>
         </div>
 
         {/* Annual savings hero number */}
-        <div className="mb-4 rounded-xl p-4 bg-gradient-to-br from-[#F0FDF4] to-[#E6FFFA] border border-[#00C85320] shadow-sm">
-          <p className="mb-1 text-xs font-medium text-[#4B5563]">Estimated Annual Savings</p>
-          <p
-            className="text-4xl font-bold tracking-tight text-[#0A0A0A]"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            $1,308
-          </p>
-          <p className="mt-1 text-xs text-[#4B5563]">Across 3 optimization opportunities</p>
+        <div className="mb-6 rounded-2xl p-6 bg-[#0d1b16] text-white border border-white/5 relative overflow-hidden group">
+          <div className="absolute inset-0 opacity-10 credex-grid pointer-events-none" />
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white/40 relative z-10">Annual Savings Opportunity</p>
+          <div className="flex items-center gap-2 relative z-10">
+            <p className="text-5xl font-bold tracking-tighter text-[#00C853]">
+              $1,308
+            </p>
+            <ArrowUpRight className="h-6 w-6 text-white/20 group-hover:text-[#00C853] transition-colors" />
+          </div>
+          <p className="mt-2 text-xs font-medium text-white/50 relative z-10">Optimizing 4 redundant subscriptions</p>
         </div>
 
         {/* Tool rows */}
-        <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
+        <div className="space-y-3 mb-6">
           {MOCK_TOOLS.map((tool) => (
             <div
               key={tool.toolName}
-              className="flex items-center justify-between rounded-lg px-3 py-2.5 bg-white border border-[#E5E7EB] hover:shadow-sm transition-shadow"
+              className="flex items-center justify-between rounded-xl px-4 py-3 bg-[#f9fafb] border border-black/5 hover:bg-[#f3f4f6] transition-colors"
             >
-              <div className="flex items-center gap-2.5">
-                <ToolIcon tool={tool.toolName} size={24} />
-                <span className="text-sm text-[#0A0A0A] font-medium">{TOOL_DISPLAY_NAMES[tool.toolName]}</span>
-              </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-[#4B5563] font-medium">${tool.spend}/mo</span>
+                <ToolIcon tool={tool.toolName} size={28} />
+                <div>
+                  <span className="text-xs text-[#111] font-bold block">{TOOL_DISPLAY_NAMES[tool.toolName]}</span>
+                  <span className="text-[10px] text-[#666] font-medium uppercase tracking-wider">Active Subscription</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-[#111] font-bold">${tool.spend}<span className="text-[10px] text-[#666]">/mo</span></span>
                 <span
-                  className="rounded-full px-2 py-0.5 text-[10px] font-medium"
+                  className="rounded-lg px-2 py-1 text-[9px] font-bold uppercase tracking-widest border"
                   style={{
-                    background:
+                    backgroundColor:
                       tool.status === "cancel"
                         ? "#FEF2F2"
                         : tool.status === "downgrade"
@@ -84,52 +81,35 @@ export default function HeroDashboard() {
                         : tool.status === "downgrade"
                         ? "#F59E0B"
                         : "#00C853",
+                    borderColor:
+                      tool.status === "cancel"
+                        ? "#EF444420"
+                        : tool.status === "downgrade"
+                        ? "#F59E0B20"
+                        : "#00C85320",
                   }}
                 >
-                  {tool.status === "cancel" ? "Cancel" : tool.status === "downgrade" ? "Downgrade" : "Optimal"}
+                  {tool.status === "cancel" ? "Redundant" : tool.status === "downgrade" ? "Downgrade" : "Aligned"}
                 </span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Savings breakdown */}
-        <div className="rounded-xl p-3" style={{ background: "#F8F9FA", border: "1px solid #E5E7EB" }}>
-          <p className="mb-2.5 text-xs font-medium text-[#4B5563]">Savings breakdown</p>
-          <div className="space-y-2">
-            {SAVINGS_ITEMS.map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <item.icon className="h-3.5 w-3.5 text-[#4B5563]" />
-                  <span className="text-xs text-[#4B5563]">{item.label}</span>
-                </div>
-                <span className="text-xs font-semibold text-[#00C853]">{item.amount}</span>
-              </div>
-            ))}
-          </div>
+        {/* Trust Note */}
+        <div className="flex items-center justify-center gap-4 pt-4 border-t border-black/5 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+           <Zap className="h-4 w-4 text-[#111]" />
+           <ShieldCheck className="h-4 w-4 text-[#111]" />
+           <p className="text-[10px] font-bold uppercase tracking-widest text-[#111]">Vantage Security Verified</p>
         </div>
       </div>
 
       {/* Floating mini card — bottom right */}
-      <div className="animate-float-delayed absolute -bottom-6 -right-4 rounded-xl border border-[#E5E7EB] bg-gradient-to-br from-[#F8F9FA] to-[#FFFFFF] px-4 py-3 shadow-lg">
-        <p className="text-[10px] font-medium uppercase tracking-widest text-[#0A0A0A]">Monthly burn</p>
-        <p 
-          className="mt-0.5 text-xl font-bold text-[#0A0A0A]" 
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          $414<span className="text-sm font-normal text-[#4B5563]">/mo</span>
+      <div className="animate-float-delayed absolute -bottom-8 -right-6 rounded-2xl border border-black/5 bg-white px-6 py-4 shadow-2xl z-20">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#666]">Monthly Burn</p>
+        <p className="mt-1 text-2xl font-bold text-[#111] tracking-tight">
+          $414<span className="text-xs font-bold text-[#666] ml-1">/mo</span>
         </p>
-      </div>
-
-      {/* Floating mini card — top right */}
-      <div className="absolute -top-5 -right-2 rounded-xl border border-[#EF4444] bg-gradient-to-r from-[#EF4444] to-[#DC2626] px-3 py-2 shadow-lg">
-        <div className="flex items-center gap-2">
-          <Scissors className="h-3.5 w-3.5 text-white" />
-          <div>
-            <p className="text-[10px] font-medium text-white">Redundant found</p>
-            <p className="text-xs font-bold text-white">GitHub Copilot</p>
-          </div>
-        </div>
       </div>
     </div>
   )

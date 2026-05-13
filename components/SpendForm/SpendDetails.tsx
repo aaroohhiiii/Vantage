@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { AlertTriangle, Info } from "lucide-react"
+import { Info, ChevronRight, ArrowLeft } from "lucide-react"
 import { ToolIcon, TOOL_DISPLAY_NAMES } from "@/components/ui/ToolIcon"
 import { getToolPricing, getOfficialPrice } from "@/lib/pricingData"
 import type { ToolInput, ToolName } from "@/lib/types"
@@ -17,21 +17,16 @@ type SpendDetailsProps = {
 
 const containerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
+  visible: { transition: { staggerChildren: 0.05 } },
 }
 
 const cardVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const } },
 }
 
 const inputClass =
-  "w-full rounded-xl px-3.5 py-2.5 text-sm text-[#0A0A0A] placeholder-[#9CA3AF] outline-none transition-all duration-200 focus:ring-2 focus:ring-[#00C853]/40"
-
-const inputStyle = {
-  background: "#FFFFFF",
-  border: "1px solid #E5E7EB",
-}
+  "w-full rounded-2xl px-4 py-3 text-sm font-medium text-[#111] placeholder-[#9CA3AF] bg-white border border-black/5 outline-none transition-all duration-300 focus:border-[#00C853] focus:ring-4 focus:ring-[#00C853]/5"
 
 export function SpendDetails({
   selectedTools,
@@ -40,17 +35,15 @@ export function SpendDetails({
   onBack,
   onNext,
 }: SpendDetailsProps) {
-  // local editable strings for monthly spend to avoid overwriting while typing
   const [, setEditSpend] = useState<Record<string, string>>({})
 
-  // keep local edit values in sync when parent toolInputs change (e.g. plan/seat updates)
   useEffect(() => {
     const next: Record<string, string> = {}
     selectedTools.forEach((tool) => {
       const val = toolInputs[tool]?.monthlySpend
       next[tool] = typeof val === "number" ? String(val) : ""
     })
-    setEditSpend((prev) => ({ ...next, ...prev })) // prefer new values but preserve any in-progress edits
+    setEditSpend((prev) => ({ ...next, ...prev }))
   }, [selectedTools, toolInputs])
 
   const totalSpend = selectedTools.reduce(
@@ -59,17 +52,17 @@ export function SpendDetails({
   )
 
   return (
-    <section className="space-y-5" aria-labelledby="spend-details-title">
+    <section className="space-y-8" aria-labelledby="spend-details-title">
       {/* Header */}
       <div>
         <h2
           id="spend-details-title"
-          className="text-xl font-bold text-[#0A0A0A]"
+          className="text-2xl font-medium text-[#111]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           How much do you spend on each?
         </h2>
-        <p className="mt-1 text-sm text-[#4B5563]">
+        <p className="mt-2 text-[#666] font-medium text-sm">
           Enter your current plan and monthly cost. We&apos;ll compare against official pricing.
         </p>
       </div>
@@ -79,7 +72,7 @@ export function SpendDetails({
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="space-y-3"
+        className="space-y-4"
       >
         {selectedTools.map((tool) => {
           const pricing = getToolPricing(tool)
@@ -97,47 +90,36 @@ export function SpendDetails({
             <motion.div
               key={tool}
               variants={cardVariants}
-              className="rounded-2xl p-5"
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid #E5E7EB",
-              }}
+              className="rounded-[32px] p-6 bg-white border border-black/5 transition-all duration-300"
             >
               {/* Tool header */}
-              <div className="mb-4 flex items-center gap-3">
-                <ToolIcon tool={tool} size={32} />
-                <div>
-                  <p className="text-sm font-semibold text-[#0A0A0A]">{TOOL_DISPLAY_NAMES[tool]}</p>
+              <div className="mb-6 flex items-center gap-4">
+                <ToolIcon tool={tool} size={40} />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-[#111]">{TOOL_DISPLAY_NAMES[tool]}</p>
                   {selectedPlan && officialMonthlySpend > 0 && (
-                    <p className="text-xs" style={{ color: "#4B5563" }}>
-                      List: ${officialMonthlySpend}{selectedPlan.isPerUser ? "/user" : ""}/mo
+                    <p className="text-xs font-medium text-[#666] mt-0.5">
+                      List Price: ${officialMonthlySpend}{selectedPlan.isPerUser ? "/user" : ""}/mo
                     </p>
                   )}
                 </div>
 
                 {isOverpaying && (
-                  <div
-                    className="ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium"
-                    style={{ background: "#FFFBEB", color: "#F59E0B", border: "1px solid #FCD34D" }}
-                  >
-                    ⚠ Overpaying
+                  <div className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                    Overpaying
                   </div>
                 )}
                 {isUnderList && !isOverpaying && (
-                  <div
-                    className="ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium"
-                    style={{ background: "#F0FDF4", color: "#00C853", border: "1px solid #BBF7D0" }}
-                  >
-                    ✓ At list price
+                  <div className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-green-50 text-green-600 border border-green-200">
+                    Optimal
                   </div>
                 )}
               </div>
 
               {/* Inputs row */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {/* Plan selector */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-plan`}>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#666] ml-1" htmlFor={`${tool}-plan`}>
                     Plan
                   </label>
                   <select
@@ -146,139 +128,68 @@ export function SpendDetails({
                     onChange={(e) => {
                       const selectedPlan = e.target.value
                       const pricing = getToolPricing(tool)
-                      const planData = pricing?.plans.find(
-                        (p) => p.planName === selectedPlan
-                      )
+                      const planData = pricing?.plans.find((p) => p.planName === selectedPlan)
                       const minSeats = planData?.minSeats ?? 1
-                      
-                      // Auto-fill seats with minimum required
                       onToolInputChange(tool, { 
                         plan: selectedPlan,
                         seats: Math.max(input.seats, minSeats)
                       })
                     }}
                     className={inputClass}
-                    style={inputStyle}
                   >
-                    <option value="">Select a plan</option>
-                    {pricing?.plans && pricing.plans.length > 0 ? (
-                      pricing.plans.map((plan) => (
-                        <option key={plan.planName} value={plan.planName}>
-                          {plan.planName}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>No plans available</option>
-                    )}
+                    <option value="">Select plan</option>
+                    {pricing?.plans?.map((plan) => (
+                      <option key={plan.planName} value={plan.planName}>{plan.planName}</option>
+                    ))}
                   </select>
                 </div>
 
-                {/* Monthly spend */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#64748B]" htmlFor={`${tool}-spend`}>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#666] ml-1" htmlFor={`${tool}-spend`}>
                     Monthly spend
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#475569]">
-                      $
-                    </span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#666]">$</span>
                     <input
                       id={`${tool}-spend`}
                       type="number"
                       min={0}
-                      placeholder="0"
                       value={input.monthlySpend || ""}
-                      onChange={(e) =>
-                        onToolInputChange(tool, { monthlySpend: Number(e.target.value) || 0 })
-                      }
-                      className={inputClass}
-                      style={{ ...inputStyle, paddingLeft: "1.75rem" }}
+                      onChange={(e) => onToolInputChange(tool, { monthlySpend: Number(e.target.value) || 0 })}
+                      className={`${inputClass} pl-8`}
                     />
                   </div>
                 </div>
 
-                {/* Seats */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#4B5563]" htmlFor={`${tool}-seats`}>
-                    Seats / users
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#666] ml-1" htmlFor={`${tool}-seats`}>
+                    Seats
                   </label>
                   <input
                     id={`${tool}-seats`}
                     type="number"
                     min={1}
                     value={input.seats || ""}
-                    placeholder="e.g. 5 users"
-                    onChange={(e) => {
-                      const newSeats = Number(e.target.value) || 0
-                      // const pricing = getToolPricing(tool)
-                      // const selectedPlan = pricing?.plans.find(
-                      //   (p) => p.planName === (input.plan || "")
-                      // )
-                      // const minSeats = selectedPlan?.minSeats ?? 1
-                      
-                      // Allow typing any value, but we'll validate on blur
-                      onToolInputChange(tool, { seats: newSeats })
-                    }}
+                    onChange={(e) => onToolInputChange(tool, { seats: Number(e.target.value) || 0 })}
                     onBlur={(e) => {
                       const newSeats = Number(e.target.value) || 0
                       const pricing = getToolPricing(tool)
-                      const selectedPlan = pricing?.plans.find(
-                        (p) => p.planName === (input.plan || "")
-                      )
+                      const selectedPlan = pricing?.plans.find((p) => p.planName === (input.plan || ""))
                       const minSeats = selectedPlan?.minSeats ?? 1
-                      
-                      // Always enforce minimum on blur
-                      const finalSeats = Math.max(minSeats, Math.max(1, newSeats))
-                      onToolInputChange(tool, { seats: finalSeats })
+                      onToolInputChange(tool, { seats: Math.max(minSeats, Math.max(1, newSeats)) })
                     }}
                     className={inputClass}
-                    style={inputStyle}
                   />
-                  {(() => {
-                    const pricing = getToolPricing(tool)
-                    const selectedPlan = pricing?.plans.find(
-                      (p) => p.planName === (input.plan || "")
-                    )
-                    const minSeats = selectedPlan?.minSeats
-                    const isBelowMin = minSeats && input.seats < minSeats
-                    
-                    if (isBelowMin) {
-                      return (
-                        <div className="flex items-center gap-1.5 mt-1 p-2 bg-orange-50 border border-orange-200 rounded-md">
-                          <AlertTriangle className="h-3.5 w-3.5 text-orange-600 flex-shrink-0" />
-                          <p className="text-xs text-orange-700">
-                            Minimum {minSeats} seat{minSeats > 1 ? 's' : ''} required for {selectedPlan?.planName}
-                          </p>
-                        </div>
-                      )
-                    } else if (minSeats && minSeats > 1) {
-                      return (
-                        <div className="flex items-center gap-1.5 mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                          <Info className="h-3.5 w-3.5 text-blue-600 flex-shrink-0" />
-                          <p className="text-xs text-blue-700">
-                            Minimum {minSeats} seat{minSeats > 1 ? 's' : ''} required
-                          </p>
-                        </div>
-                      )
-                    }
-                    return null
-                  })()}
                 </div>
               </div>
 
-              {/* Source link */}
               {selectedPlan && (
-                <p className="mt-3 text-[11px]" style={{ color: "#4B5563" }}>
-                  Pricing verified{" "}
-                  <a
-                    href={selectedPlan.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-2 transition-colors hover:text-[#00C853]"
-                  >
-                    {new URL(selectedPlan.sourceUrl).hostname}
-                  </a>
-                </p>
+                <div className="mt-4 pt-4 border-t border-black/5 flex items-center justify-between">
+                  <p className="text-[10px] font-medium text-[#666]">
+                    Verified via <a href={selectedPlan.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#111] underline underline-offset-2 hover:text-[#00C853]">{new URL(selectedPlan.sourceUrl).hostname}</a>
+                  </p>
+                  <Info className="h-3.5 w-3.5 text-[#9CA3AF]" />
+                </div>
               )}
             </motion.div>
           )
@@ -286,48 +197,36 @@ export function SpendDetails({
       </motion.div>
 
       {/* Total spend bar */}
-      <div
-        className="flex items-center justify-between rounded-2xl px-5 py-4"
-        style={{
-          background: "#F8F9FA",
-          border: "1px solid #E5E7EB",
-        }}
-      >
+      <div className="rounded-[32px] px-8 py-6 bg-[#f9fafb] border border-black/5 flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium text-[#4B5563]">Total monthly spend</p>
-          <p
-            className="text-2xl font-bold text-[#0A0A0A]"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            ${totalSpend.toFixed(2)}
-            <span className="text-sm font-normal text-[#4B5563]">/mo</span>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#666] mb-1">Monthly Burn</p>
+          <p className="text-3xl font-medium text-[#111]" style={{ fontFamily: "var(--font-heading)" }}>
+            ${totalSpend.toFixed(0)}<span className="text-sm font-medium text-[#666] ml-1">/mo</span>
           </p>
         </div>
-        {totalSpend > 0 && (
-          <div className="text-right">
-            <p className="text-xs text-[#4B5563]">Annual run rate</p>
-            <p className="text-lg font-semibold text-[#00C853]">
-              ${(totalSpend * 12).toFixed(0)}/yr
-            </p>
-          </div>
-        )}
+        <div className="text-right">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#666] mb-1">Annual Run Rate</p>
+          <p className="text-xl font-semibold text-[#00C853]">
+            ${(totalSpend * 12).toLocaleString()}/yr
+          </p>
+        </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between pt-1">
+      <div className="flex justify-between pt-4 border-t border-black/5">
         <button
           type="button"
           onClick={onBack}
-          className="rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#4B5563] hover:bg-[#F8F9FA]"
+          className="text-sm font-bold uppercase tracking-widest text-[#666] hover:text-[#111] transition-all flex items-center gap-2"
         >
-          ← Back
+          <ArrowLeft className="h-4 w-4" /> Back
         </button>
         <button
           type="button"
           onClick={onNext}
-          className="rounded-xl bg-[#00C853] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#00A846]"
+          className="btn-primary flex items-center gap-2"
         >
-          Next: Team context →
+          Next: Team context <ChevronRight className="h-4 w-4" />
         </button>
       </div>
     </section>
