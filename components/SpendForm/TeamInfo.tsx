@@ -11,6 +11,8 @@ import {
   Search,
   UserRound,
   Users,
+  ChevronRight,
+  ArrowLeft
 } from "lucide-react"
 import type { FormState, UseCase } from "@/lib/types"
 
@@ -23,7 +25,7 @@ const TEAM_SIZE_OPTIONS = [
 
 const USE_CASE_OPTIONS: { value: UseCase; label: string; icon: typeof Code2; desc: string }[] = [
   { value: "coding", label: "Coding", icon: Code2, desc: "Dev tools & code gen" },
-  { value: "writing", label: "Writing", icon: PenSquare, desc: "Docs, emails, content" },
+  { value: "writing", label: "Writing", icon: PenSquare, desc: "Docs & content" },
   { value: "data", label: "Data", icon: ChartColumn, desc: "Analysis & reporting" },
   { value: "research", label: "Research", icon: Search, desc: "Knowledge & synthesis" },
   { value: "mixed", label: "Mixed", icon: GitMerge, desc: "Multiple use cases" },
@@ -41,15 +43,14 @@ type TeamInfoProps = {
 
 const containerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.06 } },
+  visible: { transition: { staggerChildren: 0.05 } },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const } },
 }
 
-/** Match team size option to the current teamSize value */
 function getActiveTeamOption(teamSize: number) {
   if (teamSize <= 1) return 1
   if (teamSize <= 10) return 5
@@ -79,26 +80,26 @@ export function TeamInfo({
   const activeTeamValue = getActiveTeamOption(state.teamSize)
 
   return (
-    <section className="space-y-6" aria-labelledby="team-info-title">
+    <section className="space-y-8" aria-labelledby="team-info-title">
       {/* Header */}
       <div>
         <h2
           id="team-info-title"
-          className="text-xl font-bold text-[#0A0A0A]"
+          className="text-2xl font-medium text-[#111]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           Tell us about your team
         </h2>
-        <p className="mt-1 text-sm text-[#4B5563]">
+        <p className="mt-2 text-[#666] font-medium text-sm">
           This helps us tailor recommendations to your context.
         </p>
       </div>
 
-      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-10">
         {/* Team size cards */}
-        <motion.fieldset variants={itemVariants} className="space-y-3">
-          <legend className="text-sm font-semibold text-[#0A0A0A]">Team size</legend>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <motion.fieldset variants={itemVariants} className="space-y-4">
+          <legend className="text-[10px] font-bold uppercase tracking-widest text-[#666] mb-4">Team Size</legend>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {TEAM_SIZE_OPTIONS.map((option) => {
               const isActive = activeTeamValue === option.value
               return (
@@ -108,91 +109,59 @@ export function TeamInfo({
                   aria-pressed={isActive}
                   disabled={isSubmitting}
                   onClick={() => onTeamSizeChange(option.value)}
-                  className="group relative rounded-2xl p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853] disabled:opacity-50"
+                  className="group relative rounded-[24px] p-5 text-left transition-all duration-300 focus-visible:outline-none border border-black/5 bg-white disabled:opacity-50"
                   style={
                     isActive
                       ? {
-                          background: "#F0FDF4",
-                          border: "1px solid #00C853",
-                          boxShadow: "0 0 20px rgba(0,200,83,0.12)",
+                          background: "rgba(0, 200, 83, 0.03)",
+                          border: "1px solid rgba(0, 200, 83, 0.3)",
                         }
-                      : {
-                          background: "#FFFFFF",
-                          border: "1px solid #E5E7EB",
-                        }
+                      : {}
                   }
                 >
-                  <div className="mb-2 text-[#00C853]">
+                  <div className="mb-3 text-[#111]">
                     <option.icon className="h-5 w-5" />
                   </div>
-                  <p
-                    className="text-sm font-semibold"
-                    style={{ color: "#0A0A0A" }}
-                  >
-                    {option.label}
-                  </p>
-                  <p
-                    className="text-xs"
-                    style={{ color: "#4B5563" }}
-                  >
-                    {option.description}
-                  </p>
+                  <p className="text-sm font-semibold text-[#111]">{option.label}</p>
+                  <p className="text-[11px] font-medium text-[#666] mt-0.5">{option.description}</p>
                 </button>
               )
             })}
           </div>
 
-          {/* Custom numeric input for exact team size */}
-          <div className="flex items-center gap-3">
-            <label htmlFor="team-size-exact" className="whitespace-nowrap text-xs text-[#4B5563]">
-              Exact count:
-            </label>
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4 pt-4">
+            <div className="flex items-center gap-3 bg-[#f9fafb] p-2 rounded-2xl border border-black/5">
               <button
                 type="button"
                 onClick={decrementTeamSize}
-                className="h-10 w-10 rounded-lg border border-[#E5E7EB] bg-white text-lg font-semibold text-[#4B5563] hover:bg-[#F8F9FA]"
-                aria-label="Decrease team size"
+                className="h-10 w-10 rounded-xl bg-white border border-black/5 text-lg font-medium text-[#111] transition-all"
               >
                 −
               </button>
-
               <input
                 id="team-size"
                 type="number"
                 min={1}
                 value={state.teamSize}
                 onChange={(e) => onTeamSizeChange(clampTeamSize(Number(e.target.value)))}
-                onKeyDown={(e) => {
-                  if (e.key === "ArrowUp") {
-                    e.preventDefault()
-                    incrementTeamSize()
-                  }
-                  if (e.key === "ArrowDown") {
-                    e.preventDefault()
-                    decrementTeamSize()
-                  }
-                }}
-                className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-sm text-[#0A0A0A] outline-none focus:ring-2 focus:ring-[#00C853]/40"
+                className="w-16 bg-transparent text-center font-bold text-[#111] outline-none"
               />
-
               <button
                 type="button"
                 onClick={incrementTeamSize}
-                className="h-10 w-10 rounded-lg border border-[#E5E7EB] bg-white text-lg font-semibold text-[#4B5563] hover:bg-[#F8F9FA]"
-                aria-label="Increase team size"
+                className="h-10 w-10 rounded-xl bg-white border border-black/5 text-lg font-medium text-[#111] transition-all"
               >
                 +
               </button>
             </div>
-            <span className="text-xs text-[#4B5563]">people</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#666]">Seats Found</span>
           </div>
         </motion.fieldset>
 
         {/* Use case pills */}
-        <motion.fieldset variants={itemVariants} className="space-y-3">
-          <legend className="text-sm font-semibold text-[#0A0A0A]">Primary use case</legend>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+        <motion.fieldset variants={itemVariants} className="space-y-4">
+          <legend className="text-[10px] font-bold uppercase tracking-widest text-[#666] mb-4">Primary Use Case</legend>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             {USE_CASE_OPTIONS.map((option) => {
               const isActive = state.useCase === option.value
               return (
@@ -202,106 +171,58 @@ export function TeamInfo({
                   aria-pressed={isActive}
                   disabled={isSubmitting}
                   onClick={() => onUseCaseChange(option.value)}
-                  className="group rounded-xl p-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00C853] disabled:opacity-50"
+                  className="group rounded-2xl p-4 text-left transition-all duration-300 border border-black/5 bg-white disabled:opacity-50"
                   style={
                     isActive
                       ? {
-                          background: "#F0FDF4",
-                          border: "1px solid #00C853",
-                          boxShadow: "0 0 16px rgba(0,200,83,0.12)",
+                          background: "rgba(0, 200, 83, 0.03)",
+                          border: "1px solid rgba(0, 200, 83, 0.3)",
                         }
-                      : {
-                          background: "#FFFFFF",
-                          border: "1px solid #E5E7EB",
-                        }
+                      : {}
                   }
                 >
-                  <div className="mb-1.5 text-[#00C853]">
+                  <div className="mb-2 text-[#111] group-hover:text-[#00C853] transition-colors">
                     <option.icon className="h-4 w-4" />
                   </div>
-                  <p
-                    className="text-xs font-semibold"
-                    style={{ color: "#0A0A0A" }}
-                  >
-                    {option.label}
-                  </p>
-                  <p className="text-[10px] leading-tight" style={{ color: "#4B5563" }}>
-                    {option.desc}
-                  </p>
+                  <p className="text-xs font-semibold text-[#111]">{option.label}</p>
                 </button>
               )
             })}
           </div>
         </motion.fieldset>
 
-        {/* Summary review */}
-        <motion.div
-          variants={itemVariants}
-          className="rounded-2xl px-5 py-4"
-          style={{
-            background: "#F8F9FA",
-            border: "1px solid #E5E7EB",
-          }}
-        >
-          <p className="mb-3 text-xs font-medium uppercase tracking-widest text-[#4B5563]">
-            Audit summary
-          </p>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs text-[#4B5563]">Tools</p>
-              <p className="text-base font-semibold text-[#0A0A0A]">{state.selectedTools.length}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#4B5563]">Team size</p>
-              <p className="text-base font-semibold text-[#0A0A0A]">{state.teamSize}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#4B5563]">Use case</p>
-              <p className="text-base font-semibold capitalize text-[#0A0A0A]">{state.useCase}</p>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Navigation */}
-        <motion.div variants={itemVariants} className="flex justify-between pt-1">
+        <motion.div variants={itemVariants} className="flex justify-between pt-8 border-t border-black/5">
           <button
             type="button"
             onClick={onBack}
             disabled={isSubmitting}
-            className="rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#4B5563] hover:bg-[#F8F9FA] disabled:opacity-40"
+            className="text-sm font-bold uppercase tracking-widest text-[#666] hover:text-[#111] transition-all flex items-center gap-2 disabled:opacity-40"
           >
-            ← Back
+            <ArrowLeft className="h-4 w-4" /> Back
           </button>
 
           <button
             type="button"
             onClick={onSubmit}
             disabled={isSubmitting}
-            className="relative rounded-2xl bg-[#00C853] px-8 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 hover:bg-[#00A846]"
-            id="submit-audit-btn"
+            className="btn-primary flex items-center gap-2 relative overflow-hidden"
           >
             {isSubmitting ? (
-              <span className="flex items-center gap-2.5">
-                <svg
-                  className="h-4 w-4 animate-spin"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Analyzing your spend...
-              </span>
+              <>
+                <div className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <span>Running Audit...</span>
+              </>
             ) : (
-              "Run My Audit →"
+              <>
+                Run Final Audit <ChevronRight className="h-4 w-4" />
+              </>
             )}
           </button>
         </motion.div>
         
-        {/* Error message */}
         {error && (
-          <motion.div variants={itemVariants} className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600 text-center">
+          <motion.div variants={itemVariants} className="mt-6 rounded-2xl bg-red-50 p-4 text-xs font-bold uppercase tracking-widest text-red-600 text-center">
             {error}
           </motion.div>
         )}
