@@ -193,23 +193,23 @@ export default function Home() {
             {[
               { 
                 q: "How exactly do you calculate my potential savings?", 
-                a: "Our engine performs a multi-vector analysis: identifying redundant model capabilities (e.g., ChatGPT Plus vs Claude Pro), comparing your per-seat spend against enterprise benchmarks for your team size, and verifying feature-parity across different tier levels. On average, we identify 34% in recoverable spend." 
+                a: "We compare your current tool stack against official vendor price lists to find overlaps. For example, if you're paying for both ChatGPT Plus and Claude Pro for the same team, we'll show you exactly how much you can save by consolidating based on your team's specific size and use case." 
               },
               { 
                 q: "Is my corporate spend data stored or sold?", 
-                a: "Absolutely not. Vantage uses session-based processing. Your data is used exclusively to generate your audit report in real-time. We don't store identifiable business metrics or sell user data to third-party vendors." 
+                a: "No. We don't save your company data or sell it to third parties. The audit happens in your current browser session, and we only ask for an email if you want us to send you a persistent PDF copy of your report." 
               },
               { 
                 q: "How accurate and current is the vendor pricing?", 
-                a: "Our database is verified weekly against official vendor documentation. Every savings recommendation in your report includes a direct citation to the official pricing page for OpenAI, Anthropic, Cursor, and other major providers." 
+                a: "We check official price lists (OpenAI, Anthropic, Cursor, etc.) every week to stay current. Every recommendation we give in your report includes a direct link to the vendor's pricing page so you can verify the numbers yourself." 
               },
               { 
                 q: "Which AI tools are included in the audit?", 
-                a: "We currently provide deep-dive analysis for Cursor, GitHub Copilot, Claude, ChatGPT, Anthropic API, OpenAI API, Gemini, and Windsurf, covering both individual Pro plans and Enterprise tiers." 
+                a: "Right now we cover the most common dev tools: Cursor, GitHub Copilot, Claude, ChatGPT, and the major APIs (OpenAI/Anthropic). We're adding more tools every week based on what teams are asking for." 
               },
               { 
                 q: "Is this audit really free of charge?", 
-                a: "Yes. There is no credit card required, no account creation, and no paywall. We provide the full dashboard analysis for free, only requesting an email if you wish to receive a persistent PDF copy of your report." 
+                a: "Yes. No credit card, no account creation, and no paywall. We give you the full dashboard analysis upfront for free. You only share your email if you want to download the PDF version of your results." 
               }
             ].map((item, i) => (
               <details key={i} className="group glass-card rounded-[24px] border border-black/5 overflow-hidden">
