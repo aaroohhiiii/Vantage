@@ -53,8 +53,8 @@ export default function Home() {
 
 
           <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-[#111] mb-8 leading-[1.05]">
-            Find out if you are <br />
-            <span className="text-[#00C853]">overpaying</span> for AI tools.
+            Unlock <br />
+            <span className="text-[#00C853]">Hidden</span> savings in your AI Subscriptions .
           </h1>
 
           <p className="text-xl text-[#666] max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
