@@ -22,10 +22,13 @@ For generating the final "Consultant-Style" audit summaries, I utilized **Groq (
 
 Second, and more significantly, I found that AI tools often struggled with original design; they tended to generate generic "SaaS prototypes" that felt like they were built by a template-driven company. Making the website feel unique, premium, and professional took a tremendous amount of manual refinement and time to push past these AI-standard defaults. I didn't trust the AI for raw pricing math or the high-stakes aesthetic direction, ensuring the engine's core is grounded in "Truth" while the design remains a handcrafted, professional experience.
 
-## 5. Self-Rating & Rationale
+## 5. The Design Pivot: Engineered Authority
+In the final stages, I made a critical decision to move away from generic UI libraries (shadcn/Tailwind) in favor of a handcrafted **"Engineered Platform"** design system. I realized that while standard components are efficient, they often signal "SaaS Prototype" rather than "Professional Financial Tool." By implementing a high-contrast Vanilla CSS system with thinned `#111` borders and oversized 35px uppercase typography, I shifted the platform's visual identity towards executive authority. This handcrafted approach ensures that every pixel feels intentionally engineered, reinforcing the technical depth of our "Science of Savings" methodology.
 
-*   **Discipline: 8/10** — Maintained a rigorous DevLog and enforced a "Tests-First" approach for every Engine V3 change.
-*   **Code Quality: 8/10** — Refactored the audit logic into a modular, strongly-typed pipeline that handles edge cases like team-size penalties.
-*   **Design Sense: 8/10** — Implemented high-end professional frontend and standardized technical typography, though minor hydration warnings persist.
-*   **Problem Solving: 8/10** — Successfully diagnosed and fixed the complex Webpack crash that was blocking the entire build.
-*   **Entrepreneurial Thinking: 9/10** — Constantly prioritized the "Lean Stack" philosophy, ensuring the output is defensible to a CFO.
+## 6. Self-Rating & Rationale
+
+*   **Discipline: 9/10** — Maintained a rigorous DevLog and enforced a "Tests-First" approach for every Engine V3 change.
+*   **Code Quality: 8/10** — Refactored the audit logic into a modular, strongly-typed pipeline that handles complex benchmarking.
+*   **Design Sense: 9/10** — Successfully pivoted to a unique, authoritative visual system that elevates the platform above standard templates.
+*   **Problem Solving: 8/10** — Diagnosed and fixed complex build issues while simultaneously re-architecting the frontend style.
+*   **Entrepreneurial Thinking: 9/10** — Consistently prioritized CFO-defensible output and a "Lean Stack" philosophy that builds immediate trust.
