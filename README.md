@@ -2,6 +2,8 @@
 
 **AI Spend Optimization Platform** - Stop overpaying for AI tools with the "Science of Savings" audit engine designed for high-growth engineering teams.
 
+**[Watch the Demo Video](https://youtu.be/Qlu0wdfcylw)**
+
 Vantage helps startups and engineering teams analyze their AI tool stack, identify redundant subscriptions, and find optimization opportunities. Get personalized recommendations in 60 seconds with our advanced audit engine powered by real-time pricing data and AI insights.
 
 ##  Who It's For
