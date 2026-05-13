@@ -13,7 +13,7 @@ export function MethodologySection({ audit }: Props) {
   const isOptimal = audit.isOptimal
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       {/* Prominent Credex for High Savings */}
       {hasHighSavings && (
         <div className="rounded-2xl border-2 border-[#7c3aed] bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] p-6 shadow-lg relative overflow-hidden">
@@ -126,7 +126,7 @@ export function MethodologySection({ audit }: Props) {
 
           <div className="rounded-xl border border-[#7c3aed]/20 bg-white/50 p-4">
             <p className="mb-3 text-xs font-bold text-[#7c3aed]">Your team qualifies for:</p>
-            <p className="mb-4 text-2xl font-bold text-[#0A0A0A]">Up to <span className="text-[#7c3aed]">${(audit.totalMonthlySavings * 0.5).toFixed(0)}</span>/mo savings</p>
+            <p className="mb-4 text-2xl font-bold text-[#0A0A0A]">Up to <span className="text-[#7c3aed]">${((audit.totalMonthlySavings || 0) * 0.5).toFixed(0)}</span>/mo savings</p>
             <a
               href="https://credex.rocks"
               target="_blank"

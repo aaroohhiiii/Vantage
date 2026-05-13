@@ -4,7 +4,7 @@ import { Redis } from "@upstash/redis"
 // Create a new ratelimiter, that allows 5 requests per 1 hour
 export const auditRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  limiter: Ratelimit.slidingWindow(100, "1 h"),
   analytics: true,
   prefix: "@upstash/ratelimit/vantage_audit",
 })

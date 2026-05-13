@@ -132,6 +132,8 @@ export function getSupabaseServerClient() {
 		throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY')
 	}
 
+	console.log("[getSupabaseServerClient] Using URL:", supabaseUrl)
+
 	return createClient(supabaseUrl, key, {
 		auth: {
 			persistSession: false,
