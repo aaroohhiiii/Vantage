@@ -45,24 +45,20 @@ This reinforced the idea that for technical users, **heavy styling can actually 
 
 ---
 ## User Interview 3:
-**Participant:** Varun Mantri (Engineer @Swiggy)
-**Company Stage:** MNC
+**Participant:** Nimesh Mali ( AIEngineer @ rocketfrog.ai ) 
+**Company Stage:** Startup
 **Date:** May 13, 2026
 
 **Key Quotes:**
-- "The feedback provided by the engine is very detailed."
-- "The depth of the analysis is good enough for a 7 day project."
+- "ui should have a little bit of motion ."
+- "The depth of the analysis is good enough for a 7 day project but it doesnt do well if we are using one single tool "
 
 **Most Surprising Thing They Said:**
-"The feedback is detailed." 
-Coming from an engineer at a large-scale MNC like Swiggy, this was a strong validation of our **Engine V3 upgrade.** It confirmed that the granular data and specific justifications we added are not "too much," but rather meet the expectations of professionals used to working with high-complexity systems.
+"thats the audit engine should not be hardcoded  and should use llm help to calculate savings . " 
 
 **What it Changed About the Design:**
+made the ui more crisp and tried amending the logic to reccommned downgrading if overspending on a single product .
 
-
-## Summary of Project Impact
-
-The user interview phase served as the primary catalyst for the **Dual Upgrade** of the Vantage platform. By listening to engineering leaders and peers, the project pivoted from a "SaaS Prototype" to a "Consultant-Grade Tool."
 
 ### 1. UI Upgrade: From "AI-Generated" to "Engineered"
 - **The Shift:** Removed all neon gradients, heavy shadows, and low-contrast backgrounds.
